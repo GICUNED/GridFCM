@@ -1,11 +1,10 @@
 Package: GridFCM
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Fuzzy Cognitive Maps (FCM) for repertory grids
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: GICUNED
+Maintainer: Alejandro Sanfeliciano (Sanfeliciano.Alejandro@gmail.com)
+Description: work in progress
+License: 
 Encoding: UTF-8
 LazyData: true
