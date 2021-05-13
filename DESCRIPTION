@@ -1,6 +1,6 @@
 Package: GridFCM
 Type: Package
-Title: Fuzzy Cognitive Maps (FCM) for repertory grids
+Title: Fuzzy Cognitive Maps (FCM) for repertory grids.
 Version: 0.1.0
 Author: GICUNED
 Maintainer: Alejandro Sanfeliciano <Sanfeliciano.Alejandro@gmail.com>
