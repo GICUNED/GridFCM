@@ -123,11 +123,11 @@ FuzzyMap <- function(w.mat,results, lpoles, rpoles, niter = 30 ){
   n <- 1
   for (size.vertex in results) {
   size.vertex <- abs(size.vertex)
-  V(graph.map)$size[n] <- 40 + size.vertex * 75
+  V(graph.map)$size[n] <- 5 + size.vertex * 15
   n <- n + 1
   }
 
   #Dibujar plot
-  graph.map <- add_layout_(graph.map,as_star())
+  graph.map <- add_layout_(graph.map,as_tree())
   plot(graph.map, edge.curved = edge.curved)
 }
