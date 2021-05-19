@@ -128,6 +128,6 @@ FuzzyMap <- function(w.mat,results, lpoles, rpoles, niter = 30 ){
   }
 
   #Dibujar plot
-  graph.map <- add_layout_(graph.map,as_tree())
+  graph.map <- add_layout_(graph.map,as_star())
   plot(graph.map, edge.curved = edge.curved)
 }
