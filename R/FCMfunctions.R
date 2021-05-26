@@ -94,7 +94,7 @@ FuzzyMap <- function(w.mat,results, lpoles, rpoles, niter = 30, edge.width = 1.5
       }
     }
   }
-  print(E(graph.map)$width)
+
   #Color de los vertices
   V(graph.map)$color <- "black"
   n <- 1
@@ -104,14 +104,13 @@ FuzzyMap <- function(w.mat,results, lpoles, rpoles, niter = 30, edge.width = 1.5
     if(pole.vertex > 0){V(graph.map)$color[n] <- "#a5d610" }
     else{
     if(pole.vertex == 0){V(graph.map)$color[n] <- "grey" }
-
     }
     }
     n <- n + 1
   }
+
   #Nombre de los vertices
   n <- 1
-
   for (pole.name.vertex in results) {
     if(pole.name.vertex < 0){V(graph.map)$name[n] <- lpoles[n] }
     else{
@@ -121,10 +120,7 @@ FuzzyMap <- function(w.mat,results, lpoles, rpoles, niter = 30, edge.width = 1.5
       }
     }
     n <- n + 1
-
   }
-
-
 
   #Tamaño de los vertices
   V(graph.map)$size <- 1
@@ -136,7 +132,6 @@ FuzzyMap <- function(w.mat,results, lpoles, rpoles, niter = 30, edge.width = 1.5
   }
 
   #Dibujar plot
-
   E(graph.map)$arrow.size <- 0.3
   V(graph.map)$shape <- "circle"
   V(graph.map)$label.cex <- 0.75
