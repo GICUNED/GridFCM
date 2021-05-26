@@ -136,6 +136,7 @@ FuzzyMap <- function(w.mat,results, lpoles, rpoles, niter = 30, edge.width = 1.5
   }
 
   #Dibujar plot
+
   E(graph.map)$arrow.size <- 0.3
   V(graph.map)$shape <- "circle"
   V(graph.map)$label.cex <- 0.75
