@@ -56,7 +56,7 @@ FuzzyIter <- function(w.mat, act.vec, infer= "mk", act= "t", lambda = 1.5 , iter
 ################################################################################
 #---------------------#Mapa cognitivo
 
-FuzzyMap <- function(w.mat,results, lpoles, rpoles, niter = 30 ){
+FuzzyMap <- function(w.mat,results, lpoles, rpoles, niter = 30, edge.width = 1.5, vertex.size = 1 ){
   require(igraph)
   w.mat <- w.mat
   results <- as.numeric(as.data.frame(results)[niter,])
@@ -84,21 +84,30 @@ FuzzyMap <- function(w.mat,results, lpoles, rpoles, niter = 30 ){
  }
  }
  }
-  print(results)
+  #Tamaño de las aristas.
+  n <- 1
+  for (N in 1:dim(w.mat)[1]) {
+    for (M in 1:dim(w.mat)[1]) {
+      if(w.mat[N,M] != 0){
+        E(graph.map)$width[n] <- abs(edge.width * w.mat[N,M])
+        n <- n + 1
+      }
+    }
+  }
+  print(E(graph.map)$width)
   #Color de los vertices
   V(graph.map)$color <- "black"
   n <- 1
   for (pole.vertex in results) {
-    if(pole.vertex < 0){V(graph.map)$color[n] <- "red" }
+    if(pole.vertex < 0){V(graph.map)$color[n] <- "#F52722" }
     else{
-    if(pole.vertex > 0){V(graph.map)$color[n] <- "green" }
+    if(pole.vertex > 0){V(graph.map)$color[n] <- "#a5d610" }
     else{
     if(pole.vertex == 0){V(graph.map)$color[n] <- "grey" }
 
     }
     }
     n <- n + 1
-    print(V(graph.map)$color)
   }
   #Nombre de los vertices
   n <- 1
@@ -112,7 +121,6 @@ FuzzyMap <- function(w.mat,results, lpoles, rpoles, niter = 30 ){
       }
     }
     n <- n + 1
-    print(V(graph.map)$name)
 
   }
 
@@ -123,11 +131,17 @@ FuzzyMap <- function(w.mat,results, lpoles, rpoles, niter = 30 ){
   n <- 1
   for (size.vertex in results) {
   size.vertex <- abs(size.vertex)
-  V(graph.map)$size[n] <- 40 + size.vertex * 75
+  V(graph.map)$size[n] <-  vertex.size * (5 + size.vertex * 15)
   n <- n + 1
   }
 
   #Dibujar plot
-  graph.map <- add_layout_(graph.map,as_star())
-  plot(graph.map, edge.curved = edge.curved)
+  E(graph.map)$arrow.size <- 0.3
+  V(graph.map)$shape <- "circle"
+  V(graph.map)$label.cex <- 0.75
+  V(graph.map)$label.family <- "sans"
+  V(graph.map)$label.font <- 2
+  V(graph.map)$label.color <- "#323232"
+  graph.map <- add_layout_(graph.map,as_tree(circular = TRUE))
+  plot.igraph(graph.map, edge.curved = edge.curved)
 }
