@@ -20,7 +20,7 @@ SelectConstructs <- function(x, sel.vec){
 }
 ################################################################################
 #------------------------------#Crear matriz de pesos
-WeightMatrix <- function(x,imp,sel.vec = NULL){
+WeightMatrixP <- function(x,imp,sel.vec = NULL){
 test2.matrix <- constructCor(x) * imp
   #Adaptamos el formato de OpenRepGrid a una matriz estandar.
   if(class(x)[1] == "repgrid"){
@@ -38,6 +38,11 @@ test2.matrix <- constructCor(x) * imp
     result <- abs(partial.matrix) * imp
   }
   return(result)
+}
+################################################################################
+WeightMatrix <- function(x){
+  W <- x/3
+  return(W)
 }
 ################################################################################
 #------------------#Iteraciones del Mapa cognitivo
@@ -150,13 +155,13 @@ W.FuzzyMap <- function(w.mat,results, lpoles, rpoles, niter = 30, edge.width = 1
 ################################################################################
 #---------------------#Mapa cognitivo
 
-FuzzyMap <- function(x, imp, results, col.ideal, niter = 30, layout = "rtcircle", edge.width = 1.5, vertex.size = 1, legend = FALSE ){
+FuzzyMap <- function(x, imp, results, col.ideal = dim(x)[2], niter = 30, layout = "rtcircle", edge.width = 1.5, vertex.size = 1, legend = FALSE ){
   require(igraph)
 
   lpoles <- getConstructNames(x)[,1]
   rpoles <- getConstructNames(x)[,2]
 
-  w.mat <- WeightMatrix(x,imp)
+  w.mat <- WeightMatrix(imp)
   w.mat <- as.matrix(w.mat)
   results <- as.numeric(as.data.frame(results)[niter,])
 
@@ -280,12 +285,6 @@ FuzzyMap <- function(x, imp, results, col.ideal, niter = 30, layout = "rtcircle"
 if(layout == "grid"){
   graph.map <- add_layout_(graph.map,on_grid())
 }
-  #if(layout == "mds3d"){
-    #graph.map <- add_layout_(graph.map,with_mds(dim=3))
-  #}
-
-  #Dibujar plot
-
 
   if(layout == "mds3d"){
     require(rgl)
