@@ -41,7 +41,7 @@ test2.matrix <- constructCor(x) * imp
 }
 ################################################################################
 #------------------#Iteraciones del Mapa cognitivo
-FuzzyIter <- function(w.mat, act.vec, infer= "mk", thr= "t", lambda = 1.5 , iter = 30, graph = TRUE){
+FuzzyIter <- function(w.mat, act.vec, infer= "mk", thr= "t", lambda = 1 , iter = 30, graph = TRUE){
   require(fcm)
   require(FCMapper)
   w.mat <- as.data.frame(w.mat)
