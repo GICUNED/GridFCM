@@ -28,7 +28,7 @@ test2.matrix <- constructCor(x) * imp
   }
   test.matrix <- Pmatrix(x) * imp
   if(any(test.matrix < 0)){
-    warning("La matriz de correlaciones parciales y la matriz de implicaciones tienen contradicciones. \n Se usará la matriz de impliciones para calcular los pesos \n")
+    warning("La matriz de correlaciones parciales y la matriz de implicaciones tienen contradicciones. \n Se usará la matriz de impliciones para calcular la naturaleza de las relaciones \n")
     }
 
   if(is.null(sel.vec)){
@@ -41,11 +41,11 @@ test2.matrix <- constructCor(x) * imp
 }
 ################################################################################
 #------------------#Iteraciones del Mapa cognitivo
-FuzzyIter <- function(w.mat, act.vec, infer= "mk", act= "t", lambda = 1.5 , iter = 30, graph = TRUE){
+FuzzyIter <- function(w.mat, act.vec, infer= "mk", thr= "t", lambda = 1.5 , iter = 30, graph = TRUE){
   require(fcm)
   require(FCMapper)
   w.mat <- as.data.frame(w.mat)
-  result <- fcm.infer(act.vec, weight_mat = w.mat, infer = infer, transform = act, lambda = lambda, iter = iter)
+  result <- fcm.infer(act.vec, weight_mat = w.mat, infer = infer, transform = thr, lambda = lambda, iter = iter)
 
   if(graph){
     require(reshape2)
@@ -150,17 +150,16 @@ W.FuzzyMap <- function(w.mat,results, lpoles, rpoles, niter = 30, edge.width = 1
 ################################################################################
 #---------------------#Mapa cognitivo
 
-FuzzyMap <- function(x, imp, results, niter = 30, edge.width = 1.5, vertex.size = 1, legend = FALSE ){
+FuzzyMap <- function(x, imp, results, col.ideal, niter = 30, layout = "rtcircle", edge.width = 1.5, vertex.size = 1, legend = FALSE ){
   require(igraph)
 
-  #Adaptamos el formato de OpenRepGrid a una matriz estandar.
   lpoles <- getConstructNames(x)[,1]
   rpoles <- getConstructNames(x)[,2]
 
   w.mat <- WeightMatrix(x,imp)
   w.mat <- as.matrix(w.mat)
   results <- as.numeric(as.data.frame(results)[niter,])
-  #Voltear relaciones entre polos opuestos
+
   n <- 1
   for (integer in results) {
     integer.value <- integer / abs(integer)
@@ -208,12 +207,26 @@ FuzzyMap <- function(x, imp, results, niter = 30, edge.width = 1.5, vertex.size 
   V(graph.map)$color <- "black"
   n <- 1
   for (pole.vertex in results) {
+  if(getRatingLayer(x)[,col.ideal][n] > 4){
     if(pole.vertex < 0){V(graph.map)$color[n] <- "#F52722" }
     else{
       if(pole.vertex > 0){V(graph.map)$color[n] <- "#a5d610" }
       else{
         if(pole.vertex == 0){V(graph.map)$color[n] <- "grey" }
       }
+    }
+  }
+    if(getRatingLayer(x)[,col.ideal][n] < 4){
+      if(pole.vertex > 0){V(graph.map)$color[n] <- "#F52722" }
+      else{
+        if(pole.vertex < 0){V(graph.map)$color[n] <- "#a5d610" }
+        else{
+          if(pole.vertex == 0){V(graph.map)$color[n] <- "grey" }
+        }
+      }
+    }
+    if(getRatingLayer(x)[,col.ideal][n] == 4){
+      V(graph.map)$color[n] <- "yellow"
     }
     n <- n + 1
   }
@@ -240,15 +253,50 @@ FuzzyMap <- function(x, imp, results, niter = 30, edge.width = 1.5, vertex.size 
     n <- n + 1
   }
 
-  #Dibujar plot
+  #Retoques finales
   E(graph.map)$arrow.size <- edge.width * 0.3
   V(graph.map)$shape <- "circle"
   V(graph.map)$label.cex <- 0.75
   V(graph.map)$label.family <- "sans"
   V(graph.map)$label.font <- 2
   V(graph.map)$label.color <- "#323232"
-  graph.map <- add_layout_(graph.map,as_tree(circular = TRUE))
+
+  #Layout
+  if(layout == "rtcircle"){
+   graph.map <- add_layout_(graph.map,as_tree(circular = TRUE))
+  }
+  if(layout == "tree"){
+    graph.map <- add_layout_(graph.map,as_tree())
+  }
+  if(layout == "circle"){
+    graph.map <- add_layout_(graph.map,in_circle())
+  }
+  if(layout == "graphopt"){
+    graph.map <- add_layout_(graph.map,with_graphopt())
+  }
+  if(layout == "mds"){
+    graph.map <- add_layout_(graph.map,with_mds())
+  }
+if(layout == "grid"){
+  graph.map <- add_layout_(graph.map,on_grid())
+}
+  #if(layout == "mds3d"){
+    #graph.map <- add_layout_(graph.map,with_mds(dim=3))
+  #}
+
+  #Dibujar plot
+
+
+  if(layout == "mds3d"){
+    require(rgl)
+    options(rgl.printRglwidget = TRUE)
+    L <- layout_with_mds(graph.map,dim=3)
+   rglplot(graph.map,layout = L)
+  rglwidget()
+  }else{
   plot.igraph(graph.map, edge.curved = edge.curved)
+  }
+  #Leyeda
   if(legend){
     poles <- paste(lpoles,rpoles,sep = " - ")
     poles <- paste(c(1:length(poles)),poles,sep = ". ")
