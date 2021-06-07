@@ -167,9 +167,11 @@ FuzzyMap <- function(x, imp, results, col.ideal = dim(x)[2], niter = 30, layout 
 
   n <- 1
   for (integer in results) {
+    if(integer != 0){
     integer.value <- integer / abs(integer)
     w.mat[,n] <- w.mat[,n] * integer.value
     w.mat[n,] <- w.mat[n,] * integer.value
+    }
     n <- n + 1
   }
 
@@ -301,4 +303,84 @@ if(layout == "grid"){
     poles <- paste(c(1:length(poles)),poles,sep = ". ")
     legend("topright",legend = poles, cex = 0.7, title = "Constructos Personales")
   }
+}
+
+################################################################################
+#---------------------#Mapa cognitivo
+
+FuzzyMap3D <- function(x, imp, results,col.ideal = dim(x)[2],niter=30,vertex.size =1){
+  require(igraph)
+
+  lpoles <- getConstructNames(x)[,1]
+  rpoles <- getConstructNames(x)[,2]
+
+  w.mat <- WeightMatrix(imp)
+  w.mat <- as.matrix(w.mat)
+  results <- as.numeric(as.data.frame(results)[niter,])
+
+
+  graph.map <- graph.adjacency(w.mat,mode = "directed",weighted = T)
+
+  #Tamaño de los vertices
+  V(graph.map)$size <- 1
+  n <- 1
+  for (size.vertex in results) {
+    size.vertex <- abs(size.vertex)
+    V(graph.map)$size[n] <-  vertex.size * (5 + size.vertex * 15)
+    n <- n + 1
+  }
+
+  #Color de los vertices
+  V(graph.map)$color <- "black"
+  n <- 1
+  for (pole.vertex in results) {
+    if(getRatingLayer(x)[,col.ideal][n] > 4){
+      if(pole.vertex < 0){V(graph.map)$color[n] <- "#F52722" }
+      else{
+        if(pole.vertex > 0){V(graph.map)$color[n] <- "#a5d610" }
+        else{
+          if(pole.vertex == 0){V(graph.map)$color[n] <- "grey" }
+        }
+      }
+    }
+    if(getRatingLayer(x)[,col.ideal][n] < 4){
+      if(pole.vertex > 0){V(graph.map)$color[n] <- "#F52722" }
+      else{
+        if(pole.vertex < 0){V(graph.map)$color[n] <- "#a5d610" }
+        else{
+          if(pole.vertex == 0){V(graph.map)$color[n] <- "grey" }
+        }
+      }
+    }
+    if(getRatingLayer(x)[,col.ideal][n] == 4){
+      V(graph.map)$color[n] <- "yellow"
+    }
+    n <- n + 1
+  }
+  #Color de las aristas.
+  E(graph.map)$color <- "black"
+  n <- 1
+  for (weight in E(graph.map)$weight) {
+    E(graph.map)$color[n] <-  ifelse(weight < 0, "red", "black" )
+    n <- n + 1
+  }
+
+  #Curvatura de las aristas.
+  edge.curved = rep(0, length(E(graph.map)))
+  n <- 1
+  for (N in 1:dim(w.mat)[1]) {
+    for (M in 1:dim(w.mat)[1]) {
+      if(w.mat[M,N] != 0 && w.mat[N,M] != 0){
+        edge.curved[n] <- 100
+      }
+      if(w.mat[N,M] != 0){
+        n <- n + 1
+
+      }
+    }
+  }
+
+  V(graph.map)$label.dist <- 1.5
+  L <- layout_with_mds(graph.map,dim=3)
+  rglplot(graph.map,layout = L)
 }
