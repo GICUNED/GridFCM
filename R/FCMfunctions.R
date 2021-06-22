@@ -46,20 +46,24 @@ WeightMatrix <- function(x){
 }
 ################################################################################
 #------------------#Iteraciones del Mapa cognitivo
-FuzzyIter <- function(w.mat, act.vec, infer= "mk", thr= "t", lambda = 1 , iter = 30, graph = TRUE){
+FuzzyIter <- function(x, w.mat, act.vec, ideal = dim(x)[2], infer= "mk", thr= "t", lambda = 1 , iter = 30, graph = TRUE){
   require(fcm)
   require(FCMapper)
+  require(OpenRepGrid)
   w.mat <- as.data.frame(w.mat)
+  ideal.vector <- getRatingLayer(x)[,11]
+  ideal.vector <- (ideal.vector - 4)/3
   result <- fcm.infer(act.vec, weight_mat = w.mat, infer = infer, transform = thr, lambda = lambda, iter = iter)
-
+  ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector), nrow = iter, byrow = TRUE)
   if(graph){
     require(reshape2)
     require(ggplot2)
     iterations <- as.numeric(rownames(result$values))
-    df <- data.frame(iterations, result$values)
+    df <- data.frame(iterations, abs((result$values - ideal.matrix)/2))
     df2 <- melt(df, id="iterations")
-    plot(ggplot(data=df2,aes(x=iterations, y=value, group=variable, colour=variable)) +
-      theme_bw() + geom_line(size=0.7) + geom_point(size = 3))
+    plot(ggplot(data=df2,aes(x=iterations, y=value, group=variable, color=variable)) +
+      theme_bw() + geom_line(size=0.7) + geom_point(size = 3) + labs(x="Iteraciones",y="Distancia respecto el ideal",color="Constructos Personales"))
+
   }
   return(result)
 }
@@ -308,7 +312,7 @@ if(layout == "grid"){
 ################################################################################
 #---------------------#Mapa cognitivo
 
-FuzzyMap3D <- function(x, imp, results,col.ideal = dim(x)[2],niter=30,vertex.size =1){
+FuzzyMap3D <- function(x, imp, results,col.ideal = dim(x)[2],niter=30,vertex.size =1,edge.width=2){
   require(igraph)
 
   lpoles <- getConstructNames(x)[,1]
@@ -318,6 +322,15 @@ FuzzyMap3D <- function(x, imp, results,col.ideal = dim(x)[2],niter=30,vertex.siz
   w.mat <- as.matrix(w.mat)
   results <- as.numeric(as.data.frame(results)[niter,])
 
+  n <- 1
+  for (integer in results) {
+    if(integer != 0){
+      integer.value <- integer / abs(integer)
+      w.mat[,n] <- w.mat[,n] * integer.value
+      w.mat[n,] <- w.mat[n,] * integer.value
+    }
+    n <- n + 1
+  }
 
   graph.map <- graph.adjacency(w.mat,mode = "directed",weighted = T)
 
@@ -327,6 +340,19 @@ FuzzyMap3D <- function(x, imp, results,col.ideal = dim(x)[2],niter=30,vertex.siz
   for (size.vertex in results) {
     size.vertex <- abs(size.vertex)
     V(graph.map)$size[n] <-  vertex.size * (5 + size.vertex * 15)
+    n <- n + 1
+  }
+
+  #Nombre de los vertices
+  n <- 1
+  for (pole.name.vertex in results) {
+    if(pole.name.vertex < 0){V(graph.map)$name[n] <- lpoles[n] }
+    else{
+      if(pole.name.vertex > 0){V(graph.map)$name[n] <- rpoles[n] }
+      else{
+        if(pole.name.vertex == 0){V(graph.map)$name[n] <- paste(lpoles[n],"-",rpoles[n])}
+      }
+    }
     n <- n + 1
   }
 
@@ -365,6 +391,7 @@ FuzzyMap3D <- function(x, imp, results,col.ideal = dim(x)[2],niter=30,vertex.siz
     n <- n + 1
   }
 
+
   #Curvatura de las aristas.
   edge.curved = rep(0, length(E(graph.map)))
   n <- 1
@@ -379,8 +406,14 @@ FuzzyMap3D <- function(x, imp, results,col.ideal = dim(x)[2],niter=30,vertex.siz
       }
     }
   }
+  #Ultimos retoques
 
+  V(graph.map)$label.cex <- 0.75
+  V(graph.map)$label.family <- "sans"
+  V(graph.map)$label.font <- 2
+  V(graph.map)$label.color <- "#323232"
   V(graph.map)$label.dist <- 1.5
+
   L <- layout_with_mds(graph.map,dim=3)
   rglplot(graph.map,layout = L)
 }
