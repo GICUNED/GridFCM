@@ -141,12 +141,5 @@ Pmatrix <- function(x){
 
   return(result)
 }
-#----------------------------#Adaptación de Repgrid a matriz multivariada
-.adaptrepgrid <- function(x){
 
-  x <- getRatingLayer(x)
-  result <- t(x)
-
-  return(result)
-}
 
