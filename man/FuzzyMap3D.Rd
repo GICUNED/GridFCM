@@ -45,4 +45,5 @@ escalado multidimensional.
 }
 \examples{
 
+
 }

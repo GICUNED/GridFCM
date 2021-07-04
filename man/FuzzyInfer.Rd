@@ -29,7 +29,9 @@ Debe de ser un objeto de la clase repgrid del paquete OpenRepGrid.}
 \item{ideal}{Posición del ideal dentro de la rejilla expresado a través del
 número de la columna donde se encuentra.}
 
-\item{infer}{Función de Propagación para la inferencia de escenarios.}
+\item{infer}{Función de Propagación para la inferencia de escenarios.
+Información sobre las diferentes funciones de propagación escribiendo
+?\code{\link{PropFunctions}}.}
 
 \item{thr}{Función Umbral para la inferencia de escenarios.}
 
