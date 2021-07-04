@@ -41,13 +41,17 @@ SelectConstructs <- function(x, sel.vec){
 #'
 #' @examples
 #'
+#' @import OpenRepGrid
+#'
 #' @export
 
 
 ActVector <- function(x, col.element = 1){
-  require(OpenRepGrid)                                                          # Cargamos OpenRepGrid
+
   vector <- getRatingLayer(x)[,col.element]                                     # Extraemos el vector de la rejilla
+
   result <- (vector - getScaleMidpoint(x))/((getScale(x)[2]-1)/2)               # Transformamos el vector en  un intervalo [-1,1]
+
   return(result)
 }
 ################################################################################
@@ -84,6 +88,8 @@ WeightMatrix <- function(x){
 #' número de la columna donde se encuentra.
 #'
 #' @param infer Función de Propagación para la inferencia de escenarios.
+#' Información sobre las diferentes funciones de propagación escribiendo
+#' ?\code{\link{PropFunctions}}.
 #'
 #' @param thr Función Umbral para la inferencia de escenarios.
 #'
@@ -99,17 +105,19 @@ WeightMatrix <- function(x){
 #'
 #' @examples
 #'
+#' @import OpenRepGrid
+#' @import ggplot2
+#'
 #' @export
 
 
 FuzzyInfer <- function(x, imp, act.vec, ideal = dim(x)[2], infer= "mk",
                        thr= "t", lambda = 1 , iter = 30, graph = TRUE){
-  require(OpenRepGrid)                                                          # Cargamos las librerías necesarias para la función
 
   w.mat <- WeightMatrix(imp)
   w.mat <- as.data.frame(w.mat)                                                 # Transformamos la matriz de implicaciones en una matriz de pesos
 
-  ideal.vector <- getRatingLayer(x)[,11]
+  ideal.vector <- OpenRepGrid::getRatingLayer(x)[,11]
   ideal.vector <- (ideal.vector - 4)/3                                          # Extraemos el vector del ideal y lo ponemos en formato de intervalo [-1,1]
 
 
@@ -118,14 +126,12 @@ FuzzyInfer <- function(x, imp, act.vec, ideal = dim(x)[2], infer= "mk",
 
 
   if(graph){                                                                    # Comprobamos si el usuario quiere graficar la matriz de escenarios en un GCT.
-    require(reshape2)
-    require(ggplot2)                                                            # Cargamos las librerías para el gráfico.
 
     ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),
                            nrow = iter, byrow = TRUE)                           # Construimos una matriz con el ideal repetido por columnas para luego calcular las distancias.
     iterations <- as.numeric(rownames(result$values))
     df <- data.frame(iterations, abs((result$values - ideal.matrix)/2))
-    df2 <- melt(df, id="iterations")                                            # Creamos un dataframe que contiene las distancias del ideal agrupadas por constructos
+    df2 <- reshape2::melt(df, id="iterations")                                  # Creamos un dataframe que contiene las distancias del ideal agrupadas por constructos
                                                                                 # y separadas para cada iteración.
     plot(ggplot(data=df2,aes(x=iterations, y=value, group=variable,
                              color=variable)) + theme_bw() + geom_line(size=0.7)
@@ -173,13 +179,15 @@ FuzzyInfer <- function(x, imp, act.vec, ideal = dim(x)[2], infer= "mk",
 #'
 #' @examples
 #'
+#' @import igraph
+#' @import OpenRepGrid
+#'
 #' @export
 
 
 FuzzyMap <- function(x, imp, results, ideal = dim(x)[2], niter = 30,
                      layout = "rtcircle", edge.width = 1.5, vertex.size = 1,
                      legend = FALSE ){
-  require(igraph)                                                               # Cargamos las librerías necesarias.
 
   lpoles <- getConstructNames(x)[,1]
   rpoles <- getConstructNames(x)[,2]                                            # Extraemos los nombres de los polos de los contrusctos de la Rejilla.
@@ -355,11 +363,14 @@ FuzzyMap <- function(x, imp, results, ideal = dim(x)[2], niter = 30,
 #'
 #' @examples
 #'
+#'
+#' @import igraph
+#' @import OpenRepGrid
+#'
 #' @export
 #'
 FuzzyMap3D <- function(x, imp, results, ideal = dim(x)[2],niter=30,
                        edge.width=2, vertex.size =1){
-  require(igraph)                                                               # Cargamos la librería igraph para dibujar y configurar el digrafo.
 
   lpoles <- getConstructNames(x)[,1]
   rpoles <- getConstructNames(x)[,2]                                            # Extraemos los nombres de los polos de los constructos.
