@@ -88,12 +88,17 @@ WeightMatrix <- function(x){
 #' número de la columna donde se encuentra.
 #'
 #' @param infer Función de Propagación para la inferencia de escenarios.
-#' Información sobre las diferentes funciones de propagación escribiendo
-#' ?\code{\link{PropFunctions}}.
+#' Puedes mirar la información sobre las diferentes funciones de propagación
+#' escribiendo ?\code{\link{PropFunctions}}. Por defecto se utiliza la
+#' modificada de Kosko ("mk").
 #'
-#' @param thr Función Umbral para la inferencia de escenarios.
+#' @param thr Función Umbral para la inferencia de escenarios. Puedes mirar la
+#' información sonbre las distintas funciones umbral escribiendo
+#' ?\code{\link{ThrFunctions}}. Por defecto se utiliza la Tangente Hiperbólica
+#' ("t").
 #'
-#' @param lambda Valor de lambda de la función umbral.
+#' @param lambda Valor de lambda de la función umbral. Solo se aplica si se
+#' escoge función umbral sigmoidal o tangente hiperbólica.
 #'
 #' @param iter Número de iteraciones que se desea inferir
 #'
@@ -101,7 +106,7 @@ WeightMatrix <- function(x){
 #' \code{TRUE}
 #'
 #' @return Devuelve una lista (list) que contiene por filas cada uno de los
-#' vectores de esenario en función del número de iteraciones.
+#' vectores de escenario en función del número de iteraciones.
 #'
 #' @examples
 #'
@@ -117,7 +122,7 @@ FuzzyInfer <- function(x, imp, act.vec, ideal = dim(x)[2], infer= "mk",
   w.mat <- WeightMatrix(imp)
   w.mat <- as.data.frame(w.mat)                                                 # Transformamos la matriz de implicaciones en una matriz de pesos
 
-  ideal.vector <- OpenRepGrid::getRatingLayer(x)[,11]
+  ideal.vector <- OpenRepGrid::getRatingLayer(x)[,ideal]
   ideal.vector <- (ideal.vector - 4)/3                                          # Extraemos el vector del ideal y lo ponemos en formato de intervalo [-1,1]
 
 
@@ -458,3 +463,197 @@ FuzzyMap3D <- function(x, imp, results, ideal = dim(x)[2],niter=30,
 
   rglplot(graph.map,layout = L)                                                 # Dibujamos el grafo en 3D con rgl.
 }
+################################################################################
+
+# DIGRAFO DEL IDEAL
+################################################################################
+#' Digrafo del Yo-Ideal (IdealMap)
+#'
+#' @description Función que nos dibuja un digrafo del Ideal del individuo que
+#' nos permite ver las implicaciones entre los polos del Yo-Ideal.
+#'
+#' @param x Rejilla del sujeto del que queremos dibujar el Mapa Cognitivo
+#' Borroso. Debe de ser un objeto de la clase repgrid del paquete OpenRepGrid.
+#'
+#' @param imp Matriz de implicaciones del sujeto importada con
+#' \code{\link{importIMP}}.
+#'
+#' @param inc Si lo establecemos como TRUE nos muestra solamente las relaciones
+#' de inconsistencia dentro del ideal.
+#'
+#' @param ideal Posición del ideal dentro de la rejilla expresado a través del
+#' número de la columna donde se encuentra.
+#'
+#' @param layout Layout que se quiere utilizar para representar el mapa.
+#'
+#' @param edge.width Escalar del grosor de las aristas.
+#'
+#' @param vertex.size Escalar del tamaño de los vértices.
+#'
+#' @param legend Dibuja una leyenda con TRUE.
+#'
+#' @return Devuelve una representación gráfica de un digrafo del Yo-Ideal del
+#' individuo
+#'
+#' @examples
+#'
+#' @import igraph
+#' @import OpenRepGrid
+#'
+#' @export
+
+IdealMap <- function(x,imp, ideal = dim(x)[2], inc = FALSE, layout ="circle",
+                     edge.width = 1, vertex.size = 1,legend = FALSE){
+
+  lpoles <- getConstructNames(x)[,1]
+  rpoles <- getConstructNames(x)[,2]                                            # Extraemos los nombres de los polos de los contrusctos de la Rejilla.
+
+  w.mat <- WeightMatrix(imp)
+  w.mat <- as.matrix(w.mat)                                                     # Transformamos las implicaciones en pesos.
+
+  act.vector <- ActVector(x,col.element = ideal)
+  ideal.results <- FuzzyInfer(x,imp,act.vector,graph = FALSE)
+  results <- as.numeric(as.data.frame(ideal.results)[1,])                       # Extraemos el vector de escenario seleccionado por el usuario.
+
+  n <- 1
+  for (integer in results) {
+    if(integer != 0){
+      integer.value <- integer / abs(integer)
+      w.mat[,n] <- w.mat[,n] * integer.value
+      w.mat[n,] <- w.mat[n,] * integer.value
+    }
+    n <- n + 1
+  }                                                                             # Orientamos la matriz de pesos en funcíon del estado actual de la matriz.
+                                                                                # Esto sirve para cambiar el color de las aristas en función del estado de los vértices
+
+
+  graph.map <- graph.adjacency(w.mat,mode = "directed",weighted = T)            # Creamos un gráfico primitivo y poco a poco lo vamos configurando.
+
+  E(graph.map)$color <- "black"
+  n <- 1
+  for (weight in E(graph.map)$weight) {
+    E(graph.map)$color[n] <-  ifelse(weight < 0, "red", "black" )
+    n <- n + 1
+  }                                                                             # Damos color a las aristas en función del tipo de relación.
+
+  edge.curved <- rep(0, length(E(graph.map)))
+  n <- 1
+  for (N in 1:dim(w.mat)[1]) {
+    for (M in 1:dim(w.mat)[1]) {
+      if(w.mat[M,N] != 0 && w.mat[N,M] != 0){
+        edge.curved[n] <- 0.25
+      }
+      if(w.mat[N,M] != 0){
+        n <- n + 1
+
+      }
+    }
+  }                                                                             # Damos curvatura a las aristas para evitar superposiciones en los casos de bicausalidad.
+
+  n <- 1
+  for (N in 1:dim(w.mat)[1]) {
+    for (M in 1:dim(w.mat)[1]) {
+      if(w.mat[N,M] != 0){
+        E(graph.map)$width[n] <- abs(edge.width * w.mat[N,M])
+        n <- n + 1
+      }
+    }
+  }                                                                             # Damos grosor a las aristas en función de los pesos.
+
+  if(inc){
+   n <- 1
+  for (weight in E(graph.map)$weight) {
+    E(graph.map)$width[n] <-  ifelse(weight < 0, E(graph.map)$width[n] , 0 )
+    n <- n + 1
+  }
+  }
+
+  V(graph.map)$color <- "black"
+  n <- 1
+  for (pole.vertex in results) {
+    if(getRatingLayer(x)[,ideal][n] > 4){
+      if(pole.vertex < 0){V(graph.map)$color[n] <- "#F52722" }
+      else{
+        if(pole.vertex > 0){V(graph.map)$color[n] <- "#a5d610" }
+        else{
+          if(pole.vertex == 0){V(graph.map)$color[n] <- "grey" }
+        }
+      }
+    }
+    if(getRatingLayer(x)[,ideal][n] < 4){
+      if(pole.vertex > 0){V(graph.map)$color[n] <- "#F52722" }
+      else{
+        if(pole.vertex < 0){V(graph.map)$color[n] <- "#a5d610" }
+        else{
+          if(pole.vertex == 0){V(graph.map)$color[n] <- "grey" }
+        }
+      }
+    }
+    if(getRatingLayer(x)[,ideal][n] == 4){
+      V(graph.map)$color[n] <- "yellow"
+    }
+    n <- n + 1
+  }                                                                             # Damos color a los vértices en función de su orientación al ideal.
+
+  n <- 1
+  for (pole.name.vertex in results) {
+    if(pole.name.vertex < 0){V(graph.map)$name[n] <- lpoles[n] }
+    else{
+      if(pole.name.vertex > 0){V(graph.map)$name[n] <- rpoles[n] }
+      else{
+        if(pole.name.vertex == 0){V(graph.map)$name[n] <- paste(lpoles[n],"-",
+                                                                rpoles[n])}
+      }
+    }
+    n <- n + 1
+  }                                                                             # Damos nombre a los vértices en función del polo que se encuentra activado.
+
+  V(graph.map)$size <- 1
+  n <- 1
+  for (size.vertex in results) {
+    size.vertex <- abs(size.vertex)
+    V(graph.map)$size[n] <-  vertex.size * (5 + size.vertex * 15)
+    n <- n + 1
+  }                                                                             # Damos tamaño a los vértices en función de su grado de activación.
+
+  E(graph.map)$arrow.size <- edge.width * 0.3
+  V(graph.map)$shape <- "circle"
+  V(graph.map)$label.cex <- 0.75
+  V(graph.map)$label.family <- "sans"
+  V(graph.map)$label.font <- 2
+  V(graph.map)$label.color <- "#323232"                                         # Realizamos un serie de retoques finales para mejorar la visualización.
+
+
+  if(layout == "rtcircle"){
+    graph.map <- add_layout_(graph.map,as_tree(circular = TRUE))
+  }
+  if(layout == "tree"){
+    graph.map <- add_layout_(graph.map,as_tree())
+  }
+  if(layout == "circle"){
+    graph.map <- add_layout_(graph.map,in_circle())
+  }
+  if(layout == "graphopt"){
+    graph.map <- add_layout_(graph.map,with_graphopt())
+  }
+  if(layout == "mds"){
+    graph.map <- add_layout_(graph.map,with_mds())
+  }
+  if(layout == "grid"){
+    graph.map <- add_layout_(graph.map,on_grid())
+  }                                                                             # Diferentes layouts para los mapas cognitivos borrosos.
+
+  plot.igraph(graph.map, edge.curved = edge.curved)                             # Ejecutamos el gráfico.
+
+  if(legend){
+    poles <- paste(lpoles,rpoles,sep = " - ")
+    poles <- paste(c(1:length(poles)),poles,sep = ". ")
+    legend("topright",legend = poles, cex = 0.7,
+           title = "Constructos Personales")
+  }                                                                             # Dibujamos la leyenda del mapa cognitivo borroso.
+}
+
+
+
+
+

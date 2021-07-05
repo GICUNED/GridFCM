@@ -30,12 +30,17 @@ Debe de ser un objeto de la clase repgrid del paquete OpenRepGrid.}
 número de la columna donde se encuentra.}
 
 \item{infer}{Función de Propagación para la inferencia de escenarios.
-Información sobre las diferentes funciones de propagación escribiendo
-?\code{\link{PropFunctions}}.}
+Puedes mirar la información sobre las diferentes funciones de propagación
+escribiendo ?\code{\link{PropFunctions}}. Por defecto se utiliza la
+modificada de Kosko ("mk").}
 
-\item{thr}{Función Umbral para la inferencia de escenarios.}
+\item{thr}{Función Umbral para la inferencia de escenarios. Puedes mirar la
+información sonbre las distintas funciones umbral escribiendo
+?\code{\link{ThrFunctions}}. Por defecto se utiliza la Tangente Hiperbólica
+("t").}
 
-\item{lambda}{Valor de lambda de la función umbral.}
+\item{lambda}{Valor de lambda de la función umbral. Solo se aplica si se
+escoge función umbral sigmoidal o tangente hiperbólica.}
 
 \item{iter}{Número de iteraciones que se desea inferir}
 
@@ -44,7 +49,7 @@ Información sobre las diferentes funciones de propagación escribiendo
 }
 \value{
 Devuelve una lista (list) que contiene por filas cada uno de los
-vectores de esenario en función del número de iteraciones.
+vectores de escenario en función del número de iteraciones.
 }
 \description{
 Función que infiere los cambios dentro un mapa cognitivo borroso

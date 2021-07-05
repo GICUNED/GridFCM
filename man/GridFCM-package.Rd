@@ -19,6 +19,8 @@ Paquete de R para la creación de mapas cognitivos borrosos a través de la téc
 \code{\link{FuzzyMap}}
 
 \code{\link{FuzzyMap3D}}
+
+\code{\link{IdealMap}}
 }
 
 \author{

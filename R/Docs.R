@@ -15,6 +15,8 @@
 #'
 #' \code{\link{FuzzyMap3D}}
 #'
+#' \code{\link{IdealMap}}
+#'
 #' @docType package
 #'
 "_PACKAGE"

@@ -20,6 +20,7 @@ importIMP <- function(path){
   xls <- xls[,-dim(xls)[2]]
   xls <- xls[,-1]
   rownames(xls) <- colnames(xls)
-  return(xls)
+  result <- t(xls)
+  return(result)
 }
 
