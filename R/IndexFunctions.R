@@ -110,6 +110,9 @@ DistMatrix <- function(imp){
 #' @param imp Matriz de implicaciones del sujeto importada con
 #' \code{\link{importIMP}}.
 #'
+#' @param norm Si es TRUE devuelve la cercanía de los constructos normalizada en
+#' función del número de vértices. Por defecto se establece en TRUE.
+#'
 #' @return Devuelve un vector con el índice de cercanía de cada uno de los
 #' constructos.
 #'
