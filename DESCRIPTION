@@ -5,9 +5,9 @@ Version: 0.1.0
 Author: Alejandro Sanfeliciano (GICUNED)
 Maintainer: Alejandro Sanfeliciano <Sanfeliciano.Alejandro@gmail.com>
 Description: work in progress
-License: work in progress
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
-Imports:  reshape2 (>= 1.4.4), fcm (>= 0.1.3), rgl (>= 0.106.8), readxl (>= 1.3.1)
+Imports: reshape2 (>= 1.4.4), fcm (>= 0.1.3), rgl (>= 0.106.8), readxl (>= 1.3.1)
 Depends: OpenRepGrid (>= 0.1.12), ggplot2 (>= 3.3.3), igraph (>= 1.2.6)
