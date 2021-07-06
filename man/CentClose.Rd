@@ -9,6 +9,9 @@ CentClose(imp, norm = TRUE)
 \arguments{
 \item{imp}{Matriz de implicaciones del sujeto importada con
 \code{\link{importIMP}}.}
+
+\item{norm}{Si es TRUE devuelve la cercanía de los constructos normalizada en
+función del número de vértices. Por defecto se establece en TRUE.}
 }
 \value{
 Devuelve un vector con el índice de cercanía de cada uno de los
