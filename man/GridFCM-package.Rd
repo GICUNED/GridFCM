@@ -10,9 +10,14 @@ Paquete de R para la creación de mapas cognitivos borrosos a través de la téc
 }
 \section{Functions}{
 
+
+\strong{Funciones Funcionales:}
+
 \code{\link{importIMP}}
 
 \code{\link{ActVector}}
+
+\strong{Funciones de Representación:}
 
 \code{\link{FuzzyInfer}}
 
@@ -21,6 +26,14 @@ Paquete de R para la creación de mapas cognitivos borrosos a través de la téc
 \code{\link{FuzzyMap3D}}
 
 \code{\link{IdealMap}}
+
+\strong{Funciones de Índices:}
+
+\code{\link{CentDegree}}
+
+\code{\link{CentClose}}
+
+\code{\link{DistMatrix}}
 }
 
 \author{

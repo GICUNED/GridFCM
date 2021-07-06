@@ -31,7 +31,9 @@ número de la columna donde se encuentra.}
 \item{niter}{Selección del vector de escenario que se quiere representar en
 el mapa. Expresado a través del número de iteraciones.}
 
-\item{layout}{Layout que se quiere utilizar para representar el mapa.}
+\item{layout}{Layout que se quiere utilizar para representar el mapa. Más
+información de los layouts escribiendo ?\code{\link{GraphLayouts}} o haciendo
+click sobre él.}
 
 \item{edge.width}{Escalar del grosor de las aristas.}
 
