@@ -1,6 +1,6 @@
 Package: GridFCM
 Type: Package
-Title: Fuzzy Cognitive Maps (FCM) for repertory grids
+Title: Fuzzy Cognitive Maps (FCM) for RepGrids and ImpGrids
 Version: 0.1.0
 Author: Alejandro Sanfeliciano (GICUNED)
 Maintainer: Alejandro Sanfeliciano <Sanfeliciano.Alejandro@gmail.com>
@@ -11,3 +11,4 @@ LazyData: true
 RoxygenNote: 7.1.1
 Imports: reshape2 (>= 1.4.4), fcm (>= 0.1.3), rgl (>= 0.106.8), readxl (>= 1.3.1)
 Depends: OpenRepGrid (>= 0.1.12), ggplot2 (>= 3.3.3), igraph (>= 1.2.6)
+
