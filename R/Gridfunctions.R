@@ -23,4 +23,18 @@ importIMP <- function(path){
   result <- t(xls)
   return(result)
 }
+################################################################################
 
+# MATRIZ DE DISTANCIAS
+################################################################################
+DistanceMatrix <- function(imp){
+
+  w.mat <- WeightMatrix(imp)
+  w.mat <- as.matrix(w.mat)
+
+  G <- igraph::graph.adjacency(w.mat,mode = "directed",weighted = T)
+
+  result <- igraph::shortest.paths(G, weights = NA)
+
+  return(result)
+}
