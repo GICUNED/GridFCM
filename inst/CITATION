@@ -1,0 +1,16 @@
+citHeader("To cite GridFCM in publications use:")
+
+citEntry(
+  entry    = "Article",
+  title    = "Aplicación de los Mapas Cognitivos Borrosos al Sistema de Constructos Personales",
+  author   = "Alejandro Sanfeliciano",
+  journal  = "Prueba",
+  year     = "2021",
+  volume   = "Prueba",
+  number   = "Prueba",
+  pages    = "Prueba",
+  url      = "Prueba",
+  textVersion = paste(
+  "Esta sería la cita en formato de texto"
+  )
+)
