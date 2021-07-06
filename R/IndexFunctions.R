@@ -5,6 +5,23 @@
 # CENTRALIDAD POR GRADO
 ################################################################################
 
+#' Cálculo de la Centralidad a través del Grado (CentDegree)
+#'
+#' @description Función que permite calcular la centralidad de los constructos
+#' teniendo en cuenta su grado. Entendiendo este como el grado de conexión que
+#' mantiene con el resto de constructos.
+#'
+#' @param imp Matriz de implicaciones del sujeto importada con
+#' \code{\link{importIMP}}.
+#'
+#' @param method Método para calcular el grado de centralidad. Más información
+#' escribiendo ?\code{\link{DegreeMethod}} o haciendo click sobre él.
+#'
+#' @return Devuelve una lista con los datos de centralidad por constructo y
+#' separados por grado de entrada y grado de salida.
+#'
+#' @examples
+#'
 #' @export
 #'
 
@@ -50,4 +67,65 @@ CentDegree <- function(imp, method="simple"){
 }
 ################################################################################
 
+# MATRIZ DE DISTANCIAS
+################################################################################
 
+#' Cálculo de distancia entre constructos en el digrafo (DistMatrix)
+#'
+#' @description Función que permite calcular la distancia mas corta entre dos
+#' constructos en el digrafo.
+#'
+#' @param imp Matriz de implicaciones del sujeto importada con
+#' \code{\link{importIMP}}.
+#'
+#' @return Devuelve la matriz de distancia del digrafo. Matriz que contiene las
+#' distancias de los caminos más cortos de un constructo a otro.
+#'
+#' @examples
+#'
+#' @export
+#'
+
+DistMatrix <- function(imp){
+
+  w.mat <- WeightMatrix(imp)
+  w.mat <- as.matrix(w.mat)
+
+  G <- igraph::graph.adjacency(w.mat,mode = "directed",weighted = T)
+
+  result <- igraph::shortest.paths(G, weights = NA)
+
+  return(result)
+}
+################################################################################
+
+# CENTRALIDAD POR CERCANÍA
+################################################################################
+
+#' Cálculo de la centralidad a través de la cercanía (CentClose)
+#'
+#' @description Función que permite calcular la cercanía de un constructo
+#' del resto de constructos del mapa cognitivo borroso.
+#'
+#' @param imp Matriz de implicaciones del sujeto importada con
+#' \code{\link{importIMP}}.
+#'
+#' @return Devuelve un vector con el índice de cercanía de cada uno de los
+#' constructos.
+#'
+#' @examples
+#'
+#' @export
+#'
+
+CentClose <- function(imp, norm = TRUE){
+
+  dist <- DistMatrix(imp)
+  N <- dim(dist)[1]
+  if(norm){
+    result <- (N-1)/(colSums(dist))
+  }else{
+    result <- 1/(colSums(dist))
+  }
+  return(result)
+}

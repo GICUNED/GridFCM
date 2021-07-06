@@ -25,16 +25,3 @@ importIMP <- function(path){
 }
 ################################################################################
 
-# MATRIZ DE DISTANCIAS
-################################################################################
-DistanceMatrix <- function(imp){
-
-  w.mat <- WeightMatrix(imp)
-  w.mat <- as.matrix(w.mat)
-
-  G <- igraph::graph.adjacency(w.mat,mode = "directed",weighted = T)
-
-  result <- igraph::shortest.paths(G, weights = NA)
-
-  return(result)
-}

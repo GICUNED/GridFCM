@@ -171,7 +171,9 @@ FuzzyInfer <- function(x, imp, act.vec, ideal = dim(x)[2], infer= "mk",
 #' @param niter Selección del vector de escenario que se quiere representar en
 #' el mapa. Expresado a través del número de iteraciones.
 #'
-#' @param layout Layout que se quiere utilizar para representar el mapa.
+#' @param layout Layout que se quiere utilizar para representar el mapa. Más
+#' información de los layouts escribiendo ?\code{\link{GraphLayouts}} o haciendo
+#' click sobre él.
 #'
 #' @param edge.width Escalar del grosor de las aristas.
 #'
