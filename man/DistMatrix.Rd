@@ -4,11 +4,16 @@
 \alias{DistMatrix}
 \title{Cálculo de distancia entre constructos en el digrafo (DistMatrix)}
 \usage{
-DistMatrix(imp)
+DistMatrix(imp, mode = "out")
 }
 \arguments{
 \item{imp}{Matriz de implicaciones del sujeto importada con
 \code{\link{importIMP}}.}
+
+\item{mode}{Modo de calcular las distancias en función de la dirección de las
+aristas. "out" las calculamos respetando la dirección de las aristas, "in"
+a través de la inversa de la dirección de las aristas y "all" sin tener en
+cuenta la dirección del grafo.}
 }
 \value{
 Devuelve la matriz de distancia del digrafo. Matriz que contiene las

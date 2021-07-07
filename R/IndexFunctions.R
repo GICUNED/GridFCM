@@ -78,6 +78,11 @@ CentDegree <- function(imp, method="simple"){
 #' @param imp Matriz de implicaciones del sujeto importada con
 #' \code{\link{importIMP}}.
 #'
+#' @param mode Modo de calcular las distancias en función de la dirección de las
+#' aristas. "out" las calculamos respetando la dirección de las aristas, "in"
+#' a través de la inversa de la dirección de las aristas y "all" sin tener en
+#' cuenta la dirección del grafo.
+#'
 #' @return Devuelve la matriz de distancia del digrafo. Matriz que contiene las
 #' distancias de los caminos más cortos de un constructo a otro.
 #'
@@ -86,14 +91,14 @@ CentDegree <- function(imp, method="simple"){
 #' @export
 #'
 
-DistMatrix <- function(imp){
+DistMatrix <- function(imp,mode="out"){
 
   w.mat <- WeightMatrix(imp)
   w.mat <- as.matrix(w.mat)
 
   G <- igraph::graph.adjacency(w.mat,mode = "directed",weighted = T)
 
-  result <- igraph::shortest.paths(G, weights = NA)
+  result <- igraph::shortest.paths(G, weights = NA,mode = mode)
 
   return(result)
 }
@@ -132,3 +137,42 @@ CentClose <- function(imp, norm = TRUE){
   }
   return(result)
 }
+################################################################################
+
+# CENTRALIDAD POR INTERMEDIACIÓN
+################################################################################
+
+#' Cálculo de la centralidad a través de la intermediación (CentBetw)
+#'
+#' @description Función que permite calcular la intermediación de un
+#' constructo. Esto es el número de veces que un camino geodésico entre otros
+#' dos constructos pasa por dicho constructo.
+#'
+#' @param imp Matriz de implicaciones del sujeto importada con
+#' \code{\link{importIMP}}.
+#'
+#' @param norm Si es TRUE devuelve la intermediación de los constructos
+#' normalizada en función del número de vértices. Por defecto se establece en
+#' TRUE.
+#'
+#' @return Devuelve un vector con el índice de intermediación de cada uno de los
+#' constructos.
+#'
+#' @examples
+#'
+#' @export
+#'
+
+CentBetw <- function(imp,norm=TRUE){
+
+
+  w.mat <- WeightMatrix(abs(imp))
+  w.mat <- as.matrix(w.mat)
+
+  G <- igraph::graph.adjacency(w.mat,mode = "directed",weighted = T)
+
+  result <- igraph::betweenness(G,normalized = norm,weights = NA )
+
+  return(result)
+}
+

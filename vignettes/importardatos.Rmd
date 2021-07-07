@@ -1,0 +1,22 @@
+---
+title: "Importar Datos en GridFCM"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{importardatos}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(GridFCM)
+```
+
+# HOLA MUNDO
+Esto es una prueba de viñeta para servir de ayuda
