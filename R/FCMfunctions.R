@@ -197,7 +197,7 @@ FuzzyMap <- function(x, imp, results, ideal = dim(x)[2], niter = 30,
                      legend = FALSE ){
 
   lpoles <- getConstructNames(x)[,1]
-  rpoles <- getConstructNames(x)[,2]                                            # Extraemos los nombres de los polos de los contrusctos de la Rejilla.
+  rpoles <- getConstructNames(x)[,2]                                            # Extraemos los nombres de los polos de los constructos de la Rejilla.
 
   w.mat <- WeightMatrix(imp)
   w.mat <- as.matrix(w.mat)                                                     # Transformamos las implicaciones en pesos.

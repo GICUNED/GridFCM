@@ -4,11 +4,15 @@
 \alias{importIMP}
 \title{Importar Rejilla de Implicaciones (importIMP)}
 \usage{
-importIMP(path)
+importIMP(path, method = "hinkle")
 }
 \arguments{
 \item{path}{Ruta donde se encuentra el archivo de excel que contiene la
 rejilla de implicaciones.}
+
+\item{method}{Metodo que se ha seguido a la hora de aplicar la rejilla de
+implicaciones. Debe tomar el valor "hinkle" si se utiliza el método de Hinkle
+y "fransella" en el caso del método de fransella.}
 }
 \value{
 Devuelve una matriz que contiene los datos de la matriz de
