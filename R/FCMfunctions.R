@@ -116,7 +116,7 @@ WeightMatrix <- function(x){
 #' @export
 
 
-FuzzyInfer <- function(x, imp, act.vec, ideal = dim(x)[2], infer= "mk",
+FuzzyInfer <- function(x, imp, act.vec = ActVector(x), ideal = dim(x)[2], infer= "mk",
                        thr= "t", lambda = 1 , iter = 30, graph = TRUE){
 
   w.mat <- WeightMatrix(imp)
@@ -192,7 +192,7 @@ FuzzyInfer <- function(x, imp, act.vec, ideal = dim(x)[2], infer= "mk",
 #' @export
 
 
-FuzzyMap <- function(x, imp, results, ideal = dim(x)[2], niter = 30,
+FuzzyMap <- function(x, imp, results = FuzzyInfer(x,imp), ideal = dim(x)[2], niter = 30,
                      layout = "rtcircle", edge.width = 1.5, vertex.size = 1,
                      legend = FALSE ){
 
