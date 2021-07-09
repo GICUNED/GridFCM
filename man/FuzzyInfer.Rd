@@ -7,7 +7,7 @@
 FuzzyInfer(
   x,
   imp,
-  act.vec,
+  act.vec = ActVector(x),
   ideal = dim(x)[2],
   infer = "mk",
   thr = "t",

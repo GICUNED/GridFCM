@@ -7,7 +7,7 @@
 FuzzyMap(
   x,
   imp,
-  results,
+  results = FuzzyInfer(x, imp),
   ideal = dim(x)[2],
   niter = 30,
   layout = "rtcircle",
