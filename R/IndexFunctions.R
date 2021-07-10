@@ -2,6 +2,34 @@
 #------------------------------INDEX FUNCTIONS---------------------------------#
 ################################################################################
 
+# DENSIDAD DEL MAPA
+################################################################################
+
+#' Cálculo de la Densidad del Mapa (IMPdensity)
+#'
+#' @description Función que permite calcular la densidad de aristas dentro del
+#' grafo que genera la matriz de implicaciones.
+#'
+#' @param imp Matriz de implicaciones del sujeto importada con
+#' \code{\link{importIMP}}.
+#'
+#'
+#' @return Devuelve una valor de 0 a 1 que representa la proporcion de aristas
+#' existentes en el grafo sobre el número máximo de aristas posibles.
+#'
+#' @examples
+#'
+#' @export
+#'
+
+IMPdensity <- function(imp){
+  n <- ncol(imp)
+  result <- sum(CentDegree(imp)$Salidas)/(n*(n-1))
+  return(result)
+}
+################################################################################
+
+
 # CENTRALIDAD POR GRADO
 ################################################################################
 
@@ -60,8 +88,9 @@ CentDegree <- function(imp, method="simple"){
     Cin <- Cin/(N*(N-1))                                                        # Dividimos los vectores de entrada y salida entre el número de aristas potenciales.
   }
 
-  result$Entrada <- Cout
-  result$Salida <- Cin                                                          # Introducimos los resultados en la lista
+  result$Salidas <- Cout
+  result$Entradas <- Cin
+  result$Conexiones <- Cout + Cin                                               # Introducimos los resultados en la lista
 
   return(result)
 }

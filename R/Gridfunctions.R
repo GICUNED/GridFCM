@@ -20,11 +20,13 @@
 #' @export
 #'
 importIMP <- function(path, method="hinkle"){
-  xls <- readxl::read_excel(path)
+  xls <- readxl::read_excel(path)                                               # Leemos el excel que contiene los datos
   xls <- xls[,-dim(xls)[2]]
-  xls <- xls[,-1]
-  rownames(xls) <- colnames(xls)
-  result <- t(xls)
+  xls <- xls[,-1]                                                               # Eliminamos las columnas exteriores
+
+  rownames(xls) <- colnames(xls)                                                # Le damos nombre a las columnas
+
+  result <- t(xls)                                                              # Trasponemos la matriz para que tenga el formato de una matriz de adyacencia
   return(result)
 }
 ################################################################################
@@ -48,9 +50,10 @@ importIMP <- function(path, method="hinkle"){
 #' @export
 
 importGRID <- function(path, ...){
-  grid <- importExcel(path,...)
-  grid <- alignByIdeal(grid,dim(grid)[2])
-  grid <- .alignbyself(grid)
+
+  grid <- importExcel(path,...)                                                 #Importamos la rejilla con la función del OpenRepGrid,
+  grid <- alignByIdeal(grid,dim(grid)[2])                                       #Orientamos la rejilla según el ideal
+  grid <- .alignbyself(grid)                                                    #Orientamos la rejilla según el Yo-Actual
   return(grid)
 }
 
@@ -71,35 +74,37 @@ importGRID <- function(path, ...){
 #'
 #' @examples
 #'
+#' @import xlsx
 #' @export
 
-templateIMP <- function(x){
-  requireNamespace("xlsx")
-  dim <- dim(x)[2]
+templateIMP <- function(x,name ="ImpGrid_Template"){
+  requireNamespace("xlsx")                                                      # Comprobamos que el sujeto tenga instalado y ejecutado xlsx
+
+  # dim <- dim(x)[1]                                                              # Guardamos el número de constructos de la rejilla
 
   wb <- createWorkbook()
-  sh <- createSheet(wb)
+  sh <- createSheet(wb)                                                         # Creamos el documento de trabajo y la hoja de trabajo
 
   fill.izq <- CellStyle(wb, fill = Fill("#ffff6d","#ffff6d"))
   fill.der <- CellStyle(wb, fill = Fill("#729fcf","#729fcf"))
-  fill.imp <- Fill("#77bc65","#77bc65")
-  fill.pun <- CellStyle(wb, fill = Fill("#800080","#800080"))
-  lc <- as.character(dim + 2)
-  dfs <- list(fill.izq,fill.der)
-  names(dfs) <- c(1,dim +2)
+  fill.imp <- Fill("#77bc65","#77bc65")                                         # Establecemos los colores para las celdas
 
-  rotate.90 <- Alignment(rotation = 90)
+
+  dfs <- list(fill.izq,fill.der)
+  names(dfs) <- c(1,dim +2)                                                     # Establecemos los estilos de las celdas
+
+  rotate.90 <- Alignment(rotation = 90)                                         # Definimos una rotación de 90 grados.
 
   self.labels <- getConstructNames(x)[,1]
   noself.labels <- getConstructNames(x)[,2]
-  imp.labels <- paste(self.labels,"->",noself.labels,sep = " ")
+  imp.labels <- paste(self.labels,"->",noself.labels,sep = " ")                 # Extraemos los nombres de los constructos
 
   m <- matrix(nrow = dim, ncol = dim +2)
   diag(m[1:dim,1:dim+1]) = 0
   df <- data.frame(m)
   df[,1] <- self.labels
   df[,dim + 2] <- noself.labels
-  colnames(df) <- c("Polo asociado al Yo", imp.labels, "Polo opuesto al Yo")
+  colnames(df) <- c("Polo asociado al Yo", imp.labels, "Polo opuesto al Yo")    # Creamos el data frame con los datos de los constructos
 
   addDataFrame(df, sh,
                row.names = FALSE,
@@ -110,11 +115,14 @@ templateIMP <- function(x){
                startColumn = 2,
                row.names = FALSE,
                colnamesStyle = CellStyle(wb) + fill.imp + rotate.90
-  )
+               )                                                                # Incluimos el data frame con los estilos en el documento
+
   rows <- getRows(sh,rowIndex = 1)
   setRowHeight(rows,300)
-  autoSizeColumn(sh,colIndex = c(1:ncol(df)))
-  saveWorkbook(wb, file = "ImpGrid_Template.xlsx")
+  autoSizeColumn(sh,colIndex = c(1:ncol(df)))                                   # Ajustamos tamaño de las celdas
+
+  name <- paste(name,".xlsx")                                                   # Damos nombre al archivo
+  saveWorkbook(wb, file = name)                                                 # Exportamos el archivo
 
 
 }
