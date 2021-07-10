@@ -4,7 +4,7 @@
 \alias{templateIMP}
 \title{Importar Técnica de Rejilla (importGRID)}
 \usage{
-templateIMP(x)
+templateIMP(x, name = "ImpGrid_Template")
 }
 \value{
 Exporta un documento xlsx en el directorio de trabajo asignado de la
