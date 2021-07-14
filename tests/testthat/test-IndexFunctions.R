@@ -36,12 +36,12 @@ test_that("CentDegree", {                                                       
 
 })
 
-test_that("DistMatrix",{                                                        # Test de resultados para la función DistMatrix con todos los modos
-  expect_equal(DistMatrix(matrix),rbind(c(0,1,2,3),c(3,0,1,2),c(2,3,0,1),
+test_that("IMPdistances",{                                                      # Test de resultados para la función IMPdistances con todos los modos
+  expect_equal(IMPdistances(matrix),rbind(c(0,1,2,3),c(3,0,1,2),c(2,3,0,1),
                                         c(1,2,3,0)))
-  expect_equal(DistMatrix(matrix, mode = "in"),rbind(c(0,3,2,1),c(1,0,3,2),
+  expect_equal(IMPdistances(matrix, mode = "in"),rbind(c(0,3,2,1),c(1,0,3,2),
                                                      c(2,1,0,3),c(3,2,1,0)))
-  expect_equal(DistMatrix(matrix, mode = "all"),rbind(c(0,1,2,1),c(1,0,1,2),
+  expect_equal(IMPdistances(matrix, mode = "all"),rbind(c(0,1,2,1),c(1,0,1,2),
                                                       c(2,1,0,1),c(1,2,1,0)))
 })
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/Docs.R
 \name{DegreeMethod}
 \alias{DegreeMethod}
-\title{Métodos para el cálculo de dentralidad a través del grado}
+\title{Métodos para el cálculo de centralidad a través del grado}
 \description{
-Métodos para el cálculo de dentralidad a través del grado
+Métodos para el cálculo de centralidad a través del grado
 }

@@ -99,7 +99,7 @@ CentDegree <- function(imp, method="simple"){
 # MATRIZ DE DISTANCIAS
 ################################################################################
 
-#' Cálculo de distancia entre constructos en el digrafo (DistMatrix)
+#' Cálculo de distancia entre constructos en el digrafo (IMPdistances)
 #'
 #' @description Función que permite calcular la distancia mas corta entre dos
 #' constructos en el digrafo.
@@ -120,7 +120,7 @@ CentDegree <- function(imp, method="simple"){
 #' @export
 #'
 
-DistMatrix <- function(imp,mode="out"){
+IMPdistances <- function(imp,mode="out"){
 
   w.mat <- WeightMatrix(imp)
   w.mat <- as.matrix(w.mat)
@@ -157,7 +157,7 @@ DistMatrix <- function(imp,mode="out"){
 
 CentClose <- function(imp, norm = TRUE){
 
-  dist <- DistMatrix(imp)
+  dist <- IMPdistances(imp)
   N <- dim(dist)[1]
   if(norm){
     result <- (N-1)/(colSums(dist))

@@ -376,7 +376,7 @@ FuzzyMap <- function(x, imp, results = FuzzyInfer(x,imp), ideal = dim(x)[2], nit
 #'
 #' @export
 #'
-FuzzyMap3D <- function(x, imp, results, ideal = dim(x)[2],niter=30,
+FuzzyMap3D <- function(x, imp, results = FuzzyInfer(x,imp), ideal = dim(x)[2],niter=30,
                        edge.width=2, vertex.size =1){
 
   lpoles <- getConstructNames(x)[,1]

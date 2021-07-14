@@ -80,10 +80,11 @@ importGRID <- function(path, ...){
 templateIMP <- function(x,name ="ImpGrid_Template"){
   requireNamespace("xlsx")                                                      # Comprobamos que el sujeto tenga instalado y ejecutado xlsx
 
-  # dim <- dim(x)[1]                                                              # Guardamos el número de constructos de la rejilla
+  dim <- dim(x)[1]                                                              # Guardamos el número de constructos de la rejilla
 
   wb <- createWorkbook()
   sh <- createSheet(wb)                                                         # Creamos el documento de trabajo y la hoja de trabajo
+
 
   fill.izq <- CellStyle(wb, fill = Fill("#ffff6d","#ffff6d"))
   fill.der <- CellStyle(wb, fill = Fill("#729fcf","#729fcf"))

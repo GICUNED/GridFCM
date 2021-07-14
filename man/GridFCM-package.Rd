@@ -11,9 +11,13 @@ Paquete de R para la creación de mapas cognitivos borrosos a través de la téc
 \section{Functions}{
 
 
-\strong{Funciones Funcionales:}
+\strong{Funciones de Utilidades:}
+
+\code{\link{importGRID}}
 
 \code{\link{importIMP}}
+
+\code{\link{templateIMP}}
 
 \code{\link{ActVector}}
 
@@ -29,11 +33,15 @@ Paquete de R para la creación de mapas cognitivos borrosos a través de la téc
 
 \strong{Funciones de Índices:}
 
+\code{\link{IMPdensity}}
+
+\code{\link{IMPdistances}}
+
 \code{\link{CentDegree}}
 
 \code{\link{CentClose}}
 
-\code{\link{DistMatrix}}
+\code{\link{CentBetw}}
 }
 
 \author{

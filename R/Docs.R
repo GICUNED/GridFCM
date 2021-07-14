@@ -6,9 +6,13 @@
 #'
 #' @section Functions:
 #'
-#' \strong{Funciones Funcionales:}
+#' \strong{Funciones de Utilidades:}
+#'
+#' \code{\link{importGRID}}
 #'
 #' \code{\link{importIMP}}
+#'
+#' \code{\link{templateIMP}}
 #'
 #' \code{\link{ActVector}}
 #'
@@ -24,11 +28,15 @@
 #'
 #' \strong{Funciones de Índices:}
 #'
+#' \code{\link{IMPdensity}}
+#'
+#' \code{\link{IMPdistances}}
+#'
 #' \code{\link{CentDegree}}
 #'
 #' \code{\link{CentClose}}
 #'
-#' \code{\link{DistMatrix}}
+#' \code{\link{CentBetw}}
 #'
 #' @docType package
 #'
@@ -53,6 +61,28 @@ NULL
 
 #' @title Tipos de funciones umbral
 #' @name ThrFunctions
+#' @description
+#' El paquete GridFCM permite cuatro funciones umbral, dos de ellas discretas y otras dos continuas:
+#'
+#' \strong{Funciones discretas}
+#'
+#' \emph{\strong{Función bivalente:}} La función bivalente devuelve un valor 1 al vértice cuando la activación que le llega es superior a 0,y devuelve 0 cuando
+#' esa activacion es menor o igual que 0. Permite que los vértices tomen valores discretos y dicotómicos (activados o desactivados). Para utilizar esta función debemos escribir
+#' como argumento `thr = "b"` en la función \code{\link{FuzzyInfer}}.
+#'
+#' \emph{\strong{Función trivalente:}} La función trivalente devuelve un valor 1 al vértice cuando la activación que le llega es superior a 0, devuelve 0 cuando
+#' esa activacion es igual a 0, y devuelve -1 si esa activación es inferior a 0. Permite que los vértices tomen valores discretos, y a diferencia de la bivalente, devuelve
+#' tres posibles valores distintos. Para utilizar esta función debemos escribir como argumento `thr = "tri"` en la función \code{\link{FuzzyInfer}}.
+#'
+#' \strong{Funciones continuas}
+#'
+#' \emph{\strong{Función sigmoidal:}} La función sigmoidal es la versión continua de la función bivalente. Permite establecer un rango de activación del vértice entre 0 y 1
+#' . Si utilizamos esta función debemos específicar un lambda asociado que define el poder de discriminación de la función; valores altos de lambda acercan la función sigmoidal
+#' a la función bivalente, valores bajos la acercan a una función lineal. Para utilizar esta función debemos escribir como argumento thr = "s" en la función \code{\link{FuzzyInfer}}
+#'
+#' \emph{\strong{Función tangente hiperbólica:}} La función tangente hiperbólica es la versión continua de la función trivalente. Permite establecer un rango de activación del vértice entre -1 y 1
+#' . Si utilizamos esta función debemos específicar un lambda asociado que define el poder de discriminación de la función; valores altos de lambda acercan la función tangente hiperbólica
+#' a la función trivalente, valores bajos la acercan a una función lineal. Para utilizar esta función debemos escribir como argumento thr = "t" en la función \code{\link{FuzzyInfer}}
 #'
 NULL
 
@@ -61,7 +91,7 @@ NULL
 #'
 NULL
 
-#' @title Métodos para el cálculo de dentralidad a través del grado
+#' @title Métodos para el cálculo de centralidad a través del grado
 #' @name DegreeMethod
 #'
 NULL
