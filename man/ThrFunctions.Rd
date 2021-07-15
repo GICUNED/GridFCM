@@ -20,9 +20,9 @@ tres posibles valores distintos. Para utilizar esta función debemos escribir co
 
 \emph{\strong{Función sigmoidal:}} La función sigmoidal es la versión continua de la función bivalente. Permite establecer un rango de activación del vértice entre 0 y 1
 . Si utilizamos esta función debemos específicar un lambda asociado que define el poder de discriminación de la función; valores altos de lambda acercan la función sigmoidal
-a la función bivalente, valores bajos la acercan a una función lineal. Para utilizar esta función debemos escribir como argumento `r thr = "s"` en la función \code{\link{FuzzyInfer}}
+a la función bivalente, valores bajos la acercan a una función lineal. Para utilizar esta función debemos escribir como argumento thr = "s" en la función \code{\link{FuzzyInfer}}
 
 \emph{\strong{Función tangente hiperbólica:}} La función tangente hiperbólica es la versión continua de la función trivalente. Permite establecer un rango de activación del vértice entre -1 y 1
 . Si utilizamos esta función debemos específicar un lambda asociado que define el poder de discriminación de la función; valores altos de lambda acercan la función tangente hiperbólica
-a la función trivalente, valores bajos la acercan a una función lineal. Para utilizar esta función debemos escribir como argumento `r thr = "t"` en la función \code{\link{FuzzyInfer}}
+a la función trivalente, valores bajos la acercan a una función lineal. Para utilizar esta función debemos escribir como argumento thr = "t" en la función \code{\link{FuzzyInfer}}
 }
