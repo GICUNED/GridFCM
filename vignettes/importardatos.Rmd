@@ -94,7 +94,9 @@ Si seguimos este método a la hora de aplicar la ImpGrid debemos estructurar la 
   
   - **Matriz de Puntuaciones:** En la <span style="color : purple"> parte morada </span> debemos escribir las distintas puntuaciones de las implicaciones dentro de un intervalo de [-3,3]. Un valor negativo implicaría que el <span style="color : green"> cambio de polo </span> tiene asociado un cambio hacia el <span style="color : yellow"> polo de la izquierda</span>, un valor positivo implicaria un cambio hacia el <span style="color : blue"> polo de la derecha </span>, y un 0 implicaria que el <span style="color : green"> cambio de polo </span> no tiene efecto. Asimismo, un 1 sería un cambio leve, un 2 sería un cambio moderado, y un 3 sería  un cambio fuerte.
 
-Teniendo en cuenta este patron el resultado final sería una matriz que contiene las implicaciones de cada uno de los constructos con el resto de constructos. Los vectores columnas tendrían como elementos cada una de las salidas de causalidad y los elementos de los vectores fila serían las entradas de causalidad. 
+Teniendo en cuenta este patron el resultado final sería una matriz que contiene las implicaciones de cada uno de los constructos con el resto de constructos. Los vectores columnas tendrían como elementos cada una de las salidas de causalidad y los elementos de los vectores fila serían las entradas de causalidad.
+
+Podemos crear una plantilla personalizada con este patrón con la función `templateIMP()`. Esta función nos crea un documento de excel en nuestro espacio de trabajo que contiene una tabla personalizada, con los constructos personales de la técnica de rejilla que hayamos escogido, lista para introducir los valores de las implicaciones. El argumento que nos pide esta funcion es unicamente un objeto `RepGrid` introducido con la función `importGRID()`.
 
 ### IMPGRID SEGÚN FRANSELLA
 

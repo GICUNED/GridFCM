@@ -192,7 +192,7 @@ FuzzyInfer <- function(x, imp, act.vec = ActVector(x), ideal = dim(x)[2], infer=
 #' @export
 
 
-FuzzyMap <- function(x, imp, results = FuzzyInfer(x,imp), ideal = dim(x)[2], niter = 30,
+FuzzyMap <- function(x, imp, results = FuzzyInfer(x,imp,graph = FALSE), ideal = dim(x)[2], niter = 30,
                      layout = "rtcircle", edge.width = 1.5, vertex.size = 1,
                      legend = FALSE ){
 
@@ -376,7 +376,7 @@ FuzzyMap <- function(x, imp, results = FuzzyInfer(x,imp), ideal = dim(x)[2], nit
 #'
 #' @export
 #'
-FuzzyMap3D <- function(x, imp, results = FuzzyInfer(x,imp), ideal = dim(x)[2],niter=30,
+FuzzyMap3D <- function(x, imp, results = FuzzyInfer(x,imp,graph = FALSE), ideal = dim(x)[2],niter=30,
                        edge.width=2, vertex.size =1){
 
   lpoles <- getConstructNames(x)[,1]
@@ -654,7 +654,21 @@ IdealMap <- function(x,imp, ideal = dim(x)[2], inc = FALSE, layout ="circle",
            title = "Constructos Personales")
   }                                                                             # Dibujamos la leyenda del mapa cognitivo borroso.
 }
+################################################################################
 
+# CREACIÓN DE INFORME
+################################################################################
+
+#' @export
+#'
+
+FCMreport <- function(x, imp, dir = getwd()){
+  render.grid <- x
+  render.imp <- imp
+  rmarkdown::draft("Informe","informe", package = "GridFCM")
+  rmarkdown::render("Informe.Rmd")
+  file.remove("Informe.Rmd")
+}
 
 
 

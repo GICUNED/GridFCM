@@ -7,7 +7,7 @@
 FuzzyMap3D(
   x,
   imp,
-  results = FuzzyInfer(x, imp),
+  results = FuzzyInfer(x, imp, graph = FALSE),
   ideal = dim(x)[2],
   niter = 30,
   edge.width = 2,

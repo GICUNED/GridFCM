@@ -1,0 +1,152 @@
+---
+title: "INFORME"
+output: html_document
+output_file: "Informe.html"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(GridFCM)
+library(OpenRepGrid)
+library(knitr)
+library(rgl)
+knitr::knit_hooks$set(webgl = hook_webgl)
+```
+
+# REJILLA 
+
+```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE}
+bertin(render.grid)
+```
+
+# BIPLOT {.tabset .tabset-fade}
+
+## Simple
+
+```{r echo=FALSE,  fig.height=9, fig.width=9, message=FALSE, warning=FALSE}
+biplotSimple(render.grid, c.label.col = "darkred")
+```
+
+## 2D
+
+```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE}
+biplot2d(render.grid, c.label.col = "darkred")
+```
+
+## 3D
+
+```{r echo=FALSE,  fig.height=8, fig.width=8, message=FALSE, warning=FALSE, webgl=TRUE}
+biplot3d(render.grid, c.label.col = "darkred")
+```
+
+# CLUSTER {.tabset .tabset-fade}
+
+## Constructos
+
+```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE}
+cluster(render.grid, along = 1)
+```
+
+## Elementos
+
+```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE}
+cluster(render.grid, along = 2)
+```
+
+# ÍNDICES COGNITIVOS {.tabset .tabset-fade}
+
+```{r echo=FALSE}
+COR.IDEAL <- elementCor(render.grid)[1,ncol(render.grid)]
+PVEFF <- indexPvaff(render.grid)
+INTc <- indexIntensity(render.grid)[[1]]
+INTe <- indexIntensity(render.grid)[[2]]
+INT <- indexIntensity(render.grid)[[5]]
+CON <- indexConflict1(render.grid)[[4]]
+
+kable(data.frame(COR.IDEAL,PVEFF,INT,CON),col.names = c("Cor. Yo-Actual / Yo-Ideal","PVAPF","Intensidad","Conflictos"))
+```
+
+## Intensidad Constructos
+
+```{r echo=FALSE}
+kable(INTc, col.names = "Intensidad")
+```
+
+## Intensidad Elementos
+
+```{r echo=FALSE}
+kable(INTe, col.names = "Intensidad")
+```
+
+# MAPA COGNITIVO BORROSO DEL IDEAL {.tabset .tabset-fade}
+
+## Completo
+
+```{r echo=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, results='hide'}
+IdealMap(render.grid,render.imp)
+```
+
+## Inconsistencias
+
+```{r echo=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, results='hide'}
+IdealMap(render.grid,render.imp, inc=TRUE)
+```
+
+# ANÁLISIS MCB {.tabset .tabset-fade}
+
+```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE, results='hide'}
+FuzzyInfer(render.grid,render.imp)
+```
+
+## MCB (iter = 1)
+
+```{r echo=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, results='hide'}
+FuzzyMap(render.grid,render.imp, niter = 1, layout="graphopt")
+```
+
+
+## MCB (iter = 30)
+
+```{r echo=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, results='hide'}
+FuzzyMap(render.grid,render.imp,layout="graphopt")
+```
+
+
+## MCB 3D
+
+```{r echo=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, results='hide',webgl=TRUE}
+rgl.clear()
+FuzzyMap3D(render.grid,render.imp, niter = 1)
+```
+
+# ÍNDICES MCB {.tabset .tabset-fade}
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+n.edges <- sum(render.imp != 0)
+n.vertex <- ncol(render.imp)
+dens <- IMPdensity(render.imp)
+degree <- cbind(CentDegree(render.imp)[[1]],CentDegree(render.imp)[[2]],CentDegree(render.imp)[[3]])
+close <- CentClose(render.imp)
+betw <- CentBetw(render.imp)
+
+kable(data.frame(n.vertex,n.edges, dens),col.names = c("Vértices","Aristas","Densidad"))
+```
+
+## Grado
+
+```{r echo=FALSE}
+kable(degree, col.names = c("Salidas","Entradas","Total"))
+```
+
+## Cercanía
+
+```{r echo=FALSE}
+kable(close, col.names = "Centralidad")
+```
+
+## Intermediación
+
+```{r echo=FALSE}
+kable(betw, col.names = "Centralidad")
+```
+
