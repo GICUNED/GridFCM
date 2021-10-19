@@ -1,7 +1,9 @@
 ---
-title: "INFORME"
-output: html_document
+title: "GridFCM"
+output: flexdashboard::flex_dashboard
 output_file: "Informe.html"
+social: [ "twitter", "facebook", "menu" ]
+source_code: embed
 ---
 
 ```{r setup, include=FALSE}
@@ -10,50 +12,84 @@ library(GridFCM)
 library(OpenRepGrid)
 library(knitr)
 library(rgl)
+library(shiny)
+library(magick)
 knitr::knit_hooks$set(webgl = hook_webgl)
 ```
 
-# REJILLA 
+REPGRID
+=============================================
+
+sidebar {.sidebar}
+--------------------------------------------
+
+TEXTO DE PRUEBA
+
+1
+--------------------------------------------
+
+### GRID 
 
 ```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE}
 bertin(render.grid)
 ```
 
-# BIPLOT {.tabset .tabset-fade}
+2 {.tabset .tabset-fade}
+---------------------------------------------
 
-## Simple
+### Biplot Simple
 
 ```{r echo=FALSE,  fig.height=9, fig.width=9, message=FALSE, warning=FALSE}
 biplotSimple(render.grid, c.label.col = "darkred")
 ```
 
-## 2D
+### Biplot 2D
 
 ```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE}
 biplot2d(render.grid, c.label.col = "darkred")
 ```
 
-## 3D
+### Biplot 3D
 
 ```{r echo=FALSE,  fig.height=8, fig.width=8, message=FALSE, warning=FALSE, webgl=TRUE}
 biplot3d(render.grid, c.label.col = "darkred")
 ```
 
-# CLUSTER {.tabset .tabset-fade}
+CLUSTER
+==========================================
 
-## Constructos
+1 {.sidebar}
+----------------------------------------
+
+Constructos 
+-----------------------------------------
+
+### Constructs
 
 ```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE}
 cluster(render.grid, along = 1)
 ```
 
-## Elementos
+Elementos 
+-----------------------------------------
+
+### Elements
 
 ```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE}
 cluster(render.grid, along = 2)
 ```
 
-# ÍNDICES COGNITIVOS {.tabset .tabset-fade}
+
+COGNITIVE INDECES {data-orientation=rows}
+===========================================
+
+sidebar {.sidebar}
+--------------------------------
+
+1 {data-height=50}
+-------------------------------------
+
+### Indeces
 
 ```{r echo=FALSE}
 COR.IDEAL <- elementCor(render.grid)[1,ncol(render.grid)]
@@ -66,60 +102,155 @@ CON <- indexConflict1(render.grid)[[4]]
 kable(data.frame(COR.IDEAL,PVEFF,INT,CON),col.names = c("Cor. Yo-Actual / Yo-Ideal","PVAPF","Intensidad","Conflictos"))
 ```
 
-## Intensidad Constructos
+2 {.tabset .tabset-fade}
+----------------------------------------
+
+### Construct Intensity
 
 ```{r echo=FALSE}
 kable(INTc, col.names = "Intensidad")
 ```
 
-## Intensidad Elementos
+### Element Intensity
 
 ```{r echo=FALSE}
 kable(INTe, col.names = "Intensidad")
 ```
 
-# MAPA COGNITIVO BORROSO DEL IDEAL {.tabset .tabset-fade}
+Ideal Fuzzy Map {data-navmenu="FCM ANALYSIS"}
+==============================================
 
-## Completo
+sidebar {.sidebar}
+--------------------
+
+Idealmap {.tabset .tabset-fade}
+--------------------
+
+### Full
 
 ```{r echo=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, results='hide'}
 IdealMap(render.grid,render.imp)
 ```
 
-## Inconsistencias
+### Inconsistencies
 
 ```{r echo=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, results='hide'}
 IdealMap(render.grid,render.imp, inc=TRUE)
 ```
 
-# ANÁLISIS MCB {.tabset .tabset-fade}
+Self Fuzzy Map {data-navmenu="FCM ANALYSIS" data-orientation=rows}
+===========================================
 
-```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE, results='hide'}
+sidebar {.sidebar}
+-------------------
+
+
+GCT
+--------------------------------------
+
+### Behavior vs Time Graph
+
+```{r echo=FALSE, fig.height=6, fig.width=20, message=FALSE, warning=FALSE, results='hide'}
 FuzzyInfer(render.grid,render.imp)
 ```
 
-## MCB (iter = 1)
+FCM {.tabset .tabset-fade}
+---------------------------------------
 
-```{r echo=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, results='hide'}
-FuzzyMap(render.grid,render.imp, niter = 1, layout="graphopt")
+### Graphopt
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.show="hold", out.width="50%",out.height="100%"}
+FuzzyMap(render.grid,render.imp,niter = 1, layout = "graphopt")
+FuzzyMap(render.grid,render.imp,niter = 30, layout = "graphopt")
 ```
 
 
-## MCB (iter = 30)
+### Graphopt
 
-```{r echo=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, results='hide'}
-FuzzyMap(render.grid,render.imp,layout="graphopt")
+```{r eval=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, include=FALSE}
+
+ dir_out <- file.path(tempdir(), "FCM-images")
+dir.create(dir_out,recursive = TRUE)
+
+iter <- c(1:30)
+
+for (i in iter) {
+  if(i<10){
+  name <- paste(dir_out,"/FCM_0",i,".png",sep = "")
+  }else{
+  name <- paste(dir_out,"/FCM_",i,".png",sep = "") 
+  }  
+  
+  png(name, width = 800, height = 800)
+  FuzzyMap(render.grid,render.imp,niter = i, layout = "graphopt")
+  mtext(paste("Iteración número",i,sep = " "))
+  dev.off()
+}
+
+imgs <- list.files(dir_out, full.names = TRUE)
+img_list <- lapply(imgs, image_read)
+
+img_joined <- image_join(img_list)
+
+FCM.gif.1 <- image_animate(img_joined, fps = 1)
+```
+
+```{r eval=FALSE, include=FALSE}
+FCM.gif.1
+```
+
+### Reingold - Tilford
+
+```{r eval=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, include=FALSE}
+
+ dir_out <- file.path(tempdir(), "FCM-images")
+dir.create(dir_out,recursive = TRUE)
+
+iter <- c(1:30)
+
+for (i in iter) {
+  if(i<10){
+  name <- paste(dir_out,"/FCM_0",i,".png",sep = "")
+  }else{
+  name <- paste(dir_out,"/FCM_",i,".png",sep = "") 
+  }  
+  
+  png(name, width = 800, height = 800)
+  FuzzyMap(render.grid,render.imp,niter = i, layout = "rtcircle")
+  mtext(paste("Iteración número",i,sep = " "))
+  dev.off()
+}
+
+imgs <- list.files(dir_out, full.names = TRUE)
+img_list <- lapply(imgs, image_read)
+
+img_joined <- image_join(img_list)
+
+FCM.gif.2 <- image_animate(img_joined, fps = 1)
+```
+
+```{r eval=FALSE, include=FALSE}
+FCM.gif.2
 ```
 
 
-## MCB 3D
+### FCM 3D
 
 ```{r echo=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, results='hide',webgl=TRUE}
 rgl.clear()
 FuzzyMap3D(render.grid,render.imp, niter = 1)
 ```
 
-# ÍNDICES MCB {.tabset .tabset-fade}
+FCM Indeces {data-navmenu="FCM ANALYSIS" data-orientation=rows}
+==========================================
+
+sidebar {.sidebar}
+---------------------------------------
+
+1 {data-height=50}
+----------------------------------------
+
+### ImpGrid Indeces
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 n.edges <- sum(render.imp != 0)
@@ -132,19 +263,21 @@ betw <- CentBetw(render.imp)
 kable(data.frame(n.vertex,n.edges, dens),col.names = c("Vértices","Aristas","Densidad"))
 ```
 
-## Grado
+2 {.tabset .tabset-fade}
+------------------------------------------------
+### Degree
 
 ```{r echo=FALSE}
 kable(degree, col.names = c("Salidas","Entradas","Total"))
 ```
 
-## Cercanía
+### Closeness
 
 ```{r echo=FALSE}
 kable(close, col.names = "Centralidad")
 ```
 
-## Intermediación
+### Betweenness
 
 ```{r echo=FALSE}
 kable(betw, col.names = "Centralidad")

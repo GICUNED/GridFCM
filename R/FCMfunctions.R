@@ -122,31 +122,52 @@ FuzzyInfer <- function(x, imp, act.vec = ActVector(x), ideal = dim(x)[2], infer=
   w.mat <- WeightMatrix(imp)
   w.mat <- as.data.frame(w.mat)                                                 # Transformamos la matriz de implicaciones en una matriz de pesos
 
-  ideal.vector <- OpenRepGrid::getRatingLayer(x)[,ideal]
-  ideal.vector <- (ideal.vector - 4)/3                                          # Extraemos el vector del ideal y lo ponemos en formato de intervalo [-1,1]
 
 
   result <- fcm::fcm.infer(act.vec, weight_mat = w.mat, infer = infer,
                       transform = thr, lambda = lambda, iter = iter)            # Aplicamos la función de fcm.infer del paquete fcm para hacer la inferencia
 
 
-  if(graph){                                                                    # Comprobamos si el usuario quiere graficar la matriz de escenarios en un GCT.
-
-    ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),
-                           nrow = iter, byrow = TRUE)                           # Construimos una matriz con el ideal repetido por columnas para luego calcular las distancias.
-    iterations <- as.numeric(rownames(result$values))
-    df <- data.frame(iterations, abs((result$values - ideal.matrix)/2))
-    df2 <- reshape2::melt(df, id="iterations")                                  # Creamos un dataframe que contiene las distancias del ideal agrupadas por constructos
-                                                                                # y separadas para cada iteración.
-    plot(ggplot(data=df2,aes(x=iterations, y=value, group=variable,
-                             color=variable)) + theme_bw() + geom_line(size=0.7)
-         + geom_point(size = 3) + labs(x="Iteraciones",
-                                       y="Distancia respecto el ideal",
-                                       color="Constructos Personales"))         # Utilizamos el GGplot para generar un gráfico del dataframe y generar el GCT.
-  }
   return(result)
 }
 ################################################################################
+
+# GRÁFICO DE COMPORTAMIENTO VS TIEMPO
+################################################################################
+
+#'
+#' @export
+
+BTplot <- function(x,imp,ideal=dim(x)[2],iter=30){
+
+  lpoles <- getConstructNames(x)[,1]
+  rpoles <- getConstructNames(x)[,2]
+  poles <- paste(lpoles,"-",rpoles,sep = " ")
+
+  ideal.vector <- OpenRepGrid::getRatingLayer(x)[,ideal]
+  ideal.vector <- (ideal.vector - 4)/3
+  ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),
+                         nrow = iter, byrow = TRUE)
+
+  res <- FuzzyInfer(x,imp,iter=iter)
+
+  x <- c(1:iter)
+  y <- c(0:length(poles))
+  y <- as.character(y)
+  df <- data.frame(x, abs(res$values - ideal.matrix) / 2)
+  colnames(df) <- y
+
+
+  iterations <- as.numeric(rownames(res$values))  # create a numeric vector named "iterations"
+  df <- data.frame(iterations,  abs(res$values - ideal.matrix) / 2)   # add "iterations" in the "output1$values" dataframe
+  df2 <- melt(df, id="iterations")              # transform the dataframe df into long formats
+  plot(ggplot(data=df2,aes(x=iterations, y=value, group=variable,
+                           color=variable)) + theme_bw() + geom_line(size=0.7)
+       + geom_point(size = 3) + labs(x="Iteraciones",
+                                     y="Distancia respecto el ideal",
+                                     color="Constructos Personales"))
+
+}
 
 # DIGRAFO DEL MAPA COGNITIVO BORRROSO
 ################################################################################
@@ -307,7 +328,7 @@ FuzzyMap <- function(x, imp, results = FuzzyInfer(x,imp,graph = FALSE), ideal = 
 
 
   if(layout == "rtcircle"){
-    graph.map <- add_layout_(graph.map,as_tree(circular = TRUE))
+    graph.map <- add_layout_(graph.map,as_tree(circular = TRUE, mode = "out"))
   }
   if(layout == "tree"){
     graph.map <- add_layout_(graph.map,as_tree())
@@ -316,7 +337,10 @@ FuzzyMap <- function(x, imp, results = FuzzyInfer(x,imp,graph = FALSE), ideal = 
     graph.map <- add_layout_(graph.map,in_circle())
   }
   if(layout == "graphopt"){
-    graph.map <- add_layout_(graph.map,with_graphopt())
+    set.seed(3394)
+    matrix.seed <- matrix(rnorm(2 * dim(x)[1]), ncol = 2)
+
+    graph.map <- add_layout_(graph.map,with_graphopt(start = matrix.seed))
   }
   if(layout == "mds"){
     graph.map <- add_layout_(graph.map,with_mds())
@@ -529,6 +553,11 @@ IdealMap <- function(x,imp, ideal = dim(x)[2], inc = FALSE, layout ="circle",
                                                                                 # Esto sirve para cambiar el color de las aristas en función del estado de los vértices
 
 
+  if(inc){
+    w.mat[w.mat > 0] <- 0
+  }
+
+
   graph.map <- graph.adjacency(w.mat,mode = "directed",weighted = T)            # Creamos un gráfico primitivo y poco a poco lo vamos configurando.
 
   E(graph.map)$color <- "black"
@@ -560,15 +589,8 @@ IdealMap <- function(x,imp, ideal = dim(x)[2], inc = FALSE, layout ="circle",
         n <- n + 1
       }
     }
-  }                                                                             # Damos grosor a las aristas en función de los pesos.
-
-  if(inc){
-   n <- 1
-  for (weight in E(graph.map)$weight) {
-    E(graph.map)$width[n] <-  ifelse(weight < 0, E(graph.map)$width[n] , 0 )
-    n <- n + 1
   }
-  }
+                                                                                # Damos grosor a las aristas en función de los pesos.
 
   V(graph.map)$color <- "black"
   n <- 1
@@ -669,7 +691,3 @@ FCMreport <- function(x, imp, dir = getwd()){
   rmarkdown::render("Informe.Rmd")
   file.remove("Informe.Rmd")
 }
-
-
-
-
