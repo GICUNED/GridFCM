@@ -161,12 +161,50 @@ BTplot <- function(x,imp,ideal=dim(x)[2],iter=30){
   iterations <- as.numeric(rownames(res$values))  # create a numeric vector named "iterations"
   df <- data.frame(iterations,  abs(res$values - ideal.matrix) / 2)   # add "iterations" in the "output1$values" dataframe
   df2 <- melt(df, id="iterations")              # transform the dataframe df into long formats
-  plot(ggplot(data=df2,aes(x=iterations, y=value, group=variable,
+  ggplotly(ggplot(data=df2,aes(x=iterations, y=value, group=variable,
                            color=variable)) + theme_bw() + geom_line(size=0.7)
        + geom_point(size = 3) + labs(x="Iteraciones",
                                      y="Distancia respecto el ideal",
                                      color="Constructos Personales"))
 
+
+}
+
+################################################################################
+
+# GRÁFICO DE COMPORTAMIENTO VS TIEMPO 2.0
+################################################################################
+
+#'
+#' @export
+#' @import plotly
+
+BTplot2 <- function(x,imp,ideal=dim(x)[2],iter=30){
+
+  lpoles <- OpenRepGrid::getConstructNames(x)[,1]
+  rpoles <- OpenRepGrid::getConstructNames(x)[,2]
+  poles <- paste(lpoles,"-",rpoles,sep = " ")
+
+
+  ideal.vector <- OpenRepGrid::getRatingLayer(x)[,ideal]
+  ideal.vector <- (ideal.vector - 4)/3
+  ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),
+                        nrow = iter, byrow = TRUE)
+
+  res <- FuzzyInfer(x,imp,iter=iter)
+
+  x <- c(1:iter)
+  y <- c(0:length(poles))
+  y <- as.character(y)
+  df <- data.frame(x, abs(res$values - ideal.matrix) / 2)
+  colnames(df) <- y
+
+  fig <- plot_ly(df, x = ~x, y = df[,2], name = poles[1], type = 'scatter',
+                 mode = 'lines+markers',line = list(shape = "spline"))
+ for (n in 2:length(poles)) {
+  fig <- fig %>% add_trace(y = df[,n], name = poles[n], mode = 'lines+markers',line = list(shape = "spline"))
+ }
+  fig
 }
 
 # DIGRAFO DEL MAPA COGNITIVO BORRROSO

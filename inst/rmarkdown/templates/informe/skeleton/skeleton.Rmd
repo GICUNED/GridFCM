@@ -151,7 +151,7 @@ GCT
 ### Behavior vs Time Graph
 
 ```{r echo=FALSE, fig.height=6, fig.width=20, message=FALSE, warning=FALSE, results='hide'}
-FuzzyInfer(render.grid,render.imp)
+BTplot2(render.grid,render.imp)
 ```
 
 FCM {.tabset .tabset-fade}

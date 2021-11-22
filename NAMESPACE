@@ -2,6 +2,7 @@
 
 export(ActVector)
 export(BTplot)
+export(BTplot2)
 export(CentBetw)
 export(CentClose)
 export(CentDegree)
@@ -18,3 +19,5 @@ export(templateIMP)
 import(OpenRepGrid)
 import(ggplot2)
 import(igraph)
+import(plotly)
+import(xlsx)
