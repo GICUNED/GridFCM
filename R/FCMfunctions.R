@@ -251,9 +251,9 @@ BTplot2 <- function(x,imp,ideal=dim(x)[2],iter=30){
 #' @export
 
 
-FuzzyMap <- function(x, imp, results = FuzzyInfer(x,imp,graph = FALSE), ideal = dim(x)[2], niter = 30,
-                     layout = "rtcircle", edge.width = 1.5, vertex.size = 1,
-                     legend = FALSE ){
+FuzzyMap <- function(x, imp, results = FuzzyInfer(x,imp,graph = FALSE),
+                     ideal = dim(x)[2], niter = 30,layout = "rtcircle",
+                     edge.width = 1.5, vertex.size = 1, legend = FALSE ){
 
   lpoles <- getConstructNames(x)[,1]
   rpoles <- getConstructNames(x)[,2]                                            # Extraemos los nombres de los polos de los constructos de la Rejilla.
