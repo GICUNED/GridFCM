@@ -2,7 +2,7 @@
 ##---------------#FUNCIONES DE MAPAS COGNITIVOS BORROSOS##--------------------##
 ################################################################################
 
-
+################################################################################
 # SELECCIÓN DE SUBCONJUNTOS DE LA MATRIZ
 ################################################################################
 SelectConstructs <- function(x, sel.vec){
@@ -18,9 +18,8 @@ SelectConstructs <- function(x, sel.vec){
 
     return(result)
 }
+
 ################################################################################
-
-
 # VECTOR DE ACTIVACIÓN
 ################################################################################
 
@@ -54,9 +53,8 @@ ActVector <- function(x, col.element = 1){
 
   return(result)
 }
+
 ################################################################################
-
-
 # MATRIZ DE PESOS SEGÚN IMPGRID HINKLE
 ################################################################################
 
@@ -65,7 +63,6 @@ WeightMatrix <- function(x){
   return(result)
 }
 ################################################################################
-
 # INFERENCIA DE ESCENARIOS FUTUROS
 ################################################################################
 
@@ -116,8 +113,9 @@ WeightMatrix <- function(x){
 #' @export
 
 
-FuzzyInfer <- function(x, imp, act.vec = ActVector(x), ideal = dim(x)[2], infer= "mk",
-                       thr= "t", lambda = 1 , iter = 30, graph = TRUE){
+FuzzyInfer <- function(x, imp, act.vec = ActVector(x), ideal = dim(x)[2],
+                       infer= "mk", thr= "t", lambda = 1 , iter = 30,
+                       graph = TRUE){
 
   w.mat <- WeightMatrix(imp)
   w.mat <- as.data.frame(w.mat)                                                 # Transformamos la matriz de implicaciones en una matriz de pesos
@@ -131,7 +129,6 @@ FuzzyInfer <- function(x, imp, act.vec = ActVector(x), ideal = dim(x)[2], infer=
   return(result)
 }
 ################################################################################
-
 # GRÁFICO DE COMPORTAMIENTO VS TIEMPO
 ################################################################################
 
@@ -171,42 +168,51 @@ BTplot <- function(x,imp,ideal=dim(x)[2],iter=30){
 }
 
 ################################################################################
-
-# GRÁFICO DE COMPORTAMIENTO VS TIEMPO 2.0
+# Gráfico de Dinámicas del Sistema de Constructos Personales (DSCP)
 ################################################################################
 
 #'
 #' @export
 #' @import plotly
 
-BTplot2 <- function(x,imp,ideal=dim(x)[2],iter=30){
+DPCSplot <- function(x,imp,ideal=dim(x)[2],iter=30,...){
 
-  lpoles <- OpenRepGrid::getConstructNames(x)[,1]
+  lpoles <- OpenRepGrid::getConstructNames(x)[,1]                               # Extraemos los nombres de los constructos
   rpoles <- OpenRepGrid::getConstructNames(x)[,2]
   poles <- paste(lpoles,"-",rpoles,sep = " ")
 
 
   ideal.vector <- OpenRepGrid::getRatingLayer(x)[,ideal]
   ideal.vector <- (ideal.vector - 4)/3
-  ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),
+  ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),             # Creamos una matriz con los valores del yo-ideal repetidos por filas
                         nrow = iter, byrow = TRUE)
 
-  res <- FuzzyInfer(x,imp,iter=iter)
+  res <- FuzzyInfer(x,imp,iter=iter,...)                                        # Obtenemos la inferencia del MCB
 
   x <- c(1:iter)
   y <- c(0:length(poles))
   y <- as.character(y)
-  df <- data.frame(x, abs(res$values - ideal.matrix) / 2)
+  df <- data.frame(x, abs(res$values - ideal.matrix) / 2)                       # confeccionamos un dataframe con las distancias estandarizadas entre los resultados y el ideal
   colnames(df) <- y
 
   fig <- plot_ly(df, x = ~x, y = df[,2], name = poles[1], type = 'scatter',
                  mode = 'lines+markers',line = list(shape = "spline"))
- for (n in 2:length(poles)) {
-  fig <- fig %>% add_trace(y = df[,n], name = poles[n], mode = 'lines+markers',line = list(shape = "spline"))
+ for (n in 3:(length(poles)+1)) {
+  fig <- fig %>% add_trace(y = df[,n], name = poles[n-1], mode = 'lines+markers'
+                           ,line = list(shape = "spline"))
  }
+  fig <- fig %>% layout(title="Dynamics of the Personal Construct System",
+                        legend = list(
+                          title=list(text='Personal Constructs')),
+                        xaxis = list(
+                          title = "Iterations"),
+                        yaxis = list(
+                          title = "Distance to ideal self")
+                        )
+
   fig
 }
-
+################################################################################
 # DIGRAFO DEL MAPA COGNITIVO BORRROSO
 ################################################################################
 
@@ -252,7 +258,7 @@ BTplot2 <- function(x,imp,ideal=dim(x)[2],iter=30){
 
 
 FuzzyMap <- function(x, imp, results = FuzzyInfer(x,imp,graph = FALSE),
-                     ideal = dim(x)[2], niter = 30,layout = "rtcircle",
+                     ideal = dim(x)[2], niter = 30,layout = "graphopt",
                      edge.width = 1.5, vertex.size = 1, legend = FALSE ){
 
   lpoles <- getConstructNames(x)[,1]
@@ -398,7 +404,6 @@ FuzzyMap <- function(x, imp, results = FuzzyInfer(x,imp,graph = FALSE),
 }
 
 ################################################################################
-
 # DIGRAFO DEL MAPA COGNITIVO BORROSO EN 3D
 ################################################################################
 
@@ -527,8 +532,9 @@ FuzzyMap3D <- function(x, imp, results = FuzzyInfer(x,imp,graph = FALSE), ideal 
 
   rglplot(graph.map,layout = L)                                                 # Dibujamos el grafo en 3D con rgl.
 }
-################################################################################
 
+
+################################################################################
 # DIGRAFO DEL IDEAL
 ################################################################################
 #' Digrafo del Yo-Ideal (IdealMap)
@@ -714,8 +720,8 @@ IdealMap <- function(x,imp, ideal = dim(x)[2], inc = FALSE, layout ="circle",
            title = "Constructos Personales")
   }                                                                             # Dibujamos la leyenda del mapa cognitivo borroso.
 }
-################################################################################
 
+################################################################################
 # CREACIÓN DE INFORME
 ################################################################################
 

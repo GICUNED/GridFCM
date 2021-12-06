@@ -2,10 +2,10 @@
 
 export(ActVector)
 export(BTplot)
-export(BTplot2)
 export(CentBetw)
 export(CentClose)
 export(CentDegree)
+export(DPCSplot)
 export(FCMreport)
 export(FuzzyInfer)
 export(FuzzyMap)
