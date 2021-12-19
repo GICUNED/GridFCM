@@ -1,29 +1,13 @@
 ################################################################################
-##---------------#FUNCIONES DE MAPAS COGNITIVOS BORROSOS##--------------------##
+##--------------------#FUZZY COGNITIVE MAPS FUNCTIONS#------------------------##
 ################################################################################
 
-################################################################################
-# SELECCIÓN DE SUBCONJUNTOS DE LA MATRIZ
-################################################################################
-SelectConstructs <- function(x, sel.vec){
 
-  if(class(x)[1] == "repgrid"){
-    x <- .adaptrepgrid(x)
-  }
-  constructs.selected <- sel.vec
-  constructs.selected <- as.vector(constructs.selected)
-  constructs.selected <- as.numeric(constructs.selected)
-
-    result <- x[constructs.selected,constructs.selected]
-
-    return(result)
-}
-
-################################################################################
-# VECTOR DE ACTIVACIÓN
+# ACTIVATION VECTOR -- actvector()
 ################################################################################
 
-#' Crear Vector de Activación (ActVector)
+#' Crear Vector de Activación (actvector)
+#'
 #' @description Función que extrae un vector de un elemento de la rejilla y lo
 #' transforma en un vector de activación apropiado para utilizarse a la hora de
 #' crear un mapa cognitivo borroso.
@@ -31,6 +15,7 @@ SelectConstructs <- function(x, sel.vec){
 #' @param x Rejilla del sujeto desde donde queremos extraer el vector de
 #' activación. Debe de ser un objeto de la clase repgrid del paquete
 #' OpenRepGrid.
+#'
 #' @param col.element Elemento desde el que extraemos el vector de activación.
 #' Por defecto se establece el primer elemento, que coincide normalmente con el
 #' Yo-Actual.
@@ -45,7 +30,7 @@ SelectConstructs <- function(x, sel.vec){
 #' @export
 
 
-ActVector <- function(x, col.element = 1){
+actvector <- function(x, col.element = 1){
 
   vector <- getRatingLayer(x)[,col.element]                                     # Extraemos el vector de la rejilla
 
@@ -53,20 +38,12 @@ ActVector <- function(x, col.element = 1){
 
   return(result)
 }
-
-################################################################################
-# MATRIZ DE PESOS SEGÚN IMPGRID HINKLE
 ################################################################################
 
-WeightMatrix <- function(x){
-  result <- x/3
-  return(result)
-}
-################################################################################
-# INFERENCIA DE ESCENARIOS FUTUROS
+# FCM INFERENCE -- fcminfer()
 ################################################################################
 
-#' Inferencia de Escenarios Futuros (FuzzyInfer)
+#' Inferencia de Escenarios Futuros (fcminfer)
 #'
 #' @description Función que infiere los cambios dentro un mapa cognitivo borroso
 #' y lo expresa iteración a iteración. Permite la representación de un Gráfico
@@ -112,24 +89,24 @@ WeightMatrix <- function(x){
 #'
 #' @export
 
-
-FuzzyInfer <- function(x, imp, act.vec = ActVector(x), ideal = dim(x)[2],
+fcminfer <- function(x, imp, act.vec = actvector(x), ideal = dim(x)[2],
                        infer= "mk", thr= "t", lambda = 1 , iter = 30,
                        graph = TRUE){
 
-  w.mat <- WeightMatrix(imp)
+  w.mat <- .weightmatrix(imp)
   w.mat <- as.data.frame(w.mat)                                                 # Transformamos la matriz de implicaciones en una matriz de pesos
 
 
 
-  result <- fcm::fcm.infer(act.vec, weight_mat = w.mat, infer = infer,
+  result <- .infer(act.vec, weight_mat = w.mat, infer = infer,
                       transform = thr, lambda = lambda, iter = iter)            # Aplicamos la función de fcm.infer del paquete fcm para hacer la inferencia
 
 
   return(result)
 }
 ################################################################################
-# GRÁFICO DE COMPORTAMIENTO VS TIEMPO
+
+# BOT PLOT -- **DEPRECATED**
 ################################################################################
 
 #'
@@ -146,7 +123,7 @@ BTplot <- function(x,imp,ideal=dim(x)[2],iter=30){
   ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),
                          nrow = iter, byrow = TRUE)
 
-  res <- FuzzyInfer(x,imp,iter=iter)
+  res <- fcminfer(x,imp,iter=iter)
 
   x <- c(1:iter)
   y <- c(0:length(poles))
@@ -155,9 +132,9 @@ BTplot <- function(x,imp,ideal=dim(x)[2],iter=30){
   colnames(df) <- y
 
 
-  iterations <- as.numeric(rownames(res$values))  # create a numeric vector named "iterations"
-  df <- data.frame(iterations,  abs(res$values - ideal.matrix) / 2)   # add "iterations" in the "output1$values" dataframe
-  df2 <- melt(df, id="iterations")              # transform the dataframe df into long formats
+  iterations <- as.numeric(rownames(res$values))
+  df <- data.frame(iterations,  abs(res$values - ideal.matrix) / 2)
+  df2 <- melt(df, id="iterations")
   ggplotly(ggplot(data=df2,aes(x=iterations, y=value, group=variable,
                            color=variable)) + theme_bw() + geom_line(size=0.7)
        + geom_point(size = 3) + labs(x="Iteraciones",
@@ -168,31 +145,31 @@ BTplot <- function(x,imp,ideal=dim(x)[2],iter=30){
 }
 
 ################################################################################
-# Gráfico de Dinámicas del Sistema de Constructos Personales (DSCP)
+# PERSONAL CONSTRUCTS SYSTEM DYNAMICS PLOT -- pcsd()
 ################################################################################
 
 #'
 #' @export
 #' @import plotly
 
-DPCSplot <- function(x,imp,ideal=dim(x)[2],iter=30,...){
+pcsd <- function(x,imp,ideal=dim(x)[2],...){
 
   lpoles <- OpenRepGrid::getConstructNames(x)[,1]                               # Extraemos los nombres de los constructos
   rpoles <- OpenRepGrid::getConstructNames(x)[,2]
   poles <- paste(lpoles,"-",rpoles,sep = " ")
-
+  iter <- fcminfer(x,imp,iter=60,...)$convergence
 
   ideal.vector <- OpenRepGrid::getRatingLayer(x)[,ideal]
   ideal.vector <- (ideal.vector - 4)/3
   ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),             # Creamos una matriz con los valores del yo-ideal repetidos por filas
                         nrow = iter, byrow = TRUE)
 
-  res <- FuzzyInfer(x,imp,iter=iter,...)                                        # Obtenemos la inferencia del MCB
+  res <- fcminfer(x,imp,iter=iter,...)$values                                   # Obtenemos la inferencia del MCB
 
-  x <- c(1:iter)
+  x <- c(0:(iter-1))
   y <- c(0:length(poles))
   y <- as.character(y)
-  df <- data.frame(x, abs(res$values - ideal.matrix) / 2)                       # confeccionamos un dataframe con las distancias estandarizadas entre los resultados y el ideal
+  df <- data.frame(x, abs(res - ideal.matrix) / 2)                              # Confeccionamos un dataframe con las distancias estandarizadas entre los resultados y el ideal
   colnames(df) <- y
 
   fig <- plot_ly(df, x = ~x, y = df[,2], name = poles[1], type = 'scatter',
@@ -201,19 +178,20 @@ DPCSplot <- function(x,imp,ideal=dim(x)[2],iter=30,...){
   fig <- fig %>% add_trace(y = df[,n], name = poles[n-1], mode = 'lines+markers'
                            ,line = list(shape = "spline"))
  }
-  fig <- fig %>% layout(title="Dynamics of the Personal Construct System",
+  fig <- fig %>% layout(title="PERSONAL CONSTRUCT SYSTEM DYNAMICS",
                         legend = list(
-                          title=list(text='Personal Constructs')),
+                          title="PERSONAL CONSTRUCTS"),
                         xaxis = list(
-                          title = "Iterations"),
+                          title = "ITERATIONS"),
                         yaxis = list(
-                          title = "Distance to ideal self")
+                          title = "DISTANCE TO IDEAL SELF")
                         )
 
   fig
 }
 ################################################################################
-# DIGRAFO DEL MAPA COGNITIVO BORRROSO
+
+# FUZZY COGNITIVE MAP DIGRAPH -- fcmdigraph()
 ################################################################################
 
 #' Digrafo del Mapa Cognitivo Borroso (FuzzyMap)
@@ -228,7 +206,7 @@ DPCSplot <- function(x,imp,ideal=dim(x)[2],iter=30,...){
 #' @param imp Matriz de implicaciones del sujeto importada con
 #' \code{\link{importIMP}}.
 #'
-#' @param results inferencia de escenarios creada con \code{\link{FuzzyInfer}}.
+#' @param results inferencia de escenarios creada con \code{\link{fcminfer}}.
 #'
 #' @param ideal Posición del ideal dentro de la rejilla expresado a través del
 #' número de la columna donde se encuentra.
@@ -257,14 +235,14 @@ DPCSplot <- function(x,imp,ideal=dim(x)[2],iter=30,...){
 #' @export
 
 
-FuzzyMap <- function(x, imp, results = FuzzyInfer(x,imp,graph = FALSE),
+fcmdigraph <- function(x, imp, results = fcminfer(x,imp,graph = FALSE)$values,
                      ideal = dim(x)[2], niter = 30,layout = "graphopt",
                      edge.width = 1.5, vertex.size = 1, legend = FALSE ){
 
   lpoles <- getConstructNames(x)[,1]
   rpoles <- getConstructNames(x)[,2]                                            # Extraemos los nombres de los polos de los constructos de la Rejilla.
 
-  w.mat <- WeightMatrix(imp)
+  w.mat <- .weightmatrix(imp)
   w.mat <- as.matrix(w.mat)                                                     # Transformamos las implicaciones en pesos.
 
   results <- as.numeric(as.data.frame(results)[niter,])                         # Extraemos el vector de escenario seleccionado por el usuario.
@@ -402,12 +380,13 @@ FuzzyMap <- function(x, imp, results = FuzzyInfer(x,imp,graph = FALSE),
            title = "Constructos Personales")
   }                                                                             # Dibujamos la leyenda del mapa cognitivo borroso.
 }
-
-################################################################################
-# DIGRAFO DEL MAPA COGNITIVO BORROSO EN 3D
 ################################################################################
 
-#' Digrafo del Mapa Cognitivo Borroso en 3D (FuzzyMap3D)
+
+# 3D FUZZY COGNITVE MAP DIGRAPH -- fcmdigraph3D()
+################################################################################
+
+#' Digrafo del Mapa Cognitivo Borroso en 3D (fcmdigraph3D)
 #'
 #' @description Función que nos dibuja un digrafo del Mapa Cognitivo Borroso en
 #' tres dimensiones del sistema de constructos de un individuo a través de una
@@ -420,7 +399,7 @@ FuzzyMap <- function(x, imp, results = FuzzyInfer(x,imp,graph = FALSE),
 #' @param imp Matriz de implicaciones del sujeto importada con
 #' \code{\link{importIMP}}.
 #'
-#' @param results inferencia de escenarios creada con \code{\link{FuzzyInfer}}.
+#' @param results inferencia de escenarios creada con \code{\link{fcminfer}}.
 #'
 #' @param ideal Posición del ideal dentro de la rejilla expresado a través del
 #' número de la columna donde se encuentra.
@@ -443,13 +422,14 @@ FuzzyMap <- function(x, imp, results = FuzzyInfer(x,imp,graph = FALSE),
 #'
 #' @export
 #'
-FuzzyMap3D <- function(x, imp, results = FuzzyInfer(x,imp,graph = FALSE), ideal = dim(x)[2],niter=30,
-                       edge.width=2, vertex.size =1){
+fcmdigraph3D <- function(x, imp, results = fcminfer(x,imp,graph = FALSE)$values,
+                       ideal = dim(x)[2], niter=30,edge.width=2,
+                       vertex.size =1){
 
   lpoles <- getConstructNames(x)[,1]
   rpoles <- getConstructNames(x)[,2]                                            # Extraemos los nombres de los polos de los constructos.
 
-  w.mat <- WeightMatrix(imp)
+  w.mat <- .weightmatrix(imp)
   w.mat <- as.matrix(w.mat)                                                     # Transformamos la matriz de implicaciones en una matriz de pesos
 
   results <- as.numeric(as.data.frame(results)[niter,])                         # Extraemos el vector de escenario que quiere representar el usuario
@@ -532,10 +512,10 @@ FuzzyMap3D <- function(x, imp, results = FuzzyInfer(x,imp,graph = FALSE), ideal 
 
   rglplot(graph.map,layout = L)                                                 # Dibujamos el grafo en 3D con rgl.
 }
-
-
 ################################################################################
-# DIGRAFO DEL IDEAL
+
+
+# IDEAL FUZZY COGNITIVE MAP DIGRAPH - idealdigraph()
 ################################################################################
 #' Digrafo del Yo-Ideal (IdealMap)
 #'
@@ -572,17 +552,17 @@ FuzzyMap3D <- function(x, imp, results = FuzzyInfer(x,imp,graph = FALSE), ideal 
 #'
 #' @export
 
-IdealMap <- function(x,imp, ideal = dim(x)[2], inc = FALSE, layout ="circle",
+idealdigraph <- function(x,imp, ideal = dim(x)[2], inc = FALSE, layout ="circle",
                      edge.width = 1, vertex.size = 1,legend = FALSE){
 
   lpoles <- getConstructNames(x)[,1]
   rpoles <- getConstructNames(x)[,2]                                            # Extraemos los nombres de los polos de los contrusctos de la Rejilla.
 
-  w.mat <- WeightMatrix(imp)
+  w.mat <- .weightmatrix(imp)
   w.mat <- as.matrix(w.mat)                                                     # Transformamos las implicaciones en pesos.
 
-  act.vector <- ActVector(x,col.element = ideal)
-  ideal.results <- FuzzyInfer(x,imp,act.vector,graph = FALSE)
+  act.vector <- actvector(x,col.element = ideal)
+  ideal.results <- fcminfer(x,imp,act.vector,graph = FALSE)$values
   results <- as.numeric(as.data.frame(ideal.results)[1,])                       # Extraemos el vector de escenario seleccionado por el usuario.
 
   n <- 1
@@ -720,18 +700,21 @@ IdealMap <- function(x,imp, ideal = dim(x)[2], inc = FALSE, layout ="circle",
            title = "Constructos Personales")
   }                                                                             # Dibujamos la leyenda del mapa cognitivo borroso.
 }
-
 ################################################################################
-# CREACIÓN DE INFORME
+
+# ANALISYS REPORT -- fcmreport()
 ################################################################################
 
 #' @export
 #'
 
-FCMreport <- function(x, imp, dir = getwd()){
+fcmreport <- function(x, imp, name = "report", dir = getwd()){
   render.grid <- x
   render.imp <- imp
-  rmarkdown::draft("Informe","informe", package = "GridFCM")
-  rmarkdown::render("Informe.Rmd")
-  file.remove("Informe.Rmd")
+  file <- paste(name,".Rmd", sep = "")
+  file.remove(file)
+
+  rmarkdown::draft(name,"informe", package = "GridFCM",edit=FALSE)
+  rmarkdown::render(file , output_dir = dir)
+  file.remove(file)
 }

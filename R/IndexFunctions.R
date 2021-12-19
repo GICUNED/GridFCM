@@ -2,7 +2,7 @@
 #------------------------------INDEX FUNCTIONS---------------------------------#
 ################################################################################
 
-# DENSIDAD DEL MAPA
+# FUZZY COGNITIVE MAP DENSITY -- density_index()
 ################################################################################
 
 #' Cálculo de la Densidad del Mapa (IMPdensity)
@@ -22,15 +22,15 @@
 #' @export
 #'
 
-IMPdensity <- function(imp){
+density_index <- function(imp){
   n <- ncol(imp)
-  result <- sum(CentDegree(imp)$Salidas)/(n*(n-1))
+  result <- sum(degree_index(imp)$Outputs)/(n*(n-1))
   return(result)
 }
 ################################################################################
 
 
-# CENTRALIDAD POR GRADO
+# DEGREE INDEX CENTRALITY -- degree_index()
 ################################################################################
 
 #' Cálculo de la Centralidad a través del Grado (CentDegree)
@@ -53,7 +53,7 @@ IMPdensity <- function(imp){
 #' @export
 #'
 
-CentDegree <- function(imp, method="simple"){
+degree_index <- function(imp, method="simple"){
 
   result <- list()                                                              # Creamos una lista vacía para luego poder referenciarla.
 
@@ -70,7 +70,7 @@ CentDegree <- function(imp, method="simple"){
 
   if(method == "weight" | method == "wnorm"){                                   # Método Ponderado
 
-    imp.grid <- imp/3                                                           #Transformamos la matriz de implicaciones a una matriz de pesos.
+    imp.grid <- imp/3                                                           # Transformamos la matriz de implicaciones a una matriz de pesos.
 
     Cout <- rowSums(abs(imp.grid))
     Cin <- colSums(abs(imp.grid))                                               # Sumamos los valores absolutos de las ponderaciones
@@ -88,15 +88,15 @@ CentDegree <- function(imp, method="simple"){
     Cin <- Cin/(N*(N-1))                                                        # Dividimos los vectores de entrada y salida entre el número de aristas potenciales.
   }
 
-  result$Salidas <- Cout
-  result$Entradas <- Cin
-  result$Conexiones <- Cout + Cin                                               # Introducimos los resultados en la lista
+  result$Outputs <- Cout
+  result$Inputs <- Cin
+  result$All <- Cout + Cin                                                      # Introducimos los resultados en la lista
 
   return(result)
 }
 ################################################################################
 
-# MATRIZ DE DISTANCIAS
+# DISTANCE MATRIX -- dismatrix()
 ################################################################################
 
 #' Cálculo de distancia entre constructos en el digrafo (IMPdistances)
@@ -120,9 +120,9 @@ CentDegree <- function(imp, method="simple"){
 #' @export
 #'
 
-IMPdistances <- function(imp,mode="out"){
+dismatrix <- function(imp,mode="out"){
 
-  w.mat <- WeightMatrix(imp)
+  w.mat <- .weightmatrix(imp)
   w.mat <- as.matrix(w.mat)
 
   G <- igraph::graph.adjacency(w.mat,mode = "directed",weighted = T)
@@ -133,7 +133,7 @@ IMPdistances <- function(imp,mode="out"){
 }
 ################################################################################
 
-# CENTRALIDAD POR CERCANÍA
+# CLOSENESS CENTRALITY INDEX -- close_index()
 ################################################################################
 
 #' Cálculo de la centralidad a través de la cercanía (CentClose)
@@ -155,9 +155,9 @@ IMPdistances <- function(imp,mode="out"){
 #' @export
 #'
 
-CentClose <- function(imp, norm = TRUE){
+close_index <- function(imp, norm = TRUE){
 
-  dist <- IMPdistances(imp)
+  dist <- dismatrix(imp)
   N <- dim(dist)[1]
   if(norm){
     result <- (N-1)/(colSums(dist))
@@ -168,7 +168,7 @@ CentClose <- function(imp, norm = TRUE){
 }
 ################################################################################
 
-# CENTRALIDAD POR INTERMEDIACIÓN
+# BETWEENESS CENTRALITY INDEX -- betw_index()
 ################################################################################
 
 #' Cálculo de la centralidad a través de la intermediación (CentBetw)
@@ -192,10 +192,10 @@ CentClose <- function(imp, norm = TRUE){
 #' @export
 #'
 
-CentBetw <- function(imp,norm=TRUE){
+betw_index <- function(imp,norm=TRUE){
 
 
-  w.mat <- WeightMatrix(abs(imp))
+  w.mat <- .weightmatrix(abs(imp))
   w.mat <- as.matrix(w.mat)
 
   G <- igraph::graph.adjacency(w.mat,mode = "directed",weighted = T)
@@ -204,4 +204,4 @@ CentBetw <- function(imp,norm=TRUE){
 
   return(result)
 }
-
+################################################################################

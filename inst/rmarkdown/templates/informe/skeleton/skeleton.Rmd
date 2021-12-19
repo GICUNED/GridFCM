@@ -1,6 +1,7 @@
 ---
 title: "GridFCM"
-output: flexdashboard::flex_dashboard
+output:
+  flexdashboard::flex_dashboard:
 output_file: "Informe.html"
 social: [ "twitter", "facebook", "menu" ]
 source_code: embed
@@ -13,7 +14,7 @@ library(OpenRepGrid)
 library(knitr)
 library(rgl)
 library(shiny)
-library(magick)
+library(plotly)
 knitr::knit_hooks$set(webgl = hook_webgl)
 ```
 
@@ -95,11 +96,13 @@ sidebar {.sidebar}
 COR.IDEAL <- elementCor(render.grid)[1,ncol(render.grid)]
 PVEFF <- indexPvaff(render.grid)
 INTc <- indexIntensity(render.grid)[[1]]
+INTc <- INTc[order(-INTc)]
 INTe <- indexIntensity(render.grid)[[2]]
+INTe <- INTe[order(-INTe)]
 INT <- indexIntensity(render.grid)[[5]]
 CON <- indexConflict1(render.grid)[[4]]
 
-kable(data.frame(COR.IDEAL,PVEFF,INT,CON),col.names = c("Cor. Yo-Actual / Yo-Ideal","PVAPF","Intensidad","Conflictos"))
+kable(data.frame(COR.IDEAL,PVEFF,INT,CON),col.names = c("Cor. Self / Ideal-Self","PVAFF","Intensity","Conflicts"))
 ```
 
 2 {.tabset .tabset-fade}
@@ -108,34 +111,34 @@ kable(data.frame(COR.IDEAL,PVEFF,INT,CON),col.names = c("Cor. Yo-Actual / Yo-Ide
 ### Construct Intensity
 
 ```{r echo=FALSE}
-kable(INTc, col.names = "Intensidad")
+kable(INTc, col.names = "Intensity")
 ```
 
 ### Element Intensity
 
 ```{r echo=FALSE}
-kable(INTe, col.names = "Intensidad")
+kable(INTe, col.names = "Intensity")
 ```
 
-Ideal Fuzzy Map {data-navmenu="FCM ANALYSIS"}
+Ideal Digraph {data-navmenu="FCM ANALYSIS"}
 ==============================================
 
 sidebar {.sidebar}
 --------------------
 
-Idealmap {.tabset .tabset-fade}
+Ideal digraph {.tabset .tabset-fade}
 --------------------
 
 ### Full
 
 ```{r echo=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, results='hide'}
-IdealMap(render.grid,render.imp)
+idealdigraph(render.grid,render.imp)
 ```
 
 ### Inconsistencies
 
 ```{r echo=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, results='hide'}
-IdealMap(render.grid,render.imp, inc=TRUE)
+idealdigraph(render.grid,render.imp, inc=TRUE)
 ```
 
 Self Fuzzy Map {data-navmenu="FCM ANALYSIS" data-orientation=rows}
@@ -145,100 +148,60 @@ sidebar {.sidebar}
 -------------------
 
 
-GCT
+DPCS Plot
 --------------------------------------
 
-### Behavior vs Time Graph
+### PCSD plot
 
-```{r echo=FALSE, fig.height=6, fig.width=20, message=FALSE, warning=FALSE, results='hide'}
-BTplot2(render.grid,render.imp)
+```{r echo=FALSE, fig.height=6, fig.width=20, message=FALSE, warning=FALSE}
+pcsd(render.grid,render.imp)
 ```
 
-FCM {.tabset .tabset-fade}
+FCM Digraph  {.tabset .tabset-fade}
 ---------------------------------------
 
 ### Graphopt
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.show="hold", out.width="50%",out.height="100%"}
-FuzzyMap(render.grid,render.imp,niter = 1, layout = "graphopt")
-FuzzyMap(render.grid,render.imp,niter = 30, layout = "graphopt")
+fcmdigraph(render.grid,render.imp,niter = 1, layout = "graphopt")
+fcmdigraph(render.grid,render.imp,niter = 30, layout = "graphopt")
 ```
 
 
-### Graphopt
+### Multidimensional Scaling
 
-```{r eval=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, include=FALSE}
-
- dir_out <- file.path(tempdir(), "FCM-images")
-dir.create(dir_out,recursive = TRUE)
-
-iter <- c(1:30)
-
-for (i in iter) {
-  if(i<10){
-  name <- paste(dir_out,"/FCM_0",i,".png",sep = "")
-  }else{
-  name <- paste(dir_out,"/FCM_",i,".png",sep = "") 
-  }  
-  
-  png(name, width = 800, height = 800)
-  FuzzyMap(render.grid,render.imp,niter = i, layout = "graphopt")
-  mtext(paste("Iteración número",i,sep = " "))
-  dev.off()
-}
-
-imgs <- list.files(dir_out, full.names = TRUE)
-img_list <- lapply(imgs, image_read)
-
-img_joined <- image_join(img_list)
-
-FCM.gif.1 <- image_animate(img_joined, fps = 1)
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.show="hold", out.width="50%",out.height="100%"}
+fcmdigraph(render.grid,render.imp,niter = 1, layout = "mds")
+fcmdigraph(render.grid,render.imp,niter = 30, layout = "mds")
 ```
 
-```{r eval=FALSE, include=FALSE}
-FCM.gif.1
-```
 
 ### Reingold - Tilford
 
-```{r eval=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, include=FALSE}
-
- dir_out <- file.path(tempdir(), "FCM-images")
-dir.create(dir_out,recursive = TRUE)
-
-iter <- c(1:30)
-
-for (i in iter) {
-  if(i<10){
-  name <- paste(dir_out,"/FCM_0",i,".png",sep = "")
-  }else{
-  name <- paste(dir_out,"/FCM_",i,".png",sep = "") 
-  }  
-  
-  png(name, width = 800, height = 800)
-  FuzzyMap(render.grid,render.imp,niter = i, layout = "rtcircle")
-  mtext(paste("Iteración número",i,sep = " "))
-  dev.off()
-}
-
-imgs <- list.files(dir_out, full.names = TRUE)
-img_list <- lapply(imgs, image_read)
-
-img_joined <- image_join(img_list)
-
-FCM.gif.2 <- image_animate(img_joined, fps = 1)
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.show="hold", out.width="50%",out.height="100%"}
+fcmdigraph(render.grid,render.imp,niter = 1, layout = "rtcircle")
+fcmdigraph(render.grid,render.imp,niter = 30, layout = "rtcircle")
 ```
 
-```{r eval=FALSE, include=FALSE}
-FCM.gif.2
+### Circle
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.show="hold", out.width="50%",out.height="100%"}
+fcmdigraph(render.grid,render.imp,niter = 1, layout = "circle")
+fcmdigraph(render.grid,render.imp,niter = 30, layout = "circle")
 ```
 
+### Grid
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.show="hold", out.width="50%",out.height="100%"}
+fcmdigraph(render.grid,render.imp,niter = 1, layout = "grid")
+fcmdigraph(render.grid,render.imp,niter = 30, layout = "grid")
+```
 
 ### FCM 3D
 
 ```{r echo=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, results='hide',webgl=TRUE}
 rgl.clear()
-FuzzyMap3D(render.grid,render.imp, niter = 1)
+fcmdigraph3D(render.grid,render.imp, niter = 1)
 ```
 
 FCM Indeces {data-navmenu="FCM ANALYSIS" data-orientation=rows}
@@ -255,12 +218,15 @@ sidebar {.sidebar}
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 n.edges <- sum(render.imp != 0)
 n.vertex <- ncol(render.imp)
-dens <- IMPdensity(render.imp)
-degree <- cbind(CentDegree(render.imp)[[1]],CentDegree(render.imp)[[2]],CentDegree(render.imp)[[3]])
-close <- CentClose(render.imp)
-betw <- CentBetw(render.imp)
+dens <- density_index(render.imp)
+degree <- cbind(degree_index(render.imp)[[1]],degree_index(render.imp)[[2]],degree_index(render.imp)[[3]])
+degree <- degree[order(-degree[,3]),]
+close <- close_index(render.imp)
+close <- close[order(-close)]
+betw <- betw_index(render.imp)
+betw <- betw[order(-betw)]
 
-kable(data.frame(n.vertex,n.edges, dens),col.names = c("Vértices","Aristas","Densidad"))
+kable(data.frame(n.vertex,n.edges, dens),col.names = c("Vertexes","Edges","Density"))
 ```
 
 2 {.tabset .tabset-fade}
@@ -268,18 +234,18 @@ kable(data.frame(n.vertex,n.edges, dens),col.names = c("Vértices","Aristas","De
 ### Degree
 
 ```{r echo=FALSE}
-kable(degree, col.names = c("Salidas","Entradas","Total"))
+kable(degree, col.names = c("Outputs","Inputs","All"))
 ```
 
 ### Closeness
 
 ```{r echo=FALSE}
-kable(close, col.names = "Centralidad")
+kable(close, col.names = "Centrality")
 ```
 
 ### Betweenness
 
 ```{r echo=FALSE}
-kable(betw, col.names = "Centralidad")
+kable(betw, col.names = "Centrality")
 ```
 

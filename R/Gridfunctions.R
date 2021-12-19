@@ -1,6 +1,10 @@
-# IMPORTAR REJILLA DE IMPLICACIONES
+################################################################################
+##----------------------------#GRID FUNCTIONS##-------------------------------##
+################################################################################
+
+# IMPORT IMPGRID --- importimp()
 ###############################################################################
-#' Importar Rejilla de Implicaciones (importIMP)
+#' Importar Rejilla de Implicaciones (importimp)
 #'
 #' @description Función que permite leer una rejilla de implicaciones contenida
 #' dentro de un archivo de excel.
@@ -19,7 +23,8 @@
 #'
 #' @export
 #'
-importIMP <- function(path, method="hinkle"){
+
+importimp <- function(path, method="hinkle"){
   xls <- readxl::read_excel(path)                                               # Leemos el excel que contiene los datos
   xls <- xls[,-dim(xls)[2]]
   xls <- xls[,-1]                                                               # Eliminamos las columnas exteriores
@@ -31,7 +36,7 @@ importIMP <- function(path, method="hinkle"){
 }
 ################################################################################
 
-# IMPORTAR TÉCNICA DE REJILLA
+# IMPORT IMPGRID -- importgrid()
 ################################################################################
 
 #' Importar Técnica de Rejilla (importGRID)
@@ -49,15 +54,16 @@ importIMP <- function(path, method="hinkle"){
 #'
 #' @export
 
-importGRID <- function(path, ...){
+importgrid <- function(path, ...){
 
-  grid <- importExcel(path,...)                                                 #Importamos la rejilla con la función del OpenRepGrid,
-  grid <- alignByIdeal(grid,dim(grid)[2])                                       #Orientamos la rejilla según el ideal
-  grid <- .alignbyself(grid)                                                    #Orientamos la rejilla según el Yo-Actual
+  grid <- importExcel(path, ...)                                                # Importamos la rejilla con la función del OpenRepGrid,
+  grid <- alignByIdeal(grid,dim(grid)[2])                                       # Orientamos la rejilla según el ideal
+  grid <- .alignbyself(grid)                                                    # Orientamos la rejilla según el Yo-Actual
   return(grid)
 }
+################################################################################
 
-# PLANTILLA DE IMPGRID
+# EXPORT IMPGRID TEMPLATE -- templateimp()
 ################################################################################
 
 #' Importar Técnica de Rejilla (importGRID)
@@ -77,7 +83,7 @@ importGRID <- function(path, ...){
 #' @import xlsx
 #' @export
 
-templateIMP <- function(x,name ="ImpGrid_Template"){
+templateimp <- function(x,name ="ImpGrid_Template"){
   requireNamespace("xlsx")                                                      # Comprobamos que el sujeto tenga instalado y ejecutado xlsx
 
   dim <- dim(x)[1]                                                              # Guardamos el número de constructos de la rejilla
@@ -127,3 +133,4 @@ templateIMP <- function(x,name ="ImpGrid_Template"){
 
 
 }
+################################################################################
