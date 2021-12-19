@@ -1,0 +1,258 @@
+---
+title: "GridFCM"
+output:
+  flexdashboard::flex_dashboard:
+social: [ "twitter", "facebook", "menu" ]
+source_code: embed
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(GridFCM)
+library(OpenRepGrid)
+library(knitr)
+library(rgl)
+library(shiny)
+library(plotly)
+knitr::knit_hooks$set(webgl = hook_webgl)
+```
+
+REPGRID
+=============================================
+
+sidebar {.sidebar}
+--------------------------------------------
+
+TEXTO DE PRUEBA
+
+1
+--------------------------------------------
+
+### GRID 
+
+```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE}
+bertin(render.grid)
+```
+
+2 {.tabset .tabset-fade}
+---------------------------------------------
+
+### Biplot Simple
+
+```{r echo=FALSE,  fig.height=9, fig.width=9, message=FALSE, warning=FALSE}
+biplotSimple(render.grid, c.label.col = "darkred")
+```
+
+### Biplot 2D
+
+```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE}
+biplot2d(render.grid, c.label.col = "darkred")
+```
+
+### Biplot 3D
+
+```{r echo=FALSE,  fig.height=8, fig.width=8, message=FALSE, warning=FALSE, webgl=TRUE}
+biplot3d(render.grid, c.label.col = "darkred")
+```
+
+CLUSTER
+==========================================
+
+1 {.sidebar}
+----------------------------------------
+
+Constructos 
+-----------------------------------------
+
+### Constructs
+
+```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE}
+cluster(render.grid, along = 1)
+```
+
+Elementos 
+-----------------------------------------
+
+### Elements
+
+```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE}
+cluster(render.grid, along = 2)
+```
+
+
+COGNITIVE INDECES {data-orientation=rows}
+===========================================
+
+sidebar {.sidebar}
+--------------------------------
+
+1 {data-height=50}
+-------------------------------------
+
+### Indeces
+
+```{r echo=FALSE}
+COR.IDEAL <- elementCor(render.grid)[1,ncol(render.grid)]
+PVEFF <- indexPvaff(render.grid)
+INTc <- indexIntensity(render.grid)[[1]]
+INTc <- INTc[order(-INTc)]
+INTe <- indexIntensity(render.grid)[[2]]
+INTe <- INTe[order(-INTe)]
+INT <- indexIntensity(render.grid)[[5]]
+CON <- indexConflict1(render.grid)[[4]]
+
+kable(data.frame(COR.IDEAL,PVEFF,INT,CON),col.names = c("Cor. Self / Ideal-Self","PVAFF","Intensity","Conflicts"))
+```
+
+2 {.tabset .tabset-fade}
+----------------------------------------
+
+### Construct Intensity
+
+```{r echo=FALSE}
+kable(INTc, col.names = "Intensity")
+```
+
+### Element Intensity
+
+```{r echo=FALSE}
+kable(INTe, col.names = "Intensity")
+```
+
+Ideal Digraph {data-navmenu="FCM ANALYSIS"}
+==============================================
+
+sidebar {.sidebar}
+--------------------
+
+Ideal digraph {.tabset .tabset-fade}
+--------------------
+
+### Full
+
+```{r echo=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, results='hide'}
+idealdigraph(render.grid,render.imp)
+```
+
+### Inconsistencies
+
+```{r echo=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, results='hide'}
+idealdigraph(render.grid,render.imp, inc=TRUE)
+```
+
+Self Fuzzy Map {data-navmenu="FCM ANALYSIS"}
+===========================================
+
+sidebar {.sidebar}
+-------------------
+
+```{r echo=FALSE,message=FALSE, warning=FALSE}
+convergence <- fcminfer(render.grid,render.imp)$convergence
+sliderInput("iteration", "iteration:", 
+            min = 0, max = convergence-1, value = 0, round = TRUE)
+```
+
+
+DPCS Plot
+--------------------------------------
+
+### PCSD plot
+
+```{r echo=FALSE, fig.height=6, fig.width=20, message=FALSE, warning=FALSE}
+pcsd(render.grid,render.imp)
+```
+
+FCM Digraph  {.tabset .tabset-fade}
+---------------------------------------
+
+### Graphopt
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+renderPlot({
+fcmdigraph(render.grid,render.imp,niter = input$iterarion + 1, layout = "graphopt")
+})
+```
+
+
+### Multidimensional Scaling
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.show="hold", out.width="50%",out.height="100%"}
+fcmdigraph(render.grid,render.imp,niter = 1, layout = "mds")
+fcmdigraph(render.grid,render.imp,niter = 30, layout = "mds")
+```
+
+
+### Reingold - Tilford
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.show="hold", out.width="50%",out.height="100%"}
+fcmdigraph(render.grid,render.imp,niter = 1, layout = "rtcircle")
+fcmdigraph(render.grid,render.imp,niter = 30, layout = "rtcircle")
+```
+
+### Circle
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.show="hold", out.width="50%",out.height="100%"}
+fcmdigraph(render.grid,render.imp,niter = 1, layout = "circle")
+fcmdigraph(render.grid,render.imp,niter = 30, layout = "circle")
+```
+
+### Grid
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.show="hold", out.width="50%",out.height="100%"}
+fcmdigraph(render.grid,render.imp,niter = 1, layout = "grid")
+fcmdigraph(render.grid,render.imp,niter = 30, layout = "grid")
+```
+
+### FCM 3D
+
+```{r echo=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, results='hide',webgl=TRUE}
+rgl.clear()
+fcmdigraph3D(render.grid,render.imp, niter = 1)
+```
+
+FCM Indeces {data-navmenu="FCM ANALYSIS" data-orientation=rows}
+==========================================
+
+sidebar {.sidebar}
+---------------------------------------
+
+1 {data-height=50}
+----------------------------------------
+
+### ImpGrid Indeces
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+n.edges <- sum(render.imp != 0)
+n.vertex <- ncol(render.imp)
+dens <- density_index(render.imp)
+degree <- cbind(degree_index(render.imp)[[1]],degree_index(render.imp)[[2]],degree_index(render.imp)[[3]])
+degree <- degree[order(-degree[,3]),]
+close <- close_index(render.imp)
+close <- close[order(-close)]
+betw <- betw_index(render.imp)
+betw <- betw[order(-betw)]
+
+kable(data.frame(n.vertex,n.edges, dens),col.names = c("Vertexes","Edges","Density"))
+```
+
+2 {.tabset .tabset-fade}
+------------------------------------------------
+### Degree
+
+```{r echo=FALSE}
+kable(degree, col.names = c("Outputs","Inputs","All"))
+```
+
+### Closeness
+
+```{r echo=FALSE}
+kable(close, col.names = "Centrality")
+```
+
+### Betweenness
+
+```{r echo=FALSE}
+kable(betw, col.names = "Centrality")
+```
+

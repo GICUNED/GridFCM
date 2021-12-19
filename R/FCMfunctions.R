@@ -708,13 +708,19 @@ idealdigraph <- function(x,imp, ideal = dim(x)[2], inc = FALSE, layout ="circle"
 #' @export
 #'
 
-fcmreport <- function(x, imp, name = "report", dir = getwd()){
+fcmreport <- function(x, imp, name = "report", dir = getwd(),type = "html"){
+
   render.grid <- x
   render.imp <- imp
   file <- paste(name,".Rmd", sep = "")
   file.remove(file)
-
-  rmarkdown::draft(name,"informe", package = "GridFCM",edit=FALSE)
+if(type == "html"){
+  rmarkdown::draft(name,"report_html", package = "GridFCM",edit=FALSE)
   rmarkdown::render(file , output_dir = dir)
+}
+if(type =="shiny"){
+  rmarkdown::draft(name,"report_shiny", package = "GridFCM",edit=FALSE)
+  rmarkdown::run(file, shiny_args = list(launch.browser = TRUE))
+}
   file.remove(file)
 }
