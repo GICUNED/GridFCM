@@ -7,7 +7,7 @@
 fcmdigraph3D(
   x,
   imp,
-  results = fcminfer(x, imp, graph = FALSE)$values,
+  results = fcminfer(x, imp)$values,
   ideal = dim(x)[2],
   niter = 30,
   edge.width = 2,

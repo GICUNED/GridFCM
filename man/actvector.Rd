@@ -20,7 +20,7 @@ Devuelve un vector que contiene los pesos para cada uno de los
 constructos asociados a un elemento.
 }
 \description{
-Función que extrae un vector de un elemento de la rejilla y lo
+Función que extrae un vector para un elemento de la rejilla y lo
 transforma en un vector de activación apropiado para utilizarse a la hora de
 crear un mapa cognitivo borroso.
 }

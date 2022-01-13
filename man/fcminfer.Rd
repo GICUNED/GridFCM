@@ -2,7 +2,7 @@
 % Please edit documentation in R/FCMfunctions.R
 \name{fcminfer}
 \alias{fcminfer}
-\title{Inferencia de Escenarios Futuros (fcminfer)}
+\title{Inferencia de Escenarios Futuros -- fcminfer()}
 \usage{
 fcminfer(
   x,
@@ -12,8 +12,7 @@ fcminfer(
   infer = "mk",
   thr = "t",
   lambda = 1,
-  iter = 30,
-  graph = TRUE
+  iter = 30
 )
 }
 \arguments{
@@ -43,18 +42,16 @@ información sonbre las distintas funciones umbral escribiendo
 escoge función umbral sigmoidal o tangente hiperbólica.}
 
 \item{iter}{Número de iteraciones que se desea inferir}
-
-\item{graph}{Devuelve un Gráfico de Comportamiento vs. Tiempo cuando es
-\code{TRUE}}
 }
 \value{
-Devuelve una lista (list) que contiene por filas cada uno de los
-vectores de escenario en función del número de iteraciones.
+Devuelve una lista con dos entradas. La entrada $values contiene por
+filas cada uno de los vectores de escenario en función del número de
+iteraciones. Y la entrada $convergence contiene el número de la iteración
+donde se estabilizada el mapa cognitivo borroso.
 }
 \description{
 Función que infiere los cambios dentro un mapa cognitivo borroso
-y lo expresa iteración a iteración. Permite la representación de un Gráfico
-de Comportamiento vs. Tiempo (GCT).
+y lo expresa iteración a iteración.
 }
 \examples{
 

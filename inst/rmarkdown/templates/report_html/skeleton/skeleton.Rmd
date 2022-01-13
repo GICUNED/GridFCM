@@ -2,9 +2,11 @@
 title: "GridFCM"
 output:
   flexdashboard::flex_dashboard:
+    css: style.css
+    logo: gridfcm.png
+    source_code: embed
+    
 output_file: "Informe.html"
-social: [ "twitter", "facebook", "menu" ]
-source_code: embed
 ---
 
 ```{r setup, include=FALSE}
@@ -18,56 +20,72 @@ library(plotly)
 knitr::knit_hooks$set(webgl = hook_webgl)
 ```
 
-REPGRID
+GRIDS {data-orientation=rows}
+=============================================
+
+sidebar {.sidebar}
+---------------------------------------------
+
+**GRIDFCM REPORT**
+
+Grids {.tabset .tabset-fade}
+---------------------------------------------
+
+### RepGrid
+
+```{r RepGrid, echo=FALSE, fig.width=12, message=FALSE, warning=FALSE}
+bertin(render.grid, colors = c("white","#005440"))
+```
+
+### ImpGrid
+
+```{r ImpGrid, echo=FALSE, fig.width=12, message=FALSE, warning=FALSE}
+bertin(render.imp, colors = c("#F52722","#e5e5e5","#a5d610"))
+```
+
+Biplot {data-navmenu="REPGRID ANALYSIS"}
 =============================================
 
 sidebar {.sidebar}
 --------------------------------------------
 
-TEXTO DE PRUEBA
-
-1
---------------------------------------------
-
-### GRID 
-
-```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE}
-bertin(render.grid)
-```
+**BIPLOTS**
 
 2 {.tabset .tabset-fade}
 ---------------------------------------------
 
 ### Biplot Simple
 
-```{r echo=FALSE,  fig.height=9, fig.width=9, message=FALSE, warning=FALSE}
+```{r Biplot Simple, echo=FALSE, fig.height=9, fig.width=12, message=FALSE, warning=FALSE}
 biplotSimple(render.grid, c.label.col = "darkred")
 ```
 
 ### Biplot 2D
 
-```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE}
+```{r Biplot 2D, echo=FALSE, fig.height=10, fig.width=10, message=FALSE, warning=FALSE}
 biplot2d(render.grid, c.label.col = "darkred")
 ```
 
 ### Biplot 3D
 
-```{r echo=FALSE,  fig.height=8, fig.width=8, message=FALSE, warning=FALSE, webgl=TRUE}
+```{r Biplot 3D, echo=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, webgl=TRUE}
 biplot3d(render.grid, c.label.col = "darkred")
 ```
 
-CLUSTER
+Cluster Analysis {data-navmenu="REPGRID ANALYSIS"}
 ==========================================
 
-1 {.sidebar}
+sidebar {.sidebar}
 ----------------------------------------
+
+**CLUSTER ANALYSIS**
 
 Constructos 
 -----------------------------------------
 
 ### Constructs
 
-```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE}
+```{r Construct Cluster, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%"}
 cluster(render.grid, along = 1)
 ```
 
@@ -76,23 +94,25 @@ Elementos
 
 ### Elements
 
-```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE}
+```{r Element Cluster, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%"}
 cluster(render.grid, along = 2)
 ```
 
 
-COGNITIVE INDECES {data-orientation=rows}
+Cognitive Indeces {data-navmenu="REPGRID ANALYSIS" data-orientation=rows}
 ===========================================
 
 sidebar {.sidebar}
 --------------------------------
 
-1 {data-height=50}
+**COGNITIVE INDECES**
+
+Global {data-height=50}
 -------------------------------------
 
 ### Indeces
 
-```{r echo=FALSE}
+```{r Indeces, echo=FALSE}
 COR.IDEAL <- elementCor(render.grid)[1,ncol(render.grid)]
 PVEFF <- indexPvaff(render.grid)
 INTc <- indexIntensity(render.grid)[[1]]
@@ -105,103 +125,179 @@ CON <- indexConflict1(render.grid)[[4]]
 kable(data.frame(COR.IDEAL,PVEFF,INT,CON),col.names = c("Cor. Self / Ideal-Self","PVAFF","Intensity","Conflicts"))
 ```
 
-2 {.tabset .tabset-fade}
+Intensity {.tabset .tabset-fade}
 ----------------------------------------
 
 ### Construct Intensity
 
-```{r echo=FALSE}
+```{r Constructs intensity, echo=FALSE}
 kable(INTc, col.names = "Intensity")
 ```
 
 ### Element Intensity
 
-```{r echo=FALSE}
+```{r Elements intensity, echo=FALSE}
 kable(INTe, col.names = "Intensity")
 ```
 
-Ideal Digraph {data-navmenu="FCM ANALYSIS"}
+Implicative Dilemmas {data-navmenu="REPGRID ANALYSIS"}
+===========================================
+
+```{r Dilemmas Setup, include=FALSE}
+dilemma <- indexDilemma(render.grid)
+```
+
+sidebar {.sidebar}
+--------------------------------
+
+**IMPLICATIVE DILEMMAS**
+
+Congruent/Discrepant Constructs
+--------------------------------
+
+### Congruent/Discrepant Constructs
+
+```{r Congruent/Discrepant, echo=FALSE}
+colnames(dilemma$res1)[1] <- "Status"
+kable(dilemma$res1)
+```
+
+Dilemmas
+----------------------------------
+
+### Dilemmas
+
+```{r Dilemmas, echo=FALSE}
+kable(dilemma$res4)
+```
+
+
+Ideal Map Digraph {data-navmenu="FCM ANALYSIS"}
 ==============================================
 
 sidebar {.sidebar}
 --------------------
 
-Ideal digraph {.tabset .tabset-fade}
+**IDEAL MAP DIGRAPH**
+
+Ideal Map Digraph {.tabset .tabset-fade}
 --------------------
 
 ### Full
 
-```{r echo=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, results='hide'}
+```{r Ideal digraph, echo=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, results='hide'}
 idealdigraph(render.grid,render.imp)
 ```
 
 ### Inconsistencies
 
-```{r echo=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, results='hide'}
+```{r Ideal digraph inconsistencies, echo=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, results='hide'}
 idealdigraph(render.grid,render.imp, inc=TRUE)
 ```
 
-Self Fuzzy Map {data-navmenu="FCM ANALYSIS" data-orientation=rows}
+Self Map Digraph {data-navmenu="FCM ANALYSIS" data-orientation=rows}
 ===========================================
 
 sidebar {.sidebar}
 -------------------
 
-
-DPCS Plot
---------------------------------------
-
-### PCSD plot
-
-```{r echo=FALSE, fig.height=6, fig.width=20, message=FALSE, warning=FALSE}
-pcsd(render.grid,render.imp)
-```
+**SELF MAP DIGRAPH**
 
 FCM Digraph  {.tabset .tabset-fade}
 ---------------------------------------
 
-### Graphopt
+### Multidimensional Scaling 3D
 
-```{r echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.show="hold", out.width="50%",out.height="100%"}
-fcmdigraph(render.grid,render.imp,niter = 1, layout = "graphopt")
-fcmdigraph(render.grid,render.imp,niter = 30, layout = "graphopt")
+```{r FCM MDS3D, echo=FALSE, fig.height=12, fig.width=12, message=FALSE, warning=FALSE, results='hide', webgl=TRUE}
+rgl.clear()
+fcmdigraph3D(render.grid,render.imp, niter = 1)
 ```
-
 
 ### Multidimensional Scaling
 
-```{r echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.show="hold", out.width="50%",out.height="100%"}
+```{r FCM MDS, echo=FALSE, fig.height=10, fig.width=10, message=FALSE, warning=FALSE, results='hide'}
 fcmdigraph(render.grid,render.imp,niter = 1, layout = "mds")
-fcmdigraph(render.grid,render.imp,niter = 30, layout = "mds")
 ```
 
+### Graphopt
+
+```{r FCM Graphopt, echo=FALSE, fig.height=10, fig.width=10, message=FALSE, warning=FALSE, results='hide'}
+fcmdigraph(render.grid,render.imp,niter = 1, layout = "graphopt")
+```
 
 ### Reingold - Tilford
 
-```{r echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.show="hold", out.width="50%",out.height="100%"}
+```{r FCM RT, echo=FALSE, fig.height=10, fig.width=10, message=FALSE, warning=FALSE, results='hide'}
 fcmdigraph(render.grid,render.imp,niter = 1, layout = "rtcircle")
-fcmdigraph(render.grid,render.imp,niter = 30, layout = "rtcircle")
 ```
 
 ### Circle
 
-```{r echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.show="hold", out.width="50%",out.height="100%"}
+```{r FCM Circle, echo=FALSE, fig.height=10, fig.width=10, message=FALSE, warning=FALSE, results='hide'}
 fcmdigraph(render.grid,render.imp,niter = 1, layout = "circle")
-fcmdigraph(render.grid,render.imp,niter = 30, layout = "circle")
 ```
 
 ### Grid
 
-```{r echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.show="hold", out.width="50%",out.height="100%"}
+```{r FCM Grid, echo=FALSE, fig.height=10, fig.width=10, message=FALSE, warning=FALSE, results='hide'}
 fcmdigraph(render.grid,render.imp,niter = 1, layout = "grid")
-fcmdigraph(render.grid,render.imp,niter = 30, layout = "grid")
 ```
 
-### FCM 3D
 
-```{r echo=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, results='hide',webgl=TRUE}
-rgl.clear()
-fcmdigraph3D(render.grid,render.imp, niter = 1)
+Personal Construct System Dynamics {data-navmenu="FCM ANALYSIS" data-orientation=rows}
+===========================================
+
+sidebar {.sidebar}
+-------------------
+
+**PERSONAL CONSTRUCT SYSTEM DYNAMICS**
+
+PCSD Plot 
+--------------------------------------
+
+### PCSD plot 
+
+```{r PCSD, echo=FALSE, message=FALSE, warning=FALSE}
+pcsd(render.grid,render.imp)
+```
+
+
+PCSD Indeces {.tabset .tabset-fade}
+---------------------------------------
+### Summary
+
+```{r Summary PCSD, echo=FALSE, message=FALSE, warning=FALSE}
+
+sum.pcsd <- pcsd_summary(render.grid, render.imp)
+sum.pcsd <- sum.pcsd[order(-sum.pcsd[,3]),]
+
+kable(sum.pcsd)
+```
+
+### AUC 
+
+```{r AUC, echo=FALSE, message=FALSE, warning=FALSE}
+
+auc.pcsd <- auc_index(render.grid, render.imp)
+auc.pcsd <- auc.pcsd[,order(-auc.pcsd)]
+
+kable(auc.pcsd, col.names = "AUC")
+```
+
+### Stability 
+
+```{r SD, echo=FALSE, message=FALSE, warning=FALSE}
+
+sd.pcsd <- stability_index(render.grid, render.imp)
+sd.pcsd <- sd.pcsd[order(sd.pcsd)]
+
+kable(sd.pcsd, col.names = "SD")
+```
+
+### PCSD Derivative
+
+```{r PCSD Derivative, echo=FALSE, message=FALSE, warning=FALSE}
+pcsd_derivative(render.grid,render.imp)
 ```
 
 FCM Indeces {data-navmenu="FCM ANALYSIS" data-orientation=rows}
@@ -210,14 +306,16 @@ FCM Indeces {data-navmenu="FCM ANALYSIS" data-orientation=rows}
 sidebar {.sidebar}
 ---------------------------------------
 
+**FCM INDECES**
+
 1 {data-height=50}
 ----------------------------------------
 
 ### ImpGrid Indeces
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-n.edges <- sum(render.imp != 0)
-n.vertex <- ncol(render.imp)
+```{r Imp indeces ,echo=FALSE, message=FALSE, warning=FALSE}
+n.edges <- sum(getRatingLayer(render.imp) != 0)
+n.vertex <- ncol(getRatingLayer(render.imp))
 dens <- density_index(render.imp)
 degree <- cbind(degree_index(render.imp)[[1]],degree_index(render.imp)[[2]],degree_index(render.imp)[[3]])
 degree <- degree[order(-degree[,3]),]
@@ -233,19 +331,21 @@ kable(data.frame(n.vertex,n.edges, dens),col.names = c("Vertexes","Edges","Densi
 ------------------------------------------------
 ### Degree
 
-```{r echo=FALSE}
+```{r Degree, echo=FALSE}
 kable(degree, col.names = c("Outputs","Inputs","All"))
 ```
 
 ### Closeness
 
-```{r echo=FALSE}
+```{r Closeness, echo=FALSE}
 kable(close, col.names = "Centrality")
 ```
 
 ### Betweenness
 
-```{r echo=FALSE}
+```{r Betweeness, echo=FALSE}
 kable(betw, col.names = "Centrality")
 ```
 
+REFERENCES
+===============================

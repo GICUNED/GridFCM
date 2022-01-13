@@ -8,7 +8,7 @@
 
 #' Crear Vector de Activación (actvector)
 #'
-#' @description Función que extrae un vector de un elemento de la rejilla y lo
+#' @description Función que extrae un vector para un elemento de la rejilla y lo
 #' transforma en un vector de activación apropiado para utilizarse a la hora de
 #' crear un mapa cognitivo borroso.
 #'
@@ -43,11 +43,10 @@ actvector <- function(x, col.element = 1){
 # FCM INFERENCE -- fcminfer()
 ################################################################################
 
-#' Inferencia de Escenarios Futuros (fcminfer)
+#' Inferencia de Escenarios Futuros -- fcminfer()
 #'
 #' @description Función que infiere los cambios dentro un mapa cognitivo borroso
-#' y lo expresa iteración a iteración. Permite la representación de un Gráfico
-#' de Comportamiento vs. Tiempo (GCT).
+#' y lo expresa iteración a iteración.
 #'
 #' @param x Rejilla del sujeto desde donde queremos realizar las inferencias.
 #' Debe de ser un objeto de la clase repgrid del paquete OpenRepGrid.
@@ -76,11 +75,10 @@ actvector <- function(x, col.element = 1){
 #'
 #' @param iter Número de iteraciones que se desea inferir
 #'
-#' @param graph Devuelve un Gráfico de Comportamiento vs. Tiempo cuando es
-#' \code{TRUE}
-#'
-#' @return Devuelve una lista (list) que contiene por filas cada uno de los
-#' vectores de escenario en función del número de iteraciones.
+#' @return Devuelve una lista con dos entradas. La entrada $values contiene por
+#' filas cada uno de los vectores de escenario en función del número de
+#' iteraciones. Y la entrada $convergence contiene el número de la iteración
+#' donde se estabilizada el mapa cognitivo borroso.
 #'
 #' @examples
 #'
@@ -90,10 +88,11 @@ actvector <- function(x, col.element = 1){
 #' @export
 
 fcminfer <- function(x, imp, act.vec = actvector(x), ideal = dim(x)[2],
-                       infer= "mk", thr= "t", lambda = 1 , iter = 30,
-                       graph = TRUE){
+                       infer= "mk", thr= "t", lambda = 1 , iter = 30){
 
-  w.mat <- .weightmatrix(imp)
+  imp_a <- .adaptrepgrid(imp, t = FALSE)
+
+  w.mat <- .weightmatrix(imp_a)
   w.mat <- as.data.frame(w.mat)                                                 # Transformamos la matriz de implicaciones en una matriz de pesos
 
 
@@ -106,53 +105,36 @@ fcminfer <- function(x, imp, act.vec = actvector(x), ideal = dim(x)[2],
 }
 ################################################################################
 
-# BOT PLOT -- **DEPRECATED**
-################################################################################
-
-#'
-#' @export
-
-BTplot <- function(x,imp,ideal=dim(x)[2],iter=30){
-
-  lpoles <- getConstructNames(x)[,1]
-  rpoles <- getConstructNames(x)[,2]
-  poles <- paste(lpoles,"-",rpoles,sep = " ")
-
-  ideal.vector <- OpenRepGrid::getRatingLayer(x)[,ideal]
-  ideal.vector <- (ideal.vector - 4)/3
-  ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),
-                         nrow = iter, byrow = TRUE)
-
-  res <- fcminfer(x,imp,iter=iter)
-
-  x <- c(1:iter)
-  y <- c(0:length(poles))
-  y <- as.character(y)
-  df <- data.frame(x, abs(res$values - ideal.matrix) / 2)
-  colnames(df) <- y
-
-
-  iterations <- as.numeric(rownames(res$values))
-  df <- data.frame(iterations,  abs(res$values - ideal.matrix) / 2)
-  df2 <- melt(df, id="iterations")
-  ggplotly(ggplot(data=df2,aes(x=iterations, y=value, group=variable,
-                           color=variable)) + theme_bw() + geom_line(size=0.7)
-       + geom_point(size = 3) + labs(x="Iteraciones",
-                                     y="Distancia respecto el ideal",
-                                     color="Constructos Personales"))
-
-
-}
-
-################################################################################
 # PERSONAL CONSTRUCTS SYSTEM DYNAMICS PLOT -- pcsd()
 ################################################################################
 
+#' Personal Constructs System Dynamics plot -- pcsd()
+#'
+#' @description Gráfico que nos permite observar la dinámica del sistema de
+#' constructros personales. Cruza la iteraciones matemáticas de
+#' \code{\link{fcminfer}} con la distancia respecto al ideal de cada uno de los
+#' constructos personales.
+#'
+#' @param x RepGrid sobre la que queremos realizar nuestro PCSD. Debe de haber
+#' sido importada a través de \code{\link{importgrid}}.
+#'
+#' @param imp Impgrid sobre la que queremos realizar nuestro PCSD. Debe de haber
+#' sido importada a través de \code{\link{importimp}}.
+#'
+#' @param ideal Columna donde se encuentra el Yo-Ideal en la Repgrid. Por
+#' defecto se estable la última columna de la Repgrid.
+#'
+#' @param ... Esta función hereda todos los parámetos de la función
+#' \code{\link{fcminfer}}
+#'
+#' @return Gráfico interactivo confeccionado con plotly.
+#'
+#' @import plotly
 #'
 #' @export
-#' @import plotly
 
 pcsd <- function(x,imp,ideal=dim(x)[2],...){
+
 
   lpoles <- OpenRepGrid::getConstructNames(x)[,1]                               # Extraemos los nombres de los constructos
   rpoles <- OpenRepGrid::getConstructNames(x)[,2]
@@ -179,13 +161,14 @@ pcsd <- function(x,imp,ideal=dim(x)[2],...){
                            ,line = list(shape = "spline"))
  }
   fig <- fig %>% layout(title="PERSONAL CONSTRUCT SYSTEM DYNAMICS",
-                        legend = list(
-                          title="PERSONAL CONSTRUCTS"),
                         xaxis = list(
                           title = "ITERATIONS"),
                         yaxis = list(
-                          title = "DISTANCE TO IDEAL SELF")
+                          title = "DISTANCE TO IDEAL SELF",
+                          range = c(-0.05,1.05))
                         )
+  fig <- fig %>% layout(legend=list(
+                          title=list(text='<b>PERSONAL CONSTRUCTS</b>')))
 
   fig
 }
@@ -194,7 +177,7 @@ pcsd <- function(x,imp,ideal=dim(x)[2],...){
 # FUZZY COGNITIVE MAP DIGRAPH -- fcmdigraph()
 ################################################################################
 
-#' Digrafo del Mapa Cognitivo Borroso (FuzzyMap)
+#' Digrafo del Mapa Cognitivo Borroso -- fcmdigraph()
 #'
 #' @description Función que nos dibuja un digrafo del Mapa Cognitivo Borroso del
 #' sistema de constructos de un individuo a través de una técnica de rejilla y
@@ -215,8 +198,7 @@ pcsd <- function(x,imp,ideal=dim(x)[2],...){
 #' el mapa. Expresado a través del número de iteraciones.
 #'
 #' @param layout Layout que se quiere utilizar para representar el mapa. Más
-#' información de los layouts escribiendo ?\code{\link{GraphLayouts}} o haciendo
-#' click sobre él.
+#' información de los layouts escribiendo ?\code{\link{GraphLayouts}}.
 #'
 #' @param edge.width Escalar del grosor de las aristas.
 #'
@@ -235,14 +217,15 @@ pcsd <- function(x,imp,ideal=dim(x)[2],...){
 #' @export
 
 
-fcmdigraph <- function(x, imp, results = fcminfer(x,imp,graph = FALSE)$values,
+fcmdigraph <- function(x, imp, results = fcminfer(x,imp)$values,
                      ideal = dim(x)[2], niter = 30,layout = "graphopt",
                      edge.width = 1.5, vertex.size = 1, legend = FALSE ){
 
+  imp_a <- .adaptrepgrid(imp, t = FALSE)
   lpoles <- getConstructNames(x)[,1]
   rpoles <- getConstructNames(x)[,2]                                            # Extraemos los nombres de los polos de los constructos de la Rejilla.
 
-  w.mat <- .weightmatrix(imp)
+  w.mat <- .weightmatrix(imp_a)
   w.mat <- as.matrix(w.mat)                                                     # Transformamos las implicaciones en pesos.
 
   results <- as.numeric(as.data.frame(results)[niter,])                         # Extraemos el vector de escenario seleccionado por el usuario.
@@ -422,14 +405,15 @@ fcmdigraph <- function(x, imp, results = fcminfer(x,imp,graph = FALSE)$values,
 #'
 #' @export
 #'
-fcmdigraph3D <- function(x, imp, results = fcminfer(x,imp,graph = FALSE)$values,
+fcmdigraph3D <- function(x, imp, results = fcminfer(x,imp)$values,
                        ideal = dim(x)[2], niter=30,edge.width=2,
                        vertex.size =1){
 
+  imp_a <- .adaptrepgrid(imp, t = FALSE)
   lpoles <- getConstructNames(x)[,1]
   rpoles <- getConstructNames(x)[,2]                                            # Extraemos los nombres de los polos de los constructos.
 
-  w.mat <- .weightmatrix(imp)
+  w.mat <- .weightmatrix(imp_a)
   w.mat <- as.matrix(w.mat)                                                     # Transformamos la matriz de implicaciones en una matriz de pesos
 
   results <- as.numeric(as.data.frame(results)[niter,])                         # Extraemos el vector de escenario que quiere representar el usuario
@@ -555,14 +539,18 @@ fcmdigraph3D <- function(x, imp, results = fcminfer(x,imp,graph = FALSE)$values,
 idealdigraph <- function(x,imp, ideal = dim(x)[2], inc = FALSE, layout ="circle",
                      edge.width = 1, vertex.size = 1,legend = FALSE){
 
+  act.vector <- actvector(x,col.element = ideal)
+  ideal.results <- fcminfer(x,imp,act.vector)$values
+
+  imp_a <- .adaptrepgrid(imp, t = FALSE)
+
   lpoles <- getConstructNames(x)[,1]
   rpoles <- getConstructNames(x)[,2]                                            # Extraemos los nombres de los polos de los contrusctos de la Rejilla.
 
-  w.mat <- .weightmatrix(imp)
+  w.mat <- .weightmatrix(imp_a)
   w.mat <- as.matrix(w.mat)                                                     # Transformamos las implicaciones en pesos.
 
-  act.vector <- actvector(x,col.element = ideal)
-  ideal.results <- fcminfer(x,imp,act.vector,graph = FALSE)$values
+
   results <- as.numeric(as.data.frame(ideal.results)[1,])                       # Extraemos el vector de escenario seleccionado por el usuario.
 
   n <- 1
@@ -713,7 +701,11 @@ fcmreport <- function(x, imp, name = "report", dir = getwd(),type = "html"){
   render.grid <- x
   render.imp <- imp
   file <- paste(name,".Rmd", sep = "")
+
   file.remove(file)
+  file.remove("style.css")
+  file.remove("gridfcm.png")
+
 if(type == "html"){
   rmarkdown::draft(name,"report_html", package = "GridFCM",edit=FALSE)
   rmarkdown::render(file , output_dir = dir)
@@ -723,4 +715,6 @@ if(type =="shiny"){
   rmarkdown::run(file, shiny_args = list(launch.browser = TRUE))
 }
   file.remove(file)
+  file.remove("style.css")
+  file.remove("gridfcm.png")
 }

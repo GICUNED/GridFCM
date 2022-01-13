@@ -20,7 +20,8 @@ Depends:
     ggplot2 (>= 3.3.3),
     igraph (>= 1.2.6),
     R (>= 2.10),
-    plotly (>= 1.8.6)
+    plotly (>= 1.8.6),
+    xlsx(>= 0.6.5)
 Suggests: 
     rmarkdown,
     knitr,

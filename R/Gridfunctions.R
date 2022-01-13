@@ -24,7 +24,17 @@
 #' @export
 #'
 
-importimp <- function(path, method="hinkle"){
+importimp <- function(path,...){
+
+  result <- importExcel(path, ...)
+
+  return(result)
+}
+
+# IMPORT IMPGRID --- deprecated
+###############################################################################
+
+importimp_d <- function(path, method="hinkle"){
   xls <- readxl::read_excel(path)                                               # Leemos el excel que contiene los datos
   xls <- xls[,-dim(xls)[2]]
   xls <- xls[,-1]                                                               # Eliminamos las columnas exteriores

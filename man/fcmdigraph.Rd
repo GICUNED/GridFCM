@@ -2,12 +2,12 @@
 % Please edit documentation in R/FCMfunctions.R
 \name{fcmdigraph}
 \alias{fcmdigraph}
-\title{Digrafo del Mapa Cognitivo Borroso (FuzzyMap)}
+\title{Digrafo del Mapa Cognitivo Borroso -- fcmdigraph()}
 \usage{
 fcmdigraph(
   x,
   imp,
-  results = fcminfer(x, imp, graph = FALSE)$values,
+  results = fcminfer(x, imp)$values,
   ideal = dim(x)[2],
   niter = 30,
   layout = "graphopt",
@@ -32,8 +32,7 @@ número de la columna donde se encuentra.}
 el mapa. Expresado a través del número de iteraciones.}
 
 \item{layout}{Layout que se quiere utilizar para representar el mapa. Más
-información de los layouts escribiendo ?\code{\link{GraphLayouts}} o haciendo
-click sobre él.}
+información de los layouts escribiendo ?\code{\link{GraphLayouts}}.}
 
 \item{edge.width}{Escalar del grosor de las aristas.}
 

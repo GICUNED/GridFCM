@@ -23,8 +23,12 @@
 #'
 
 density_index <- function(imp){
-  n <- ncol(imp)
+
+  imp_a <- .adaptrepgrid(imp, t = FALSE)
+  n <- ncol(imp_a)
+
   result <- sum(degree_index(imp)$Outputs)/(n*(n-1))
+
   return(result)
 }
 ################################################################################
@@ -55,13 +59,18 @@ density_index <- function(imp){
 
 degree_index <- function(imp, method="simple"){
 
-  result <- list()                                                              # Creamos una lista vacía para luego poder referenciarla.
 
-  N <- dim(imp)[1]
+  lpoles <- OpenRepGrid::getConstructNames(imp)[,1]                               # Extraemos los nombres de los constructos
+  rpoles <- OpenRepGrid::getConstructNames(imp)[,2]
+  poles <- paste(lpoles,"-",rpoles,sep = " ")
+
+  result <- list()                                                              # Creamos una lista vacía para luego poder referenciarla.
+  imp_a <- .adaptrepgrid(imp, t = FALSE)
+  N <- dim(imp_a)[1]
 
   if(method == "simple" | method == "norm" | method == "ego"){                  # Método simple
 
-    imp.grid <- imp/imp
+    imp.grid <- imp_a/imp_a
     imp.grid[is.nan(imp.grid)] <- 0                                             # Convertimos los pesos a 1 para tener en cuenta las relaciones sin ponderar ni dirección.
 
     Cout <- rowSums(imp.grid)
@@ -70,7 +79,7 @@ degree_index <- function(imp, method="simple"){
 
   if(method == "weight" | method == "wnorm"){                                   # Método Ponderado
 
-    imp.grid <- imp/3                                                           # Transformamos la matriz de implicaciones a una matriz de pesos.
+    imp.grid <- imp_a/3                                                           # Transformamos la matriz de implicaciones a una matriz de pesos.
 
     Cout <- rowSums(abs(imp.grid))
     Cin <- colSums(abs(imp.grid))                                               # Sumamos los valores absolutos de las ponderaciones
@@ -87,6 +96,8 @@ degree_index <- function(imp, method="simple"){
     Cout <- Cout/(N*(N-1))
     Cin <- Cin/(N*(N-1))                                                        # Dividimos los vectores de entrada y salida entre el número de aristas potenciales.
   }
+  names(Cout) <- poles
+  names(Cin) <- poles
 
   result$Outputs <- Cout
   result$Inputs <- Cin
@@ -121,8 +132,9 @@ degree_index <- function(imp, method="simple"){
 #'
 
 dismatrix <- function(imp,mode="out"){
+  imp_a <- .adaptrepgrid(imp, t = FALSE)
 
-  w.mat <- .weightmatrix(imp)
+  w.mat <- .weightmatrix(imp_a)
   w.mat <- as.matrix(w.mat)
 
   G <- igraph::graph.adjacency(w.mat,mode = "directed",weighted = T)
@@ -157,6 +169,11 @@ dismatrix <- function(imp,mode="out"){
 
 close_index <- function(imp, norm = TRUE){
 
+
+  lpoles <- OpenRepGrid::getConstructNames(imp)[,1]                               # Extraemos los nombres de los constructos
+  rpoles <- OpenRepGrid::getConstructNames(imp)[,2]
+  poles <- paste(lpoles,"-",rpoles,sep = " ")
+
   dist <- dismatrix(imp)
   N <- dim(dist)[1]
   if(norm){
@@ -164,6 +181,7 @@ close_index <- function(imp, norm = TRUE){
   }else{
     result <- 1/(colSums(dist))
   }
+  names(result) <- poles
   return(result)
 }
 ################################################################################
@@ -194,14 +212,184 @@ close_index <- function(imp, norm = TRUE){
 
 betw_index <- function(imp,norm=TRUE){
 
+  lpoles <- OpenRepGrid::getConstructNames(imp)[,1]                             # Extraemos los nombres de los constructos
+  rpoles <- OpenRepGrid::getConstructNames(imp)[,2]
+  poles <- paste(lpoles,"-",rpoles,sep = " ")
 
-  w.mat <- .weightmatrix(abs(imp))
+  imp_a <- imp
+  imp_a <- .adaptrepgrid(imp, t = FALSE)
+
+  w.mat <- .weightmatrix(abs(imp_a))
   w.mat <- as.matrix(w.mat)
 
   G <- igraph::graph.adjacency(w.mat,mode = "directed",weighted = T)
 
   result <- igraph::betweenness(G,normalized = norm,weights = NA )
+  names(result) <- poles
 
   return(result)
+}
+################################################################################
+
+#  PCSD AUC INDEX -- auc_index()
+################################################################################
+
+#' @import MESS
+#'
+#' @export
+
+auc_index <- function(x, imp, ideal=dim(x)[2],...){
+
+  require(MESS)
+
+  lpoles <- OpenRepGrid::getConstructNames(x)[,1]                               # Extraemos los nombres de los constructos
+  rpoles <- OpenRepGrid::getConstructNames(x)[,2]
+  poles <- paste(lpoles,"-",rpoles,sep = " ")
+  iter <- fcminfer(x,imp,iter=60,...)$convergence
+
+  ideal.vector <- OpenRepGrid::getRatingLayer(x)[,ideal]
+  ideal.vector <- (ideal.vector - 4)/3
+  ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),             # Creamos una matriz con los valores del yo-ideal repetidos por filas
+                         nrow = iter, byrow = TRUE)
+
+  res <- fcminfer(x,imp,iter=iter,...)$values
+  res <- abs(res - ideal.matrix) / 2
+
+  matrix <- matrix(ncol= length(poles), nrow = 1)
+
+  for (n in 1:length(poles)) {
+    matrix[,n] <- auc(c(1:iter), res[,n], type = "spline")/iter
+  }
+
+  colnames(matrix) <- poles
+  rownames(matrix) <- NULL
+
+  return(matrix)
+}
+################################################################################
+
+#  PCSD STABILITY INDEX -- stability_index()
+################################################################################
+
+#' @import MESS
+#'
+#' @export
+
+stability_index <- function(x, imp, ideal=dim(x)[2],...){
+
+  require(MESS)
+
+  lpoles <- OpenRepGrid::getConstructNames(x)[,1]                               # Extraemos los nombres de los constructos
+  rpoles <- OpenRepGrid::getConstructNames(x)[,2]
+  poles <- paste(lpoles,"-",rpoles,sep = " ")
+  iter <- fcminfer(x,imp,iter=60,...)$convergence
+
+  ideal.vector <- OpenRepGrid::getRatingLayer(x)[,ideal]
+  ideal.vector <- (ideal.vector - 4)/3
+  ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),             # Creamos una matriz con los valores del yo-ideal repetidos por filas
+                         nrow = iter, byrow = TRUE)
+
+  res <- fcminfer(x,imp,iter=iter,...)$values
+  res <- abs(res - ideal.matrix) / 2
+
+
+  result <- apply(res, 2, sd)
+  names(result) <- poles
+
+  return(result)
+  }
+################################################################################
+
+#  PCSD SUMMARY -- pcsd_summary()
+################################################################################
+
+#' @import MESS
+#'
+#' @export
+
+pcsd_summary <- function(x, imp, ideal=dim(x)[2],...){
+
+  require(MESS)
+
+  lpoles <- OpenRepGrid::getConstructNames(x)[,1]                               # Extraemos los nombres de los constructos
+  rpoles <- OpenRepGrid::getConstructNames(x)[,2]
+  poles <- paste(lpoles,"-",rpoles,sep = " ")
+  iter <- fcminfer(x,imp,iter=60,...)$convergence
+
+  ideal.vector <- OpenRepGrid::getRatingLayer(x)[,ideal]
+  ideal.vector <- (ideal.vector - 4)/3
+  ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),             # Creamos una matriz con los valores del yo-ideal repetidos por filas
+                         nrow = iter, byrow = TRUE)
+
+  res <- fcminfer(x,imp,iter=iter,...)$values
+  res <- abs(res - ideal.matrix) / 2
+
+
+  result <- res[c(1,iter),]
+  result <- t(result)
+  result <- cbind(result, result[,2] - result[,1])
+
+  rownames(result) <- poles
+  colnames(result) <- c("Initial value", "Final value", "Difference")
+
+  return(result)
+}
+# PERSONAL CONSTRUCTS SYSTEM DYNAMICS PLOT -- pcsd()
+################################################################################
+
+
+#'
+#' @import plotly
+#'
+#' @export
+
+pcsd_derivative <- function(x,imp,ideal=dim(x)[2],...){
+
+
+  lpoles <- OpenRepGrid::getConstructNames(x)[,1]                               # Extraemos los nombres de los constructos
+  rpoles <- OpenRepGrid::getConstructNames(x)[,2]
+  poles <- paste(lpoles,"-",rpoles,sep = " ")
+  iter <- fcminfer(x,imp,iter=60,...)$convergence
+
+  ideal.vector <- OpenRepGrid::getRatingLayer(x)[,ideal]
+  ideal.vector <- (ideal.vector - 4)/3
+  ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),             # Creamos una matriz con los valores del yo-ideal repetidos por filas
+                         nrow = iter, byrow = TRUE)
+
+  res.pre <- fcminfer(x,imp,iter=iter,...)$values                                   # Obtenemos la inferencia del MCB
+  res.pre <- abs(res.pre - ideal.matrix) / 2
+
+
+  x <- c(0:(iter-2))
+  y <- c(0:length(poles))
+
+  res <- matrix(ncol = length(poles), nrow = iter - 1)
+
+  for (i in 1:length(poles)) {
+    res[,i] <- diff(res.pre[,i])/diff(0:(iter-1))
+  }
+
+  y <- as.character(y)
+
+  df <- data.frame(x,res)                                                       # Confeccionamos un dataframe con las distancias estandarizadas entre los resultados y el ideal
+  colnames(df) <- y
+
+  fig <- plot_ly(df, x = ~x, y = df[,2], name = poles[1], type = 'scatter',
+                 mode = 'lines+markers',line = list(shape = "spline"))
+  for (n in 3:(length(poles)+1)) {
+    fig <- fig %>% add_trace(y = df[,n], name = poles[n-1], mode = 'lines+markers'
+                             ,line = list(shape = "spline"))
+  }
+  fig <- fig %>% layout(title="PCSD DERIVATIVE",
+                        xaxis = list(
+                          title = "ITERATIONS"),
+                        yaxis = list(
+                          title = "DERIVATIVE"
+                          )
+  )
+  fig <- fig %>% layout(legend=list(
+    title=list(text='<b>PERSONAL CONSTRUCTS</b>')))
+
+  fig
 }
 ################################################################################

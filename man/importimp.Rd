@@ -4,7 +4,7 @@
 \alias{importimp}
 \title{Importar Rejilla de Implicaciones (importimp)}
 \usage{
-importimp(path, method = "hinkle")
+importimp(path, ...)
 }
 \arguments{
 \item{path}{Ruta donde se encuentra el archivo de excel que contiene la
