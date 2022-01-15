@@ -121,7 +121,7 @@ templateimp <- function(x,name ="ImpGrid_Template"){
   df <- data.frame(m)
   df[,1] <- self.labels
   df[,dim + 2] <- noself.labels
-  colnames(df) <- c("Polo asociado al Yo", imp.labels, "Polo opuesto al Yo")    # Creamos el data frame con los datos de los constructos
+  colnames(df) <- c("-3", imp.labels, "3")    # Creamos el data frame con los datos de los constructos
 
   addDataFrame(df, sh,
                row.names = FALSE,
