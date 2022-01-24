@@ -8,17 +8,17 @@
 
 #' Crear Vector de Activación (actvector)
 #'
-#' @description Función que extrae un vector para un elemento de la rejilla y lo
-#' transforma en un vector de activación apropiado para utilizarse a la hora de
-#' crear un mapa cognitivo borroso.
+#' @description Función que extrae un vector de un elemento de la RepGrid y lo
+#' estandariza para poder utilizarse como vector de activación un mapa cognitivo
+#' borroso.
 #'
-#' @param x Rejilla del sujeto desde donde queremos extraer el vector de
+#' @param grid Rejilla del sujeto desde donde queremos extraer el vector de
 #' activación. Debe de ser un objeto de la clase repgrid del paquete
 #' OpenRepGrid.
 #'
 #' @param col.element Elemento desde el que extraemos el vector de activación.
 #' Por defecto se establece el primer elemento, que coincide normalmente con el
-#' Yo-Actual.
+#' Yo-Actual de la RepGrid.
 #'
 #' @return Devuelve un vector que contiene los pesos para cada uno de los
 #' constructos asociados a un elemento.
@@ -30,11 +30,11 @@
 #' @export
 
 
-actvector <- function(x, col.element = 1){
+actvector <- function(grid, col.element = 1){
 
-  vector <- getRatingLayer(x)[,col.element]                                     # Extraemos el vector de la rejilla
+  vector <- getRatingLayer(grid)[,col.element]                                  # Extraemos el vector de la rejilla
 
-  result <- (vector - getScaleMidpoint(x))/((getScale(x)[2]-1)/2)               # Transformamos el vector en  un intervalo [-1,1]
+  result <- (vector - getScaleMidpoint(grid))/((getScale(grid)[2]-1)/2)         # Estandarizamos el vector en  un intervalo [-1,1]
 
   return(result)
 }
@@ -45,28 +45,30 @@ actvector <- function(x, col.element = 1){
 
 #' Inferencia de Escenarios Futuros -- fcminfer()
 #'
-#' @description Función que infiere los cambios dentro un mapa cognitivo borroso
-#' y lo expresa iteración a iteración.
+#' @description Función para inferir escenarios futuros simulados del mapa
+#' cognitivo borroso derivados de las relaciones de causalidad.
 #'
-#' @param x Rejilla del sujeto desde donde queremos realizar las inferencias.
-#' Debe de ser un objeto de la clase repgrid del paquete OpenRepGrid.
+#' @param grid RepGrid del sujeto desde donde queremos realizar las inferencias.
+#' Debe de ser un objeto importando con la función \code{\link{importgrid}}.
 #'
 #' @param imp Matriz de implicaciones del sujeto importada con
-#' \code{\link{importIMP}}.
+#' \code{\link{importimp}}.
 #'
 #' @param act.vec Vector de activación creado a través de
-#' \code{\link{ActVector}}.
+#' \code{\link{actvector}}. Si no se define se utiliza el vector correspondiente
+#'  al primer elemento de la RepGrid.
 #'
-#' @param ideal Posición del ideal dentro de la rejilla expresado a través del
-#' número de la columna donde se encuentra.
+#' @param ideal Posición del ideal dentro de la RepGrid expresado a través del
+#' número de la columna donde se encuentra. Por defecto se establece el último
+#' elemento de la RepGrid.
 #'
 #' @param infer Función de Propagación para la inferencia de escenarios.
 #' Puedes mirar la información sobre las diferentes funciones de propagación
 #' escribiendo ?\code{\link{PropFunctions}}. Por defecto se utiliza la
 #' modificada de Kosko ("mk").
 #'
-#' @param thr Función Umbral para la inferencia de escenarios. Puedes mirar la
-#' información sonbre las distintas funciones umbral escribiendo
+#' @param thr Función de Umbral para la inferencia de escenarios. Puedes mirar
+#' la información sonbre las distintas funciones umbral escribiendo
 #' ?\code{\link{ThrFunctions}}. Por defecto se utiliza la Tangente Hiperbólica
 #' ("t").
 #'
@@ -87,10 +89,10 @@ actvector <- function(x, col.element = 1){
 #'
 #' @export
 
-fcminfer <- function(x, imp, act.vec = actvector(x), ideal = dim(x)[2],
+fcminfer <- function(grid, imp, act.vec = actvector(grid), ideal = dim(grid)[2],
                        infer= "mk", thr= "t", lambda = 1 , iter = 30){
 
-  imp_a <- .adaptrepgrid(imp, t = FALSE)
+  imp_a <- .adaptrepgrid(imp, t = FALSE)                                        # Extraemos los valores de la matriz de implicaciones
 
   w.mat <- .weightmatrix(imp_a)
   w.mat <- as.data.frame(w.mat)                                                 # Transformamos la matriz de implicaciones en una matriz de pesos
@@ -98,8 +100,7 @@ fcminfer <- function(x, imp, act.vec = actvector(x), ideal = dim(x)[2],
 
 
   result <- .infer(act.vec, weight_mat = w.mat, infer = infer,
-                      transform = thr, lambda = lambda, iter = iter)            # Aplicamos la función de fcm.infer del paquete fcm para hacer la inferencia
-
+                      transform = thr, lambda = lambda, iter = iter)            # Aplicamos la función para hacer la inferencia
 
   return(result)
 }
@@ -115,7 +116,7 @@ fcminfer <- function(x, imp, act.vec = actvector(x), ideal = dim(x)[2],
 #' \code{\link{fcminfer}} con la distancia respecto al ideal de cada uno de los
 #' constructos personales.
 #'
-#' @param x RepGrid sobre la que queremos realizar nuestro PCSD. Debe de haber
+#' @param grid RepGrid sobre la que queremos realizar nuestro PCSD. Debe haber
 #' sido importada a través de \code{\link{importgrid}}.
 #'
 #' @param imp Impgrid sobre la que queremos realizar nuestro PCSD. Debe de haber
@@ -133,20 +134,21 @@ fcminfer <- function(x, imp, act.vec = actvector(x), ideal = dim(x)[2],
 #'
 #' @export
 
-pcsd <- function(x,imp,ideal=dim(x)[2],...){
+pcsd <- function(grid,imp,ideal=dim(grid)[2],...){
 
 
-  lpoles <- OpenRepGrid::getConstructNames(x)[,1]                               # Extraemos los nombres de los constructos
-  rpoles <- OpenRepGrid::getConstructNames(x)[,2]
+  lpoles <- OpenRepGrid::getConstructNames(grid)[,1]                            # Extraemos los nombres de los constructos
+  rpoles <- OpenRepGrid::getConstructNames(grid)[,2]
   poles <- paste(lpoles,"-",rpoles,sep = " ")
-  iter <- fcminfer(x,imp,iter=60,...)$convergence
 
-  ideal.vector <- OpenRepGrid::getRatingLayer(x)[,ideal]
+  iter <- fcminfer(grid,imp,iter=60,...)$convergence                            # Establecemos el número de iteración donde se estabiliza el FCM
+
+  ideal.vector <- OpenRepGrid::getRatingLayer(grid)[,ideal]
   ideal.vector <- (ideal.vector - 4)/3
   ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),             # Creamos una matriz con los valores del yo-ideal repetidos por filas
                         nrow = iter, byrow = TRUE)
 
-  res <- fcminfer(x,imp,iter=iter,...)$values                                   # Obtenemos la inferencia del MCB
+  res <- fcminfer(grid,imp,iter=iter,...)$values                                # Obtenemos la inferencia del MCB
 
   x <- c(0:(iter-1))
   y <- c(0:length(poles))
@@ -155,7 +157,7 @@ pcsd <- function(x,imp,ideal=dim(x)[2],...){
   colnames(df) <- y
 
   fig <- plot_ly(df, x = ~x, y = df[,2], name = poles[1], type = 'scatter',
-                 mode = 'lines+markers',line = list(shape = "spline"))
+                 mode = 'lines+markers',line = list(shape = "spline"))          # Construimos el gráfico de plotly de las iteraciones para cada uno de los constructos
  for (n in 3:(length(poles)+1)) {
   fig <- fig %>% add_trace(y = df[,n], name = poles[n-1], mode = 'lines+markers'
                            ,line = list(shape = "spline"))
@@ -170,32 +172,36 @@ pcsd <- function(x,imp,ideal=dim(x)[2],...){
   fig <- fig %>% layout(legend=list(
                           title=list(text='<b>PERSONAL CONSTRUCTS</b>')))
 
-  fig
+  fig                                                                           # Ejecutamos el gráfico
 }
 ################################################################################
 
 # FUZZY COGNITIVE MAP DIGRAPH -- fcmdigraph()
 ################################################################################
 
-#' Digrafo del Mapa Cognitivo Borroso -- fcmdigraph()
+#' Fuzzy Cognitive Map Digraph -- fcmdigraph()
 #'
 #' @description Función que nos dibuja un digrafo del Mapa Cognitivo Borroso del
 #' sistema de constructos de un individuo a través de una técnica de rejilla y
 #' una rejilla de implicaciones.
 #'
-#' @param x Rejilla del sujeto del que queremos dibujar el Mapa Cognitivo
-#' Borroso. Debe de ser un objeto de la clase repgrid del paquete OpenRepGrid.
+#' @param grid RepGrid del sujeto del que queremos dibujar el Mapa Cognitivo
+#' Borroso. Debe de ser un objeto importado con la función
+#' \code{\link{importgrid}}.
 #'
 #' @param imp Matriz de implicaciones del sujeto importada con
-#' \code{\link{importIMP}}.
+#' \code{\link{importimp}}.
 #'
 #' @param results inferencia de escenarios creada con \code{\link{fcminfer}}.
+#' Por defecto se establece una inferencia sobre el Yo-Actual.
 #'
 #' @param ideal Posición del ideal dentro de la rejilla expresado a través del
-#' número de la columna donde se encuentra.
+#' número de la columna donde se encuentra. Por defecto el último elemento de la
+#' RepGrid
 #'
 #' @param niter Selección del vector de escenario que se quiere representar en
-#' el mapa. Expresado a través del número de iteraciones.
+#' el mapa. Expresado a través del número de iteraciones. Por defecto se
+#' establece la primera iteracion.
 #'
 #' @param layout Layout que se quiere utilizar para representar el mapa. Más
 #' información de los layouts escribiendo ?\code{\link{GraphLayouts}}.
@@ -217,21 +223,23 @@ pcsd <- function(x,imp,ideal=dim(x)[2],...){
 #' @export
 
 
-fcmdigraph <- function(x, imp, results = fcminfer(x,imp)$values,
-                     ideal = dim(x)[2], niter = 30,layout = "graphopt",
+fcmdigraph <- function(grid, imp, results = fcminfer(grid,imp)$values,
+                     ideal = dim(grid)[2], niter = 1,layout = "graphopt",
                      edge.width = 1.5, vertex.size = 1, legend = FALSE ){
 
-  imp_a <- .adaptrepgrid(imp, t = FALSE)
-  lpoles <- getConstructNames(x)[,1]
-  rpoles <- getConstructNames(x)[,2]                                            # Extraemos los nombres de los polos de los constructos de la Rejilla.
+  imp_a <- .adaptrepgrid(imp, t = FALSE)                                        # Extraemos los valores de la matriz de implicaciones
+
+  lpoles <- getConstructNames(grid)[,1]
+  rpoles <- getConstructNames(grid)[,2]                                         # Extraemos los nombres de los polos de los constructos de la RepGrid
 
   w.mat <- .weightmatrix(imp_a)
-  w.mat <- as.matrix(w.mat)                                                     # Transformamos las implicaciones en pesos.
+  w.mat <- as.matrix(w.mat)                                                     # Transformamos las implicaciones en pesos
 
-  results <- as.numeric(as.data.frame(results)[niter,])                         # Extraemos el vector de escenario seleccionado por el usuario.
+  results <- as.numeric(as.data.frame(results)[niter,])                         # Extraemos el vector de escenario seleccionado por el usuario de la matriz de iteraciones.
 
 
-  n <- 1
+  n <- 1                                                                         # Orientamos la matriz de pesos en funcíon del estado actual de la matriz
+                                                                                 # Esto sirve para cambiar el color de las aristas en función del estado de los vértices
   for (integer in results) {
     if(integer != 0){
     integer.value <- integer / abs(integer)
@@ -239,20 +247,19 @@ fcmdigraph <- function(x, imp, results = fcminfer(x,imp)$values,
     w.mat[n,] <- w.mat[n,] * integer.value
     }
     n <- n + 1
-  }                                                                             # Orientamos la matriz de pesos en funcíon del estado actual de la matriz.
-                                                                                # Esto sirve para cambiar el color de las aristas en función del estado de los vértices
+  }
 
 
-  graph.map <- graph.adjacency(w.mat,mode = "directed",weighted = T)            # Creamos un gráfico primitivo y poco a poco lo vamos configurando.
+  graph.map <- graph.adjacency(w.mat,mode = "directed",weighted = T)            # Creamos un gráfico primitivo y poco a poco lo iremos configurando
 
   E(graph.map)$color <- "black"
-  n <- 1
+  n <- 1                                                                        # Damos color a las aristas en función del tipo de relación
   for (weight in E(graph.map)$weight) {
     E(graph.map)$color[n] <-  ifelse(weight < 0, "red", "black" )
     n <- n + 1
-  }                                                                             # Damos color a las aristas en función del tipo de relación.
+  }
 
-  edge.curved <- rep(0, length(E(graph.map)))
+  edge.curved <- rep(0, length(E(graph.map)))                                   # Damos curvatura a las aristas para evitar superposiciones en los casos de bicausalidad
   n <- 1
   for (N in 1:dim(w.mat)[1]) {
     for (M in 1:dim(w.mat)[1]) {
@@ -264,9 +271,9 @@ fcmdigraph <- function(x, imp, results = fcminfer(x,imp)$values,
 
       }
     }
-  }                                                                             # Damos curvatura a las aristas para evitar superposiciones en los casos de bicausalidad.
+  }
 
-  n <- 1
+  n <- 1                                                                        # Damos grosor a las aristas en función de los pesos.
   for (N in 1:dim(w.mat)[1]) {
     for (M in 1:dim(w.mat)[1]) {
       if(w.mat[N,M] != 0){
@@ -274,12 +281,12 @@ fcmdigraph <- function(x, imp, results = fcminfer(x,imp)$values,
         n <- n + 1
       }
     }
-  }                                                                             # Damos grosor a las aristas en función de los pesos.
+  }
 
   V(graph.map)$color <- "black"
-  n <- 1
+  n <- 1                                                                        # Damos color a los vértices en función de su orientación al ideal.
   for (pole.vertex in results) {
-  if(getRatingLayer(x)[,ideal][n] > 4){
+  if(getRatingLayer(grid)[,ideal][n] > 4){
     if(pole.vertex < 0){V(graph.map)$color[n] <- "#F52722" }
     else{
       if(pole.vertex > 0){V(graph.map)$color[n] <- "#a5d610" }
@@ -288,7 +295,7 @@ fcmdigraph <- function(x, imp, results = fcminfer(x,imp)$values,
       }
     }
   }
-    if(getRatingLayer(x)[,ideal][n] < 4){
+    if(getRatingLayer(grid)[,ideal][n] < 4){
       if(pole.vertex > 0){V(graph.map)$color[n] <- "#F52722" }
       else{
         if(pole.vertex < 0){V(graph.map)$color[n] <- "#a5d610" }
@@ -297,13 +304,13 @@ fcmdigraph <- function(x, imp, results = fcminfer(x,imp)$values,
         }
       }
     }
-    if(getRatingLayer(x)[,ideal][n] == 4){
+    if(getRatingLayer(grid)[,ideal][n] == 4){
       V(graph.map)$color[n] <- "yellow"
     }
     n <- n + 1
-  }                                                                             # Damos color a los vértices en función de su orientación al ideal.
+  }
 
-  n <- 1
+  n <- 1                                                                        # Damos nombre a los vértices en función del polo que se encuentra activado.
   for (pole.name.vertex in results) {
     if(pole.name.vertex < 0){V(graph.map)$name[n] <- lpoles[n] }
     else{
@@ -314,24 +321,24 @@ fcmdigraph <- function(x, imp, results = fcminfer(x,imp)$values,
       }
     }
     n <- n + 1
-  }                                                                             # Damos nombre a los vértices en función del polo que se encuentra activado.
+  }
 
   V(graph.map)$size <- 1
-  n <- 1
+  n <- 1                                                                        # Damos tamaño a los vértices en función de su grado de activación.
   for (size.vertex in results) {
     size.vertex <- abs(size.vertex)
     V(graph.map)$size[n] <-  vertex.size * (5 + size.vertex * 15)
     n <- n + 1
-  }                                                                             # Damos tamaño a los vértices en función de su grado de activación.
-
+  }
+                                                                                # Realizamos un serie de retoques finales para mejorar la visualización.
   E(graph.map)$arrow.size <- edge.width * 0.3
   V(graph.map)$shape <- "circle"
   V(graph.map)$label.cex <- 0.75
   V(graph.map)$label.family <- "sans"
   V(graph.map)$label.font <- 2
-  V(graph.map)$label.color <- "#323232"                                         # Realizamos un serie de retoques finales para mejorar la visualización.
+  V(graph.map)$label.color <- "#323232"
 
-
+                                                                                # Detectamos y aplicamos el layout escogido
   if(layout == "rtcircle"){
     graph.map <- add_layout_(graph.map,as_tree(circular = TRUE, mode = "out"))
   }
@@ -343,7 +350,7 @@ fcmdigraph <- function(x, imp, results = fcminfer(x,imp)$values,
   }
   if(layout == "graphopt"){
     set.seed(3394)
-    matrix.seed <- matrix(rnorm(2 * dim(x)[1]), ncol = 2)
+    matrix.seed <- matrix(rnorm(2 * dim(grid)[1]), ncol = 2)
 
     graph.map <- add_layout_(graph.map,with_graphopt(start = matrix.seed))
   }
@@ -352,16 +359,16 @@ fcmdigraph <- function(x, imp, results = fcminfer(x,imp)$values,
   }
   if(layout == "grid"){
     graph.map <- add_layout_(graph.map,on_grid())
-  }                                                                             # Diferentes layouts para los mapas cognitivos borrosos.
+  }
 
-  plot.igraph(graph.map, edge.curved = edge.curved)                             # Ejecutamos el gráfico.
+  plot.igraph(graph.map, edge.curved = edge.curved)                             # Ejecutamos el gráfico
 
-  if(legend){
+  if(legend){                                                                   # Dibujamos la leyenda del mapa cognitivo borroso.
     poles <- paste(lpoles,rpoles,sep = " - ")
     poles <- paste(c(1:length(poles)),poles,sep = ". ")
     legend("topright",legend = poles, cex = 0.7,
            title = "Constructos Personales")
-  }                                                                             # Dibujamos la leyenda del mapa cognitivo borroso.
+  }
 }
 ################################################################################
 
@@ -369,26 +376,30 @@ fcmdigraph <- function(x, imp, results = fcminfer(x,imp)$values,
 # 3D FUZZY COGNITVE MAP DIGRAPH -- fcmdigraph3D()
 ################################################################################
 
-#' Digrafo del Mapa Cognitivo Borroso en 3D (fcmdigraph3D)
+#' 3D Fuzzy Cognitive Digraph (fcmdigraph3D)
 #'
 #' @description Función que nos dibuja un digrafo del Mapa Cognitivo Borroso en
 #' tres dimensiones del sistema de constructos de un individuo a través de una
 #' técnica de rejilla y una rejilla de implicaciones. Utilizando un layout de
 #' escalado multidimensional.
 #'
-#' @param x Rejilla del sujeto del que queremos dibujar el Mapa Cognitivo
-#' Borroso. Debe de ser un objeto de la clase repgrid del paquete OpenRepGrid.
+#' @param grid RepGrid del sujeto del que queremos dibujar el Mapa Cognitivo
+#' Borroso. Debe de ser un objeto importado con la función
+#' \code{\link{importgrid}}.
 #'
 #' @param imp Matriz de implicaciones del sujeto importada con
-#' \code{\link{importIMP}}.
+#' \code{\link{importimp}}.
 #'
 #' @param results inferencia de escenarios creada con \code{\link{fcminfer}}.
+#' Por defecto se establece una inferencia sobre el Yo-Actual.
 #'
 #' @param ideal Posición del ideal dentro de la rejilla expresado a través del
-#' número de la columna donde se encuentra.
+#' número de la columna donde se encuentra. Por defecto se estable el último
+#' elemento de la Repgrid.
 #'
 #' @param niter Selección del vector de escenario que se quiere representar en
-#' el mapa. Expresado a través del número de iteraciones.
+#' el mapa. Expresado a través del número de iteracion. Por defecto se
+#' establece la primera iteración.
 #'
 #' @param edge.width Escalar del grosor de las aristas.
 #'
@@ -405,20 +416,23 @@ fcmdigraph <- function(x, imp, results = fcminfer(x,imp)$values,
 #'
 #' @export
 #'
-fcmdigraph3D <- function(x, imp, results = fcminfer(x,imp)$values,
-                       ideal = dim(x)[2], niter=30,edge.width=2,
+
+fcmdigraph3D <- function(grid, imp, results = fcminfer(grid,imp)$values,
+                       ideal = dim(grid)[2], niter=1, edge.width=2,
                        vertex.size =1){
 
-  imp_a <- .adaptrepgrid(imp, t = FALSE)
-  lpoles <- getConstructNames(x)[,1]
-  rpoles <- getConstructNames(x)[,2]                                            # Extraemos los nombres de los polos de los constructos.
+  imp_a <- .adaptrepgrid(imp, t = FALSE)                                        # Extraemos los valores de la matriz de implicaciones.
+
+  lpoles <- getConstructNames(grid)[,1]
+  rpoles <- getConstructNames(grid)[,2]                                            # Extraemos los nombres de los polos de los constructos.
 
   w.mat <- .weightmatrix(imp_a)
   w.mat <- as.matrix(w.mat)                                                     # Transformamos la matriz de implicaciones en una matriz de pesos
 
   results <- as.numeric(as.data.frame(results)[niter,])                         # Extraemos el vector de escenario que quiere representar el usuario
 
-  n <- 1
+                                                                                # Orientamos la matriz de pesos en funcíon del estado actual de la matriz.
+  n <- 1                                                                        # Esto sirve para cambiar el color de las aristas en función del estado de los vértices.
   for (integer in results) {
     if(integer != 0){
       integer.value <- integer / abs(integer)
@@ -426,20 +440,20 @@ fcmdigraph3D <- function(x, imp, results = fcminfer(x,imp)$values,
       w.mat[n,] <- w.mat[n,] * integer.value
     }
     n <- n + 1
-  }                                                                             # Orientamos la matriz de pesos en funcíon del estado actual de la matriz.
-                                                                                # Esto sirve para cambiar el color de las aristas en función del estado de los vértices.
+  }
 
-  graph.map <- graph.adjacency(w.mat,mode = "directed",weighted = T)            # Creamos el grafo primitivo y lo vamos configurando poco a poco.
+  graph.map <- graph.adjacency(w.mat,mode = "directed",weighted = T)            # Creamos el grafo primitivo y lo vamos configurando poco a poco
 
   V(graph.map)$size <- 1
-  n <- 1
+
+  n <- 1                                                                        # Damos tamaño a los vértices en función de su grado de activación
   for (size.vertex in results) {
     size.vertex <- abs(size.vertex)
     V(graph.map)$size[n] <-  vertex.size * (5 + size.vertex * 15)
     n <- n + 1
-  }                                                                             # Damos tamaño a los vértices en función de su grado de activación
+  }
 
-  n <- 1
+  n <- 1                                                                        # Damos nombre a los vértices según que polo se encuentre activado
   for (pole.name.vertex in results) {
     if(pole.name.vertex < 0){V(graph.map)$name[n] <- lpoles[n] }
     else{
@@ -450,12 +464,12 @@ fcmdigraph3D <- function(x, imp, results = fcminfer(x,imp)$values,
       }
     }
     n <- n + 1
-  }                                                                             # Damos nombre a los vértices según que polo se encuentre activado
+  }
 
-  V(graph.map)$color <- "black"
+  V(graph.map)$color <- "black"                                                 # Damos color a los vértices según su orientación al ideal.
   n <- 1
   for (pole.vertex in results) {
-    if(getRatingLayer(x)[,ideal][n] > 4){
+    if(getRatingLayer(grid)[,ideal][n] > 4){
       if(pole.vertex < 0){V(graph.map)$color[n] <- "#F52722" }
       else{
         if(pole.vertex > 0){V(graph.map)$color[n] <- "#a5d610" }
@@ -464,7 +478,7 @@ fcmdigraph3D <- function(x, imp, results = fcminfer(x,imp)$values,
         }
       }
     }
-    if(getRatingLayer(x)[,ideal][n] < 4){
+    if(getRatingLayer(grid)[,ideal][n] < 4){
       if(pole.vertex > 0){V(graph.map)$color[n] <- "#F52722" }
       else{
         if(pole.vertex < 0){V(graph.map)$color[n] <- "#a5d610" }
@@ -473,24 +487,24 @@ fcmdigraph3D <- function(x, imp, results = fcminfer(x,imp)$values,
         }
       }
     }
-    if(getRatingLayer(x)[,ideal][n] == 4){
+    if(getRatingLayer(grid)[,ideal][n] == 4){
       V(graph.map)$color[n] <- "yellow"
     }
     n <- n + 1
-  }                                                                             # Damos color a los vértices según su orientación al ideal.
+  }
 
-  E(graph.map)$color <- "black"
+  E(graph.map)$color <- "black"                                                 # Damos color a las aristas en función del tipo de causalidad.
   n <- 1
   for (weight in E(graph.map)$weight) {
     E(graph.map)$color[n] <-  ifelse(weight < 0, "red", "black" )
     n <- n + 1
-  }                                                                             # Damos color a las aristas en función del tipo de causalidad.
+  }
 
-  V(graph.map)$label.cex <- 0.75
+  V(graph.map)$label.cex <- 0.75                                                # Hacemos unos últimos retoques para mejorar la visualización del grafo.
   V(graph.map)$label.family <- "sans"
   V(graph.map)$label.font <- 2
   V(graph.map)$label.color <- "#323232"
-  V(graph.map)$label.dist <- 1.5                                                # Hacemos unos últimos retoques para mejorar la visualización del grafo.
+  V(graph.map)$label.dist <- 1.5
 
   L <- layout_with_mds(graph.map,dim=3)                                         # Creamos el layout del grafo.
 
@@ -506,17 +520,19 @@ fcmdigraph3D <- function(x, imp, results = fcminfer(x,imp)$values,
 #' @description Función que nos dibuja un digrafo del Ideal del individuo que
 #' nos permite ver las implicaciones entre los polos del Yo-Ideal.
 #'
-#' @param x Rejilla del sujeto del que queremos dibujar el Mapa Cognitivo
-#' Borroso. Debe de ser un objeto de la clase repgrid del paquete OpenRepGrid.
+#' @param grid RepGrid del sujeto del que queremos dibujar el Mapa Cognitivo
+#' Borroso. Debe de ser un objeto importado con la función
+#' \code{\link{importgrid}}.
 #'
 #' @param imp Matriz de implicaciones del sujeto importada con
-#' \code{\link{importIMP}}.
+#' \code{\link{importimp}}.
 #'
 #' @param inc Si lo establecemos como TRUE nos muestra solamente las relaciones
-#' de inconsistencia dentro del ideal.
+#' de inconsistencia (relaciones inversas) dentro del ideal.
 #'
 #' @param ideal Posición del ideal dentro de la rejilla expresado a través del
-#' número de la columna donde se encuentra.
+#' número de la columna donde se encuentra. Por defecto se establece el último
+#' elemento de la rejilla.
 #'
 #' @param layout Layout que se quiere utilizar para representar el mapa.
 #'
@@ -536,16 +552,17 @@ fcmdigraph3D <- function(x, imp, results = fcminfer(x,imp)$values,
 #'
 #' @export
 
-idealdigraph <- function(x,imp, ideal = dim(x)[2], inc = FALSE, layout ="circle",
-                     edge.width = 1, vertex.size = 1,legend = FALSE){
+idealdigraph <- function(grid,imp, ideal = dim(grid)[2], inc = FALSE,
+                         layout ="circle", edge.width = 1, vertex.size = 1,
+                         legend = FALSE){
 
-  act.vector <- actvector(x,col.element = ideal)
-  ideal.results <- fcminfer(x,imp,act.vector)$values
+  act.vector <- actvector(grid,col.element = ideal)
+  ideal.results <- fcminfer(grid,imp,act.vector)$values
 
   imp_a <- .adaptrepgrid(imp, t = FALSE)
 
-  lpoles <- getConstructNames(x)[,1]
-  rpoles <- getConstructNames(x)[,2]                                            # Extraemos los nombres de los polos de los contrusctos de la Rejilla.
+  lpoles <- getConstructNames(grid)[,1]
+  rpoles <- getConstructNames(grid)[,2]                                         # Extraemos los nombres de los polos de los contrusctos de la Rejilla.
 
   w.mat <- .weightmatrix(imp_a)
   w.mat <- as.matrix(w.mat)                                                     # Transformamos las implicaciones en pesos.
@@ -607,7 +624,7 @@ idealdigraph <- function(x,imp, ideal = dim(x)[2], inc = FALSE, layout ="circle"
   V(graph.map)$color <- "black"
   n <- 1
   for (pole.vertex in results) {
-    if(getRatingLayer(x)[,ideal][n] > 4){
+    if(getRatingLayer(grid)[,ideal][n] > 4){
       if(pole.vertex < 0){V(graph.map)$color[n] <- "#F52722" }
       else{
         if(pole.vertex > 0){V(graph.map)$color[n] <- "#a5d610" }
@@ -616,7 +633,7 @@ idealdigraph <- function(x,imp, ideal = dim(x)[2], inc = FALSE, layout ="circle"
         }
       }
     }
-    if(getRatingLayer(x)[,ideal][n] < 4){
+    if(getRatingLayer(grid)[,ideal][n] < 4){
       if(pole.vertex > 0){V(graph.map)$color[n] <- "#F52722" }
       else{
         if(pole.vertex < 0){V(graph.map)$color[n] <- "#a5d610" }
@@ -625,7 +642,7 @@ idealdigraph <- function(x,imp, ideal = dim(x)[2], inc = FALSE, layout ="circle"
         }
       }
     }
-    if(getRatingLayer(x)[,ideal][n] == 4){
+    if(getRatingLayer(grid)[,ideal][n] == 4){
       V(graph.map)$color[n] <- "yellow"
     }
     n <- n + 1
