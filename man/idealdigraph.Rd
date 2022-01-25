@@ -2,12 +2,12 @@
 % Please edit documentation in R/FCMfunctions.R
 \name{idealdigraph}
 \alias{idealdigraph}
-\title{Digrafo del Yo-Ideal (IdealMap)}
+\title{Ideal Map Digraph -- idealdigraph()}
 \usage{
 idealdigraph(
-  x,
+  grid,
   imp,
-  ideal = dim(x)[2],
+  ideal = dim(grid)[2],
   inc = FALSE,
   layout = "circle",
   edge.width = 1,
@@ -16,17 +16,19 @@ idealdigraph(
 )
 }
 \arguments{
-\item{x}{Rejilla del sujeto del que queremos dibujar el Mapa Cognitivo
-Borroso. Debe de ser un objeto de la clase repgrid del paquete OpenRepGrid.}
+\item{grid}{RepGrid del sujeto del que queremos dibujar el Mapa Cognitivo
+Borroso. Debe de ser un objeto importado con la función
+\code{\link{importgrid}}.}
 
 \item{imp}{Matriz de implicaciones del sujeto importada con
-\code{\link{importIMP}}.}
+\code{\link{importimp}}.}
 
 \item{ideal}{Posición del ideal dentro de la rejilla expresado a través del
-número de la columna donde se encuentra.}
+número de la columna donde se encuentra. Por defecto se establece el último
+elemento de la rejilla.}
 
 \item{inc}{Si lo establecemos como TRUE nos muestra solamente las relaciones
-de inconsistencia dentro del ideal.}
+de inconsistencia (relaciones inversas) dentro del ideal.}
 
 \item{layout}{Layout que se quiere utilizar para representar el mapa.}
 
@@ -43,7 +45,4 @@ individuo
 \description{
 Función que nos dibuja un digrafo del Ideal del individuo que
 nos permite ver las implicaciones entre los polos del Yo-Ideal.
-}
-\examples{
-
 }

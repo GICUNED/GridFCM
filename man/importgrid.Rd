@@ -2,7 +2,7 @@
 % Please edit documentation in R/Gridfunctions.R
 \name{importgrid}
 \alias{importgrid}
-\title{Importar Técnica de Rejilla (importGRID)}
+\title{Import RepGrid -- importgrid()}
 \usage{
 importgrid(path, ...)
 }
@@ -11,13 +11,10 @@ importgrid(path, ...)
 la técnica de rejilla.}
 }
 \value{
-Devuelve un objeto S3 RepGrid del paquete OpenRepGrid que contiene la
+Devuelve un objeto S4 repgrid del paquete OpenRepGrid que contiene la
 información de la técnica de rejilla.
 }
 \description{
 Función que permite leer una técnica de rejilla contenida
 dentro de un archivo de excel.
-}
-\examples{
-
 }

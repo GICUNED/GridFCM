@@ -2,32 +2,36 @@
 % Please edit documentation in R/FCMfunctions.R
 \name{fcmdigraph3D}
 \alias{fcmdigraph3D}
-\title{Digrafo del Mapa Cognitivo Borroso en 3D (fcmdigraph3D)}
+\title{3D Fuzzy Cognitive Digraph -- fcmdigraph3D()}
 \usage{
 fcmdigraph3D(
-  x,
+  grid,
   imp,
-  results = fcminfer(x, imp)$values,
-  ideal = dim(x)[2],
-  niter = 30,
+  results = fcminfer(grid, imp)$values,
+  ideal = dim(grid)[2],
+  niter = 1,
   edge.width = 2,
   vertex.size = 1
 )
 }
 \arguments{
-\item{x}{Rejilla del sujeto del que queremos dibujar el Mapa Cognitivo
-Borroso. Debe de ser un objeto de la clase repgrid del paquete OpenRepGrid.}
+\item{grid}{RepGrid del sujeto del que queremos dibujar el Mapa Cognitivo
+Borroso. Debe de ser un objeto importado con la función
+\code{\link{importgrid}}.}
 
 \item{imp}{Matriz de implicaciones del sujeto importada con
-\code{\link{importIMP}}.}
+\code{\link{importimp}}.}
 
-\item{results}{inferencia de escenarios creada con \code{\link{fcminfer}}.}
+\item{results}{inferencia de escenarios creada con \code{\link{fcminfer}}.
+Por defecto se establece una inferencia sobre el Yo-Actual.}
 
 \item{ideal}{Posición del ideal dentro de la rejilla expresado a través del
-número de la columna donde se encuentra.}
+número de la columna donde se encuentra. Por defecto se estable el último
+elemento de la Repgrid.}
 
 \item{niter}{Selección del vector de escenario que se quiere representar en
-el mapa. Expresado a través del número de iteraciones.}
+el mapa. Expresado a través del número de iteracion. Por defecto se
+establece la primera iteración.}
 
 \item{edge.width}{Escalar del grosor de las aristas.}
 
@@ -42,8 +46,4 @@ Función que nos dibuja un digrafo del Mapa Cognitivo Borroso en
 tres dimensiones del sistema de constructos de un individuo a través de una
 técnica de rejilla y una rejilla de implicaciones. Utilizando un layout de
 escalado multidimensional.
-}
-\examples{
-
-
 }

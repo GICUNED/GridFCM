@@ -356,7 +356,7 @@ pcsd_derivative <- function(x,imp,ideal=dim(x)[2],...){
   ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),             # Creamos una matriz con los valores del yo-ideal repetidos por filas
                          nrow = iter, byrow = TRUE)
 
-  res.pre <- fcminfer(x,imp,iter=iter,...)$values                                   # Obtenemos la inferencia del MCB
+  res.pre <- fcminfer(x,imp,iter=iter,...)$values                               # Obtenemos la inferencia del MCB
   res.pre <- abs(res.pre - ideal.matrix) / 2
 
 

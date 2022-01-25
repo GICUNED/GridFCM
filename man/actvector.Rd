@@ -4,26 +4,23 @@
 \alias{actvector}
 \title{Crear Vector de Activación (actvector)}
 \usage{
-actvector(x, col.element = 1)
+actvector(grid, col.element = 1)
 }
 \arguments{
-\item{x}{Rejilla del sujeto desde donde queremos extraer el vector de
+\item{grid}{Rejilla del sujeto desde donde queremos extraer el vector de
 activación. Debe de ser un objeto de la clase repgrid del paquete
 OpenRepGrid.}
 
 \item{col.element}{Elemento desde el que extraemos el vector de activación.
 Por defecto se establece el primer elemento, que coincide normalmente con el
-Yo-Actual.}
+Yo-Actual de la RepGrid.}
 }
 \value{
 Devuelve un vector que contiene los pesos para cada uno de los
 constructos asociados a un elemento.
 }
 \description{
-Función que extrae un vector para un elemento de la rejilla y lo
-transforma en un vector de activación apropiado para utilizarse a la hora de
-crear un mapa cognitivo borroso.
-}
-\examples{
-
+Función que extrae un vector de un elemento de la RepGrid y lo
+estandariza para poder utilizarse como vector de activación un mapa cognitivo
+borroso.
 }

@@ -4,10 +4,10 @@
 \alias{pcsd}
 \title{Personal Constructs System Dynamics plot -- pcsd()}
 \usage{
-pcsd(x, imp, ideal = dim(x)[2], ...)
+pcsd(grid, imp, ideal = dim(grid)[2], ...)
 }
 \arguments{
-\item{x}{RepGrid sobre la que queremos realizar nuestro PCSD. Debe de haber
+\item{grid}{RepGrid sobre la que queremos realizar nuestro PCSD. Debe haber
 sido importada a través de \code{\link{importgrid}}.}
 
 \item{imp}{Impgrid sobre la que queremos realizar nuestro PCSD. Debe de haber

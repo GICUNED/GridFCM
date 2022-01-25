@@ -23,8 +23,6 @@
 #' @return Devuelve un vector que contiene los pesos para cada uno de los
 #' constructos asociados a un elemento.
 #'
-#' @examples
-#'
 #' @import OpenRepGrid
 #'
 #' @export
@@ -82,8 +80,6 @@ actvector <- function(grid, col.element = 1){
 #' iteraciones. Y la entrada $convergence contiene el número de la iteración
 #' donde se estabilizada el mapa cognitivo borroso.
 #'
-#' @examples
-#'
 #' @import OpenRepGrid
 #' @import ggplot2
 #'
@@ -139,12 +135,13 @@ pcsd <- function(grid,imp,ideal=dim(grid)[2],...){
 
   lpoles <- OpenRepGrid::getConstructNames(grid)[,1]                            # Extraemos los nombres de los constructos
   rpoles <- OpenRepGrid::getConstructNames(grid)[,2]
-  poles <- paste(lpoles,"-",rpoles,sep = " ")
+  poles <- paste(lpoles,"—",rpoles,sep = "")
 
   iter <- fcminfer(grid,imp,iter=60,...)$convergence                            # Establecemos el número de iteración donde se estabiliza el FCM
 
   ideal.vector <- OpenRepGrid::getRatingLayer(grid)[,ideal]
-  ideal.vector <- (ideal.vector - 4)/3
+  ideal.vector <- (ideal.vector -
+                   getScaleMidpoint(grid))/((getScale(grid)[2]-1)/2)
   ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),             # Creamos una matriz con los valores del yo-ideal repetidos por filas
                         nrow = iter, byrow = TRUE)
 
@@ -215,7 +212,6 @@ pcsd <- function(grid,imp,ideal=dim(grid)[2],...){
 #' @return Devuelve una representación gráfica de un digrafo de un Mapa
 #' Cognitivo Borroso.
 #'
-#' @examples
 #'
 #' @import igraph
 #' @import OpenRepGrid
@@ -316,8 +312,9 @@ fcmdigraph <- function(grid, imp, results = fcminfer(grid,imp)$values,
     else{
       if(pole.name.vertex > 0){V(graph.map)$name[n] <- rpoles[n] }
       else{
-        if(pole.name.vertex == 0){V(graph.map)$name[n] <- paste(lpoles[n],"-",
-                                                                rpoles[n])}
+        if(pole.name.vertex == 0){V(graph.map)$name[n] <- paste(lpoles[n],"—",
+                                                                rpoles[n],sep =
+                                                                  "")}
       }
     }
     n <- n + 1
@@ -376,7 +373,7 @@ fcmdigraph <- function(grid, imp, results = fcminfer(grid,imp)$values,
 # 3D FUZZY COGNITVE MAP DIGRAPH -- fcmdigraph3D()
 ################################################################################
 
-#' 3D Fuzzy Cognitive Digraph (fcmdigraph3D)
+#' 3D Fuzzy Cognitive Digraph -- fcmdigraph3D()
 #'
 #' @description Función que nos dibuja un digrafo del Mapa Cognitivo Borroso en
 #' tres dimensiones del sistema de constructos de un individuo a través de una
@@ -408,7 +405,6 @@ fcmdigraph <- function(grid, imp, results = fcminfer(grid,imp)$values,
 #' @return Devuelve una representación gráfica de un digrafo de un Mapa
 #' Cognitivo Borroso en un escalado multidimensional de 3 dimensiones.
 #'
-#' @examples
 #'
 #'
 #' @import igraph
@@ -459,8 +455,9 @@ fcmdigraph3D <- function(grid, imp, results = fcminfer(grid,imp)$values,
     else{
       if(pole.name.vertex > 0){V(graph.map)$name[n] <- rpoles[n] }
       else{
-        if(pole.name.vertex == 0){V(graph.map)$name[n] <- paste(lpoles[n],"-",
-                                                                rpoles[n])}
+        if(pole.name.vertex == 0){V(graph.map)$name[n] <- paste(lpoles[n],"—",
+                                                                rpoles[n],sep =
+                                                                  "")}
       }
     }
     n <- n + 1
@@ -513,9 +510,9 @@ fcmdigraph3D <- function(grid, imp, results = fcminfer(grid,imp)$values,
 ################################################################################
 
 
-# IDEAL FUZZY COGNITIVE MAP DIGRAPH - idealdigraph()
+# IDEAL FUZZY COGNITIVE MAP DIGRAPH -- idealdigraph()
 ################################################################################
-#' Digrafo del Yo-Ideal (IdealMap)
+#' Ideal Map Digraph -- idealdigraph()
 #'
 #' @description Función que nos dibuja un digrafo del Ideal del individuo que
 #' nos permite ver las implicaciones entre los polos del Yo-Ideal.
@@ -545,7 +542,6 @@ fcmdigraph3D <- function(grid, imp, results = fcminfer(grid,imp)$values,
 #' @return Devuelve una representación gráfica de un digrafo del Yo-Ideal del
 #' individuo
 #'
-#' @examples
 #'
 #' @import igraph
 #' @import OpenRepGrid
@@ -561,8 +557,8 @@ idealdigraph <- function(grid,imp, ideal = dim(grid)[2], inc = FALSE,
 
   imp_a <- .adaptrepgrid(imp, t = FALSE)
 
-  lpoles <- getConstructNames(grid)[,1]
-  rpoles <- getConstructNames(grid)[,2]                                         # Extraemos los nombres de los polos de los contrusctos de la Rejilla.
+  lpoles <- getConstructNames(grid)[,1]                                         # Extraemos los nombres de los polos de los contructos de la RepGrid.
+  rpoles <- getConstructNames(grid)[,2]
 
   w.mat <- .weightmatrix(imp_a)
   w.mat <- as.matrix(w.mat)                                                     # Transformamos las implicaciones en pesos.
@@ -571,15 +567,15 @@ idealdigraph <- function(grid,imp, ideal = dim(grid)[2], inc = FALSE,
   results <- as.numeric(as.data.frame(ideal.results)[1,])                       # Extraemos el vector de escenario seleccionado por el usuario.
 
   n <- 1
-  for (integer in results) {
-    if(integer != 0){
+  for (integer in results) {                                                    # Orientamos la matriz de pesos en funcíon del estado actual de la matriz.
+    if(integer != 0){                                                           # Esto sirve para cambiar el color de las aristas en función del estado de los vértices
       integer.value <- integer / abs(integer)
       w.mat[,n] <- w.mat[,n] * integer.value
       w.mat[n,] <- w.mat[n,] * integer.value
     }
     n <- n + 1
-  }                                                                             # Orientamos la matriz de pesos en funcíon del estado actual de la matriz.
-                                                                                # Esto sirve para cambiar el color de las aristas en función del estado de los vértices
+  }
+
 
 
   if(inc){
@@ -592,12 +588,12 @@ idealdigraph <- function(grid,imp, ideal = dim(grid)[2], inc = FALSE,
   E(graph.map)$color <- "black"
   n <- 1
   for (weight in E(graph.map)$weight) {
-    E(graph.map)$color[n] <-  ifelse(weight < 0, "red", "black" )
+    E(graph.map)$color[n] <-  ifelse(weight < 0, "red", "black" )               # Damos color a las aristas en función del tipo de relación.
     n <- n + 1
-  }                                                                             # Damos color a las aristas en función del tipo de relación.
+  }
 
   edge.curved <- rep(0, length(E(graph.map)))
-  n <- 1
+  n <- 1                                                                        # Damos curvatura a las aristas para evitar superposiciones en los casos de bicausalidad.
   for (N in 1:dim(w.mat)[1]) {
     for (M in 1:dim(w.mat)[1]) {
       if(w.mat[M,N] != 0 && w.mat[N,M] != 0){
@@ -608,9 +604,9 @@ idealdigraph <- function(grid,imp, ideal = dim(grid)[2], inc = FALSE,
 
       }
     }
-  }                                                                             # Damos curvatura a las aristas para evitar superposiciones en los casos de bicausalidad.
+  }
 
-  n <- 1
+  n <- 1                                                                        # Damos grosor a las aristas en función de los pesos de las implicaciones.
   for (N in 1:dim(w.mat)[1]) {
     for (M in 1:dim(w.mat)[1]) {
       if(w.mat[N,M] != 0){
@@ -619,10 +615,10 @@ idealdigraph <- function(grid,imp, ideal = dim(grid)[2], inc = FALSE,
       }
     }
   }
-                                                                                # Damos grosor a las aristas en función de los pesos.
+
 
   V(graph.map)$color <- "black"
-  n <- 1
+  n <- 1                                                                        # Damos color a los vértices en función de su orientación al ideal.
   for (pole.vertex in results) {
     if(getRatingLayer(grid)[,ideal][n] > 4){
       if(pole.vertex < 0){V(graph.map)$color[n] <- "#F52722" }
@@ -646,38 +642,39 @@ idealdigraph <- function(grid,imp, ideal = dim(grid)[2], inc = FALSE,
       V(graph.map)$color[n] <- "yellow"
     }
     n <- n + 1
-  }                                                                             # Damos color a los vértices en función de su orientación al ideal.
+  }
 
-  n <- 1
+  n <- 1                                                                        # Damos nombre a los vértices en función del polo que se encuentra activado.
   for (pole.name.vertex in results) {
     if(pole.name.vertex < 0){V(graph.map)$name[n] <- lpoles[n] }
     else{
       if(pole.name.vertex > 0){V(graph.map)$name[n] <- rpoles[n] }
       else{
-        if(pole.name.vertex == 0){V(graph.map)$name[n] <- paste(lpoles[n],"-",
-                                                                rpoles[n])}
+        if(pole.name.vertex == 0){V(graph.map)$name[n] <- paste(lpoles[n],"—",
+                                                                rpoles[n],sep =
+                                                                  "")}
       }
     }
     n <- n + 1
-  }                                                                             # Damos nombre a los vértices en función del polo que se encuentra activado.
+  }
 
   V(graph.map)$size <- 1
-  n <- 1
+  n <- 1                                                                        # Damos tamaño a los vértices en función de su grado de activación.
   for (size.vertex in results) {
     size.vertex <- abs(size.vertex)
     V(graph.map)$size[n] <-  vertex.size * (5 + size.vertex * 15)
     n <- n + 1
-  }                                                                             # Damos tamaño a los vértices en función de su grado de activación.
+  }
 
-  E(graph.map)$arrow.size <- edge.width * 0.3
+  E(graph.map)$arrow.size <- edge.width * 0.3                                   # Realizamos un serie de retoques finales para mejorar la visualización.
   V(graph.map)$shape <- "circle"
   V(graph.map)$label.cex <- 0.75
   V(graph.map)$label.family <- "sans"
   V(graph.map)$label.font <- 2
-  V(graph.map)$label.color <- "#323232"                                         # Realizamos un serie de retoques finales para mejorar la visualización.
+  V(graph.map)$label.color <- "#323232"
 
 
-  if(layout == "rtcircle"){
+  if(layout == "rtcircle"){                                                     # Configuramos el layout a mostrar.
     graph.map <- add_layout_(graph.map,as_tree(circular = TRUE))
   }
   if(layout == "tree"){
@@ -694,44 +691,74 @@ idealdigraph <- function(grid,imp, ideal = dim(grid)[2], inc = FALSE,
   }
   if(layout == "grid"){
     graph.map <- add_layout_(graph.map,on_grid())
-  }                                                                             # Diferentes layouts para los mapas cognitivos borrosos.
+  }
 
   plot.igraph(graph.map, edge.curved = edge.curved)                             # Ejecutamos el gráfico.
 
-  if(legend){
+  if(legend){                                                                   # Dibujamos la leyenda
     poles <- paste(lpoles,rpoles,sep = " - ")
     poles <- paste(c(1:length(poles)),poles,sep = ". ")
     legend("topright",legend = poles, cex = 0.7,
            title = "Constructos Personales")
-  }                                                                             # Dibujamos la leyenda del mapa cognitivo borroso.
+  }
 }
 ################################################################################
 
 # ANALISYS REPORT -- fcmreport()
 ################################################################################
 
+
+#' GridFCM Analisys Report -- fcmreport())
+#'
+#' @description Función que nos exporta un análisis completo sobre un sujeto
+#' utilizando
+#'
+#' @param grid RepGrid del sujeto del que queremos dibujar el Mapa Cognitivo
+#' Borroso. Debe de ser un objeto importado con la función
+#' \code{\link{importgrid}}.
+#'
+#' @param imp Matriz de implicaciones del sujeto importada con
+#' \code{\link{importimp}}.
+#'
+#' @param name Nombre del archivo de salida
+#'
+#' @param dir Directorio dónde se va a crear el archivo de salida. Por defecto
+#' se estable el directorio de trabajo.
+#'
+#' @param output Work in progress
+#'
+#' @param edit Parametro booleano para indicar si se desea editar el código
+#' fuente del informe. Por defecto se encuentra definido como FALSE.
+#'
+#' @return Devuelve un archivo html que muestra un análisis completo sobre la
+#' RepGrid y la ImpGrid del sujeto.
+#'
+#' @import rmarkdown
+#'
 #' @export
 #'
 
-fcmreport <- function(x, imp, name = "report", dir = getwd(),type = "html"){
+fcmreport <- function(x, imp, name = "report", dir = getwd(), output = "html",
+                      edit = FALSE){
 
-  render.grid <- x
+  render.grid <- x                                                              # Creamos los objetos renderizables para el draft
   render.imp <- imp
-  file <- paste(name,".Rmd", sep = "")
 
-  file.remove(file)
+  file <- paste(name,".Rmd", sep = "")                                          # Damos nombre al archivo de salida
+
+  file.remove(file)                                                             # Eliminamos posibles archivos residuales de algún error previo de la función
   file.remove("style.css")
   file.remove("gridfcm.png")
 
-if(type == "html"){
-  rmarkdown::draft(name,"report_html", package = "GridFCM",edit=FALSE)
+if(output == "html"){                                                           # Creamos el draft del html y lo renderizamos.
+  rmarkdown::draft(name,"report_html", package = "GridFCM",edit=edit)
   rmarkdown::render(file , output_dir = dir)
 }
-if(type =="shiny"){
-  rmarkdown::draft(name,"report_shiny", package = "GridFCM",edit=FALSE)
+if(output =="shiny"){
+  rmarkdown::draft(name,"report_shiny", package = "GridFCM",edit=edit)         # Creamos el draft del Shiny y lo ejecutamos
   rmarkdown::run(file, shiny_args = list(launch.browser = TRUE))
 }
   file.remove(file)
   file.remove("style.css")
-  file.remove("gridfcm.png")
+  file.remove("gridfcm.png")                                                    # eliminamos los archivos temporales de la renderización
 }

@@ -2,9 +2,12 @@
 % Please edit documentation in R/Gridfunctions.R
 \name{templateimp}
 \alias{templateimp}
-\title{Importar Técnica de Rejilla (importGRID)}
+\title{Create ImpGrid Template -- templateimp()}
 \usage{
-templateimp(x, name = "ImpGrid_Template")
+templateimp(grid, name = "ImpGrid_Template")
+}
+\arguments{
+\item{name}{Nombre para el archivo de salida.}
 }
 \value{
 Exporta un documento xlsx en el directorio de trabajo asignado de la
@@ -12,9 +15,6 @@ sesión.
 }
 \description{
 Función que crea en el directorio de trabajo un archivo de excel
-con una plantilla personalizada de la Rejilla de Implicaciones en base a una
-Tecnica de Rejilla
-}
-\examples{
-
+con una plantilla personalizada de la Rejilla de Implicaciones teniendo como
+base una RepGrid.
 }

@@ -2,14 +2,14 @@
 % Please edit documentation in R/FCMfunctions.R
 \name{fcmdigraph}
 \alias{fcmdigraph}
-\title{Digrafo del Mapa Cognitivo Borroso -- fcmdigraph()}
+\title{Fuzzy Cognitive Map Digraph -- fcmdigraph()}
 \usage{
 fcmdigraph(
-  x,
+  grid,
   imp,
-  results = fcminfer(x, imp)$values,
-  ideal = dim(x)[2],
-  niter = 30,
+  results = fcminfer(grid, imp)$values,
+  ideal = dim(grid)[2],
+  niter = 1,
   layout = "graphopt",
   edge.width = 1.5,
   vertex.size = 1,
@@ -17,19 +17,23 @@ fcmdigraph(
 )
 }
 \arguments{
-\item{x}{Rejilla del sujeto del que queremos dibujar el Mapa Cognitivo
-Borroso. Debe de ser un objeto de la clase repgrid del paquete OpenRepGrid.}
+\item{grid}{RepGrid del sujeto del que queremos dibujar el Mapa Cognitivo
+Borroso. Debe de ser un objeto importado con la función
+\code{\link{importgrid}}.}
 
 \item{imp}{Matriz de implicaciones del sujeto importada con
-\code{\link{importIMP}}.}
+\code{\link{importimp}}.}
 
-\item{results}{inferencia de escenarios creada con \code{\link{fcminfer}}.}
+\item{results}{inferencia de escenarios creada con \code{\link{fcminfer}}.
+Por defecto se establece una inferencia sobre el Yo-Actual.}
 
 \item{ideal}{Posición del ideal dentro de la rejilla expresado a través del
-número de la columna donde se encuentra.}
+número de la columna donde se encuentra. Por defecto el último elemento de la
+RepGrid}
 
 \item{niter}{Selección del vector de escenario que se quiere representar en
-el mapa. Expresado a través del número de iteraciones.}
+el mapa. Expresado a través del número de iteraciones. Por defecto se
+establece la primera iteracion.}
 
 \item{layout}{Layout que se quiere utilizar para representar el mapa. Más
 información de los layouts escribiendo ?\code{\link{GraphLayouts}}.}
@@ -48,7 +52,4 @@ Cognitivo Borroso.
 Función que nos dibuja un digrafo del Mapa Cognitivo Borroso del
 sistema de constructos de un individuo a través de una técnica de rejilla y
 una rejilla de implicaciones.
-}
-\examples{
-
 }

@@ -5,10 +5,10 @@
 \title{Inferencia de Escenarios Futuros -- fcminfer()}
 \usage{
 fcminfer(
-  x,
+  grid,
   imp,
-  act.vec = actvector(x),
-  ideal = dim(x)[2],
+  act.vec = actvector(grid),
+  ideal = dim(grid)[2],
   infer = "mk",
   thr = "t",
   lambda = 1,
@@ -16,25 +16,27 @@ fcminfer(
 )
 }
 \arguments{
-\item{x}{Rejilla del sujeto desde donde queremos realizar las inferencias.
-Debe de ser un objeto de la clase repgrid del paquete OpenRepGrid.}
+\item{grid}{RepGrid del sujeto desde donde queremos realizar las inferencias.
+Debe de ser un objeto importando con la función \code{\link{importgrid}}.}
 
 \item{imp}{Matriz de implicaciones del sujeto importada con
-\code{\link{importIMP}}.}
+\code{\link{importimp}}.}
 
 \item{act.vec}{Vector de activación creado a través de
-\code{\link{ActVector}}.}
+\code{\link{actvector}}. Si no se define se utiliza el vector correspondiente
+ al primer elemento de la RepGrid.}
 
-\item{ideal}{Posición del ideal dentro de la rejilla expresado a través del
-número de la columna donde se encuentra.}
+\item{ideal}{Posición del ideal dentro de la RepGrid expresado a través del
+número de la columna donde se encuentra. Por defecto se establece el último
+elemento de la RepGrid.}
 
 \item{infer}{Función de Propagación para la inferencia de escenarios.
 Puedes mirar la información sobre las diferentes funciones de propagación
 escribiendo ?\code{\link{PropFunctions}}. Por defecto se utiliza la
 modificada de Kosko ("mk").}
 
-\item{thr}{Función Umbral para la inferencia de escenarios. Puedes mirar la
-información sonbre las distintas funciones umbral escribiendo
+\item{thr}{Función de Umbral para la inferencia de escenarios. Puedes mirar
+la información sonbre las distintas funciones umbral escribiendo
 ?\code{\link{ThrFunctions}}. Por defecto se utiliza la Tangente Hiperbólica
 ("t").}
 
@@ -50,9 +52,6 @@ iteraciones. Y la entrada $convergence contiene el número de la iteración
 donde se estabilizada el mapa cognitivo borroso.
 }
 \description{
-Función que infiere los cambios dentro un mapa cognitivo borroso
-y lo expresa iteración a iteración.
-}
-\examples{
-
+Función para inferir escenarios futuros simulados del mapa
+cognitivo borroso derivados de las relaciones de causalidad.
 }
