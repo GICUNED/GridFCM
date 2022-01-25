@@ -29,3 +29,5 @@ vignettes/*.pdf
 data.RData
 /doc/
 /Meta/
+ImpGrid_Template .xlsx
+report.html
