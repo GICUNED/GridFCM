@@ -6,10 +6,10 @@
 ################################################################################
 .adaptrepgrid <- function(x, t=FALSE){
 
-  result <- getRatingLayer(x)
+  result <- getRatingLayer(x)                                                   # Extraemos las puntuaciones del objeto repgrid a una matriz
 
   if(!t){
-  result <- t(result)
+  result <- t(result)                                                           # Se traspone la matriz en caso de ser necesario
   }
 
   return(result)
@@ -19,8 +19,9 @@
 # ALIGN BY SELF --  .alignbyself()
 ################################################################################
 .alignbyself <- function(x, self = 1){
-  for (i in 1:dim(x)[1]) {
-    if(getRatingLayer(x)[i,self] > 4){
+
+  for (i in 1:dim(x)[1]) {                                                      # Revisamos fila a fila todos los constructos del self
+    if(getRatingLayer(x)[i,self] > getScaleMidpoint(x)){                        # Permutamos aquello que no esten orientados hacia el self
       x <- swapPoles(x,i)
     }
   }
@@ -31,7 +32,7 @@
 # WEIGHT MATRIX -- .weightmatrix()
 ################################################################################
 
-.weightmatrix <- function(x){
+.weightmatrix <- function(x){                                                   # Estandarizamos la matriz dividiendo entre su escala (ADECUAR A LA ESCALA)
   result <- x/3
   return(result)
 }
@@ -41,15 +42,17 @@
 ################################################################################
 
 .infer <- function (activation_vec, weight_mat, iter = 20, infer = "k",
-                    transform = "s", lambda = 1, e = 0.001)
+                    transform = "s", lambda = 1, e = 0.001)                     # Función extraída del paquete fcm y adaptada a GridFCM
 {
   if (length(which(activation_vec > 1)) & length(which(activation_vec >
                                                        -1))) {
-    stop("Please check the concepts' values of the activation vector. They must be in the range -1 and 1.")
+    stop("Please check the concepts' values of the activation vector. They must
+         be in the range -1 and 1.")
   }
   if (length(which(weight_mat > 1)) & length(which(weight_mat >
                                                    -1))) {
-    stop("Please check the weights of the matrix. They must be in the range -1 and 1.")
+    stop("Please check the weights of the matrix. They must be in the range -1
+         and 1.")
   }
   if (sum(is.na(activation_vec)) > 0) {
     stop("Please check the activation vector for missing values.")
@@ -61,9 +64,13 @@
     stop("The iterations must be higher than zero.")
   if (sum(!(infer %in% c("k", "mk", "r", "kc", "mkc", "rc"))) >
       0)
-    stop("For the Inference Rule only Kosko 'k', modified Kosko 'mk',  Rescale 'r', Kosko-clamped 'kc', modified Kosko-clamped 'mkc' or Rescale-clamped 'rc' variables are allowed.")
+    stop("For the Inference Rule only Kosko 'k', modified Kosko 'mk',  Rescale
+         'r', Kosko-clamped 'kc', modified Kosko-clamped 'mkc' or
+         Rescale-clamped 'rc' variables are allowed.")
   if (sum(!(transform %in% c("b", "tr", "s", "t"))) > 0)
-    stop("For the transformation functions only Bivalent 'b', Trivalent 'tr', Sigmoid 's' or\n            Hyperbolic tangent 't' variables are allowed.")
+    stop("For the transformation functions only Bivalent 'b', Trivalent 'tr',
+         Sigmoid 's' or\n            Hyperbolic tangent 't' variables are
+         allowed.")
   if ((lambda <= 0) || (lambda >= 10))
     stop("Lambda value should be in the range 1 to 10.")
   if ((e < 1e-06) || (e > 0.01))
@@ -76,12 +83,11 @@
         initial_vec <- colSums(t(activation_vec) * weight_mat)
       }
       else if (infer == "mk" || infer == "mkc") {
-        initial_vec <- activation_vec + colSums(t(activation_vec) *
-                                                  weight_mat)
+        initial_vec <- activation_vec + colSums(t(activation_vec) * weight_mat)
       }
       else if (infer == "r" || infer == "rc") {
-        initial_vec <- (2 * activation_vec - 1) + colSums(t((2 *
-                                                               activation_vec) - 1) * weight_mat)
+        initial_vec <- (2 * activation_vec - 1) + colSums(t((2 * activation_vec)
+                                                            - 1) * weight_mat)
       }
       if (transform == "s") {
         initial_vec <- 1/(1 + exp(-lambda * initial_vec))
@@ -95,12 +101,11 @@
         initial_vec <- colSums(t(initial_vec) * weight_mat)
       }
       else if (infer == "mk" || infer == "mkc") {
-        initial_vec <- initial_vec + colSums(t(initial_vec) *
-                                               weight_mat)
+        initial_vec <- initial_vec + colSums(t(initial_vec) * weight_mat)
       }
       else if (infer == "r" || infer == "rc") {
-        initial_vec <- (2 * initial_vec - 1) + colSums(t((2 *
-                                                            initial_vec) - 1) * weight_mat)
+        initial_vec <- (2 * initial_vec - 1) + colSums(t((2 * initial_vec) - 1)
+                                                       * weight_mat)
       }
       if (transform == "s") {
         initial_vec <- 1/(1 + exp(-lambda * initial_vec))
@@ -149,8 +154,7 @@
   else {
     mylist1 <- list()
     for (i in 2:(iter)) {
-      subst <- abs(apply(A, 2, function(x) x[i] - x[i -
-                                                      1]))
+      subst <- abs(apply(A, 2, function(x) x[i] - x[i -1]))
       mylist1[[i]] <- subst
     }
     subst.mat <- do.call("rbind", mylist1)

@@ -5,7 +5,7 @@
 # FUZZY COGNITIVE MAP DENSITY -- density_index()
 ################################################################################
 
-#' Cálculo de la Densidad del Mapa (IMPdensity)
+#' Fuzzy Cognitive Map density -- density_index()
 #'
 #' @description Función que permite calcular la densidad de aristas dentro del
 #' grafo que genera la matriz de implicaciones.
@@ -17,17 +17,17 @@
 #' @return Devuelve una valor de 0 a 1 que representa la proporcion de aristas
 #' existentes en el grafo sobre el número máximo de aristas posibles.
 #'
-#' @examples
+#' @import OpenRepGrid
 #'
 #' @export
-#'
 
 density_index <- function(imp){
 
-  imp_a <- .adaptrepgrid(imp, t = FALSE)
-  n <- ncol(imp_a)
+  imp.a<- .adaptrepgrid(imp, t = FALSE)                                         # adaptamos el objeto repgrid a una matriz
 
-  result <- sum(degree_index(imp)$Outputs)/(n*(n-1))
+  n <- ncol(imp.a)
+
+  result <- sum(degree_index(imp)$Outputs)/(n*(n-1))                            # dividimos el número de aristas que tiene el mapa entre el número potencial de aristas
 
   return(result)
 }
@@ -37,14 +37,14 @@ density_index <- function(imp){
 # DEGREE INDEX CENTRALITY -- degree_index()
 ################################################################################
 
-#' Cálculo de la Centralidad a través del Grado (CentDegree)
+#' Degree Index -- degree_index()
 #'
 #' @description Función que permite calcular la centralidad de los constructos
 #' teniendo en cuenta su grado. Entendiendo este como el grado de conexión que
 #' mantiene con el resto de constructos.
 #'
 #' @param imp Matriz de implicaciones del sujeto importada con
-#' \code{\link{importIMP}}.
+#' \code{\link{importimp}}.
 #'
 #' @param method Método para calcular el grado de centralidad. Más información
 #' escribiendo ?\code{\link{DegreeMethod}} o haciendo click sobre él.
@@ -52,15 +52,14 @@ density_index <- function(imp){
 #' @return Devuelve una lista con los datos de centralidad por constructo y
 #' separados por grado de entrada y grado de salida.
 #'
-#' @examples
+#' @import OpenRepGrid
 #'
 #' @export
-#'
 
 degree_index <- function(imp, method="simple"){
 
 
-  lpoles <- OpenRepGrid::getConstructNames(imp)[,1]                               # Extraemos los nombres de los constructos
+  lpoles <- OpenRepGrid::getConstructNames(imp)[,1]                             # Extraemos los nombres de los constructos
   rpoles <- OpenRepGrid::getConstructNames(imp)[,2]
   poles <- paste(lpoles,"-",rpoles,sep = " ")
 
@@ -68,33 +67,33 @@ degree_index <- function(imp, method="simple"){
   imp_a <- .adaptrepgrid(imp, t = FALSE)
   N <- dim(imp_a)[1]
 
-  if(method == "simple" | method == "norm" | method == "ego"){                  # Método simple
+  if(method == "simple" | method == "norm" | method == "ego"){                  # Método simple------------------------------------------
 
     imp.grid <- imp_a/imp_a
-    imp.grid[is.nan(imp.grid)] <- 0                                             # Convertimos los pesos a 1 para tener en cuenta las relaciones sin ponderar ni dirección.
+    imp.grid[is.nan(imp.grid)] <- 0                                               # Convertimos los pesos a 1 para tener en cuenta las relaciones sin ponderar ni dirección.
 
     Cout <- rowSums(imp.grid)
-    Cin <- colSums(imp.grid)                                                    # Sumamos por filas y por columnas para obtener el número de entradas y el número de salidas.
+    Cin <- colSums(imp.grid)                                                      # Sumamos por filas y por columnas para obtener el número de entradas y el número de salidas.
   }
 
-  if(method == "weight" | method == "wnorm"){                                   # Método Ponderado
+  if(method == "weight" | method == "wnorm"){                                   # Método Ponderado----------------------------------------
 
-    imp.grid <- imp_a/3                                                           # Transformamos la matriz de implicaciones a una matriz de pesos.
+    imp.grid <- .weightmatrix(imp_a)                                              # Transformamos la matriz de implicaciones a una matriz de pesos.
 
     Cout <- rowSums(abs(imp.grid))
-    Cin <- colSums(abs(imp.grid))                                               # Sumamos los valores absolutos de las ponderaciones
+    Cin <- colSums(abs(imp.grid))                                                 # Sumamos los valores absolutos de las ponderaciones
   }
 
-  if(method == "norm" | method == "wnorm"){                                     # Método Normalizado
+  if(method == "norm" | method == "wnorm"){                                     # Método Normalizado--------------------------------------
 
     Cout <- Cout/(N-1)
-    Cin <- Cin/(N-1)                                                            # Dividimos los vectores de entrada y salida entre N - 1.
+    Cin <- Cin/(N-1)                                                              # Dividimos los vectores de entrada y salida entre N - 1.
   }
 
-  if(method == "ego"){                                                          # Método de densidad de ego.
+  if(method == "ego"){                                                          # Método de densidad de ego-------------------------------------
 
     Cout <- Cout/(N*(N-1))
-    Cin <- Cin/(N*(N-1))                                                        # Dividimos los vectores de entrada y salida entre el número de aristas potenciales.
+    Cin <- Cin/(N*(N-1))                                                          # Dividimos los vectores de entrada y salida entre el número de aristas potenciales.
   }
   names(Cout) <- poles
   names(Cin) <- poles
@@ -110,18 +109,18 @@ degree_index <- function(imp, method="simple"){
 # DISTANCE MATRIX -- dismatrix()
 ################################################################################
 
-#' Cálculo de distancia entre constructos en el digrafo (IMPdistances)
+#' Distance MAtrix (IMPdistances)
 #'
-#' @description Función que permite calcular la distancia mas corta entre dos
-#' constructos en el digrafo.
+#' @description Función que permite calcular la distancia mas corta entre cada
+#' uno de los pares de constructos en el digrafo.
 #'
 #' @param imp Matriz de implicaciones del sujeto importada con
 #' \code{\link{importIMP}}.
 #'
 #' @param mode Modo de calcular las distancias en función de la dirección de las
-#' aristas. "out" las calculamos respetando la dirección de las aristas, "in"
+#' aristas. Con "out" las calculamos respetando la dirección de las aristas, "in"
 #' a través de la inversa de la dirección de las aristas y "all" sin tener en
-#' cuenta la dirección del grafo.
+#' cuenta la dirección.
 #'
 #' @return Devuelve la matriz de distancia del digrafo. Matriz que contiene las
 #' distancias de los caminos más cortos de un constructo a otro.
@@ -134,10 +133,10 @@ degree_index <- function(imp, method="simple"){
 dismatrix <- function(imp,mode="out"){
   imp_a <- .adaptrepgrid(imp, t = FALSE)
 
-  w.mat <- .weightmatrix(imp_a)
+  w.mat <- .weightmatrix(imp_a)                                                 # Transformamos la matriz de implicaciones a una matriz de pesos
   w.mat <- as.matrix(w.mat)
 
-  G <- igraph::graph.adjacency(w.mat,mode = "directed",weighted = T)
+  G <- igraph::graph.adjacency(w.mat,mode = "directed",weighted = T)            # Utilizamos el paquete igraph para calcular las distancias
 
   result <- igraph::shortest.paths(G, weights = NA,mode = mode)
 
@@ -148,7 +147,7 @@ dismatrix <- function(imp,mode="out"){
 # CLOSENESS CENTRALITY INDEX -- close_index()
 ################################################################################
 
-#' Cálculo de la centralidad a través de la cercanía (CentClose)
+#' Closeness index -- close_index()
 #'
 #' @description Función que permite calcular la cercanía de un constructo
 #' del resto de constructos del mapa cognitivo borroso.
@@ -170,18 +169,21 @@ dismatrix <- function(imp,mode="out"){
 close_index <- function(imp, norm = TRUE){
 
 
-  lpoles <- OpenRepGrid::getConstructNames(imp)[,1]                               # Extraemos los nombres de los constructos
+  lpoles <- OpenRepGrid::getConstructNames(imp)[,1]                             # Extraemos los nombres de los constructos
   rpoles <- OpenRepGrid::getConstructNames(imp)[,2]
   poles <- paste(lpoles,"-",rpoles,sep = " ")
 
-  dist <- dismatrix(imp)
+  dist <- dismatrix(imp)                                                        # Calculamos la matriz de distancias
   N <- dim(dist)[1]
+
   if(norm){
-    result <- (N-1)/(colSums(dist))
+    result <- (N-1)/(colSums(dist))                                             # Se suman las distancias de cada constructo con el resto, y se normalizan si procede.
   }else{
     result <- 1/(colSums(dist))
   }
-  names(result) <- poles
+
+  names(result) <- poles                                                        # Se nombran los elementos del vector
+
   return(result)
 }
 ################################################################################
@@ -189,11 +191,11 @@ close_index <- function(imp, norm = TRUE){
 # BETWEENESS CENTRALITY INDEX -- betw_index()
 ################################################################################
 
-#' Cálculo de la centralidad a través de la intermediación (CentBetw)
+#' Betweeness index -- betw_index()
 #'
-#' @description Función que permite calcular la intermediación de un
-#' constructo. Esto es el número de veces que un camino geodésico entre otros
-#' dos constructos pasa por dicho constructo.
+#' @description Función que permite calcular la intermediación de todos los
+#' constructos. Esto es el número de veces que un camino geodésico entre otros
+#' dos constructos pasa por dicho constructo en el digrafo.
 #'
 #' @param imp Matriz de implicaciones del sujeto importada con
 #' \code{\link{importIMP}}.
@@ -205,14 +207,12 @@ close_index <- function(imp, norm = TRUE){
 #' @return Devuelve un vector con el índice de intermediación de cada uno de los
 #' constructos.
 #'
-#' @examples
-#'
 #' @export
 #'
 
 betw_index <- function(imp,norm=TRUE){
 
-  lpoles <- OpenRepGrid::getConstructNames(imp)[,1]                             # Extraemos los nombres de los constructos
+  lpoles <- OpenRepGrid::getConstructNames(imp)[,1]                             # Extraemos los nombres de los constructos.
   rpoles <- OpenRepGrid::getConstructNames(imp)[,2]
   poles <- paste(lpoles,"-",rpoles,sep = " ")
 
@@ -220,11 +220,12 @@ betw_index <- function(imp,norm=TRUE){
   imp_a <- .adaptrepgrid(imp, t = FALSE)
 
   w.mat <- .weightmatrix(abs(imp_a))
-  w.mat <- as.matrix(w.mat)
+  w.mat <- as.matrix(w.mat)                                                     # Transformamos la matriz de implicaciones a pesos.
 
   G <- igraph::graph.adjacency(w.mat,mode = "directed",weighted = T)
 
-  result <- igraph::betweenness(G,normalized = norm,weights = NA )
+  result <- igraph::betweenness(G,normalized = norm,weights = NA )              # Utilizamos el paquete igraph para el calculo de intermediación.
+
   names(result) <- poles
 
   return(result)
@@ -248,7 +249,8 @@ auc_index <- function(x, imp, ideal=dim(x)[2],...){
   iter <- fcminfer(x,imp,iter=60,...)$convergence
 
   ideal.vector <- OpenRepGrid::getRatingLayer(x)[,ideal]
-  ideal.vector <- (ideal.vector - 4)/3
+  ideal.vector <- (ideal.vector -
+                   getScaleMidpoint(grid))/((getScale(grid)[2]-1)/2)
   ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),             # Creamos una matriz con los valores del yo-ideal repetidos por filas
                          nrow = iter, byrow = TRUE)
 
@@ -279,22 +281,24 @@ stability_index <- function(x, imp, ideal=dim(x)[2],...){
 
   require(MESS)
 
-  lpoles <- OpenRepGrid::getConstructNames(x)[,1]                               # Extraemos los nombres de los constructos
+  lpoles <- OpenRepGrid::getConstructNames(x)[,1]                               # Extraemos los nombres de los constructos.
   rpoles <- OpenRepGrid::getConstructNames(x)[,2]
   poles <- paste(lpoles,"-",rpoles,sep = " ")
   iter <- fcminfer(x,imp,iter=60,...)$convergence
 
   ideal.vector <- OpenRepGrid::getRatingLayer(x)[,ideal]
-  ideal.vector <- (ideal.vector - 4)/3
-  ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),             # Creamos una matriz con los valores del yo-ideal repetidos por filas
+  ideal.vector <- (ideal.vector -
+                   getScaleMidpoint(grid))/((getScale(grid)[2]-1)/2)
+  ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),             # Creamos una matriz con los valores del yo-ideal repetidos por filas.
                          nrow = iter, byrow = TRUE)
 
-  res <- fcminfer(x,imp,iter=iter,...)$values
-  res <- abs(res - ideal.matrix) / 2
+  res <- fcminfer(x,imp,iter=iter,...)$values                                   # Extraemos la matriz de iteraciones hasta su convergencia.
+  res <- abs(res - ideal.matrix) / 2                                            # Transformamos la matriz de iteraciones en distancias normalizadas desde el Yo-Ideal.
 
 
-  result <- apply(res, 2, sd)
-  names(result) <- poles
+  result <- apply(res, 2, sd)                                                   # Calculamos la desviación típica para cada constructro.
+
+  names(result) <- poles                                                        # Damos nombres a los elementos del vector.
 
   return(result)
   }
@@ -314,10 +318,12 @@ pcsd_summary <- function(x, imp, ideal=dim(x)[2],...){
   lpoles <- OpenRepGrid::getConstructNames(x)[,1]                               # Extraemos los nombres de los constructos
   rpoles <- OpenRepGrid::getConstructNames(x)[,2]
   poles <- paste(lpoles,"-",rpoles,sep = " ")
-  iter <- fcminfer(x,imp,iter=60,...)$convergence
+
+  iter <- fcminfer(x,imp,iter=60,...)$convergence                               # Extraemos la convergencia de la inferencia
 
   ideal.vector <- OpenRepGrid::getRatingLayer(x)[,ideal]
-  ideal.vector <- (ideal.vector - 4)/3
+  ideal.vector <- (ideal.vector -
+                   getScaleMidpoint(grid))/((getScale(grid)[2]-1)/2)
   ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),             # Creamos una matriz con los valores del yo-ideal repetidos por filas
                          nrow = iter, byrow = TRUE)
 
@@ -376,12 +382,14 @@ pcsd_derivative <- function(x,imp,ideal=dim(x)[2],...){
 
   fig <- plot_ly(df, x = ~x, y = df[,2], name = poles[1], type = 'scatter',
                  mode = 'lines+markers',line = list(shape = "spline"))
+
   for (n in 3:(length(poles)+1)) {
-    fig <- fig %>% add_trace(y = df[,n], name = poles[n-1], mode = 'lines+markers'
-                             ,line = list(shape = "spline"))
+    fig <- fig %>% add_trace(y = df[,n], name = poles[n-1],
+                             mode = 'lines+markers',
+                             line = list(shape = "spline"))
   }
-  fig <- fig %>% layout(title="PCSD DERIVATIVE",
-                        xaxis = list(
+
+  fig <- fig %>% layout(xaxis = list(
                           title = "ITERATIONS"),
                         yaxis = list(
                           title = "DERIVATIVE"

@@ -2,7 +2,7 @@
 % Please edit documentation in R/IndexFunctions.R
 \name{degree_index}
 \alias{degree_index}
-\title{Cálculo de la Centralidad a través del Grado (CentDegree)}
+\title{Degree Index -- degree_index()}
 \usage{
 degree_index(imp, method = "simple")
 }
@@ -21,7 +21,4 @@ separados por grado de entrada y grado de salida.
 Función que permite calcular la centralidad de los constructos
 teniendo en cuenta su grado. Entendiendo este como el grado de conexión que
 mantiene con el resto de constructos.
-}
-\examples{
-
 }

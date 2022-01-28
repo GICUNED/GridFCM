@@ -2,7 +2,7 @@
 % Please edit documentation in R/IndexFunctions.R
 \name{density_index}
 \alias{density_index}
-\title{Cálculo de la Densidad del Mapa (IMPdensity)}
+\title{Fuzzy Cognitive Map density -- density_index()}
 \usage{
 density_index(imp)
 }
@@ -17,7 +17,4 @@ existentes en el grafo sobre el número máximo de aristas posibles.
 \description{
 Función que permite calcular la densidad de aristas dentro del
 grafo que genera la matriz de implicaciones.
-}
-\examples{
-
 }

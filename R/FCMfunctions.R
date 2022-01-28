@@ -155,19 +155,24 @@ pcsd <- function(grid,imp,ideal=dim(grid)[2],...){
 
   fig <- plot_ly(df, x = ~x, y = df[,2], name = poles[1], type = 'scatter',
                  mode = 'lines+markers',line = list(shape = "spline"))          # Construimos el gráfico de plotly de las iteraciones para cada uno de los constructos
- for (n in 3:(length(poles)+1)) {
+
+  for (n in 3:(length(poles)+1)) {
   fig <- fig %>% add_trace(y = df[,n], name = poles[n-1], mode = 'lines+markers'
                            ,line = list(shape = "spline"))
  }
-  fig <- fig %>% layout(title="PERSONAL CONSTRUCT SYSTEM DYNAMICS",
+  fig <- fig %>% layout(
                         xaxis = list(
-                          title = "ITERATIONS"),
+                          title = "ITERATIONS"
+                          ),
                         yaxis = list(
                           title = "DISTANCE TO IDEAL SELF",
-                          range = c(-0.05,1.05))
+                          range = c(-0.05,1.05)
+                          )
                         )
   fig <- fig %>% layout(legend=list(
-                          title=list(text='<b>PERSONAL CONSTRUCTS</b>')))
+                          title=list(text='<b>PERSONAL CONSTRUCTS</b>')
+                          )
+                        )
 
   fig                                                                           # Ejecutamos el gráfico
 }
