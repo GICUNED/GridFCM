@@ -2,7 +2,7 @@
 % Please edit documentation in R/IndexFunctions.R
 \name{close_index}
 \alias{close_index}
-\title{Cálculo de la centralidad a través de la cercanía (CentClose)}
+\title{Closeness index -- close_index()}
 \usage{
 close_index(imp, norm = TRUE)
 }

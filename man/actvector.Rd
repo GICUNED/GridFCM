@@ -8,8 +8,8 @@ actvector(grid, col.element = 1)
 }
 \arguments{
 \item{grid}{Rejilla del sujeto desde donde queremos extraer el vector de
-activación. Debe de ser un objeto de la clase repgrid del paquete
-OpenRepGrid.}
+activación.Debe de ser un objeto importando con la función
+\code{\link{importgrid}}.}
 
 \item{col.element}{Elemento desde el que extraemos el vector de activación.
 Por defecto se establece el primer elemento, que coincide normalmente con el
@@ -21,6 +21,6 @@ constructos asociados a un elemento.
 }
 \description{
 Función que extrae un vector de un elemento de la RepGrid y lo
-estandariza para poder utilizarse como vector de activación un mapa cognitivo
-borroso.
+estandariza para poder utilizarse como vector de activación en un mapa
+cognitivo borroso.
 }

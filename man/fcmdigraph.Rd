@@ -36,7 +36,7 @@ el mapa. Expresado a través del número de iteraciones. Por defecto se
 establece la primera iteracion.}
 
 \item{layout}{Layout que se quiere utilizar para representar el mapa. Más
-información de los layouts escribiendo ?\code{\link{GraphLayouts}}.}
+información de los layouts con ?\code{\link{digraphlayouts}}.}
 
 \item{edge.width}{Escalar del grosor de las aristas.}
 

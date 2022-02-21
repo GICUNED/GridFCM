@@ -9,12 +9,12 @@
 #' Crear Vector de Activación (actvector)
 #'
 #' @description Función que extrae un vector de un elemento de la RepGrid y lo
-#' estandariza para poder utilizarse como vector de activación un mapa cognitivo
-#' borroso.
+#' estandariza para poder utilizarse como vector de activación en un mapa
+#' cognitivo borroso.
 #'
 #' @param grid Rejilla del sujeto desde donde queremos extraer el vector de
-#' activación. Debe de ser un objeto de la clase repgrid del paquete
-#' OpenRepGrid.
+#' activación.Debe de ser un objeto importando con la función
+#' \code{\link{importgrid}}.
 #'
 #' @param col.element Elemento desde el que extraemos el vector de activación.
 #' Por defecto se establece el primer elemento, que coincide normalmente con el
@@ -62,12 +62,12 @@ actvector <- function(grid, col.element = 1){
 #'
 #' @param infer Función de Propagación para la inferencia de escenarios.
 #' Puedes mirar la información sobre las diferentes funciones de propagación
-#' escribiendo ?\code{\link{PropFunctions}}. Por defecto se utiliza la
+#' con ?\code{\link{propfunctions}}. Por defecto se utiliza la
 #' modificada de Kosko ("mk").
 #'
 #' @param thr Función de Umbral para la inferencia de escenarios. Puedes mirar
-#' la información sonbre las distintas funciones umbral escribiendo
-#' ?\code{\link{ThrFunctions}}. Por defecto se utiliza la Tangente Hiperbólica
+#' la información sonbre las distintas funciones umbral con
+#' ?\code{\link{thrfunctions}}. Por defecto se utiliza la Tangente Hiperbólica
 #' ("t").
 #'
 #' @param lambda Valor de lambda de la función umbral. Solo se aplica si se
@@ -137,7 +137,7 @@ pcsd <- function(grid,imp,ideal=dim(grid)[2],...){
   rpoles <- OpenRepGrid::getConstructNames(grid)[,2]
   poles <- paste(lpoles,"—",rpoles,sep = "")
 
-  iter <- fcminfer(grid,imp,iter=60,...)$convergence                            # Establecemos el número de iteración donde se estabiliza el FCM
+  iter <- fcminfer(grid,imp,iter=60)$convergence                                # Establecemos el número de iteración donde se estabiliza el FCM
 
   ideal.vector <- OpenRepGrid::getRatingLayer(grid)[,ideal]
   ideal.vector <- (ideal.vector -
@@ -206,7 +206,7 @@ pcsd <- function(grid,imp,ideal=dim(grid)[2],...){
 #' establece la primera iteracion.
 #'
 #' @param layout Layout que se quiere utilizar para representar el mapa. Más
-#' información de los layouts escribiendo ?\code{\link{GraphLayouts}}.
+#' información de los layouts con ?\code{\link{digraphlayouts}}.
 #'
 #' @param edge.width Escalar del grosor de las aristas.
 #'
@@ -536,7 +536,8 @@ fcmdigraph3D <- function(grid, imp, results = fcminfer(grid,imp)$values,
 #' número de la columna donde se encuentra. Por defecto se establece el último
 #' elemento de la rejilla.
 #'
-#' @param layout Layout que se quiere utilizar para representar el mapa.
+#' @param layout Layout que se quiere utilizar para representar el mapa. Más
+#' información de los layouts con ?\code{\link{digraphlayouts}}.
 #'
 #' @param edge.width Escalar del grosor de las aristas.
 #'
@@ -760,7 +761,7 @@ if(output == "html"){                                                           
   rmarkdown::render(file , output_dir = dir)
 }
 if(output =="shiny"){
-  rmarkdown::draft(name,"report_shiny", package = "GridFCM",edit=edit)         # Creamos el draft del Shiny y lo ejecutamos
+  rmarkdown::draft(name,"report_shiny", package = "GridFCM",edit=edit)          # Creamos el draft del Shiny y lo ejecutamos
   rmarkdown::run(file, shiny_args = list(launch.browser = TRUE))
 }
   file.remove(file)

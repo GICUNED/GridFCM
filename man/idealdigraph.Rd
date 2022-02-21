@@ -30,7 +30,8 @@ elemento de la rejilla.}
 \item{inc}{Si lo establecemos como TRUE nos muestra solamente las relaciones
 de inconsistencia (relaciones inversas) dentro del ideal.}
 
-\item{layout}{Layout que se quiere utilizar para representar el mapa.}
+\item{layout}{Layout que se quiere utilizar para representar el mapa. Más
+información de los layouts con ?\code{\link{digraphlayouts}}.}
 
 \item{edge.width}{Escalar del grosor de las aristas.}
 

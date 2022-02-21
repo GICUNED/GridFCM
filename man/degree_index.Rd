@@ -8,7 +8,7 @@ degree_index(imp, method = "simple")
 }
 \arguments{
 \item{imp}{Matriz de implicaciones del sujeto importada con
-\code{\link{importIMP}}.}
+\code{\link{importimp}}.}
 
 \item{method}{Método para calcular el grado de centralidad. Más información
 escribiendo ?\code{\link{DegreeMethod}} o haciendo click sobre él.}

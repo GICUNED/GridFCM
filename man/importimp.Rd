@@ -10,7 +10,7 @@ importimp(path, ...)
 \item{path}{Ruta donde se encuentra el archivo de excel que contiene la
 ImpGrid.}
 
-\item{...}{hereda todos los parámetros de la función
+\item{...}{Esta función hereda todos los parámetros de la función
 \code{\link{importExcel}} del paquete OpenRepGrid.}
 }
 \value{
@@ -19,6 +19,6 @@ implicaciones
 }
 \description{
 Función que permite leer una ImpGrid contenida
-dentro de un archivo de excel. Para la creación de la plantilla xlsx de la
+dentro de un archivo xlsx. Para la creación de la plantilla xlsx de la
 ImpGrid se puede utilizar la función \code{\link{templateimp}}
 }

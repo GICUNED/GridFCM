@@ -2,7 +2,7 @@
 % Please edit documentation in R/IndexFunctions.R
 \name{dismatrix}
 \alias{dismatrix}
-\title{Cálculo de distancia entre constructos en el digrafo (IMPdistances)}
+\title{Distance Matrix -- dismatrix()}
 \usage{
 dismatrix(imp, mode = "out")
 }
@@ -11,18 +11,15 @@ dismatrix(imp, mode = "out")
 \code{\link{importIMP}}.}
 
 \item{mode}{Modo de calcular las distancias en función de la dirección de las
-aristas. "out" las calculamos respetando la dirección de las aristas, "in"
+aristas. Con "out" las calculamos respetando la dirección de las aristas,"in"
 a través de la inversa de la dirección de las aristas y "all" sin tener en
-cuenta la dirección del grafo.}
+cuenta la dirección.}
 }
 \value{
 Devuelve la matriz de distancia del digrafo. Matriz que contiene las
 distancias de los caminos más cortos de un constructo a otro.
 }
 \description{
-Función que permite calcular la distancia mas corta entre dos
-constructos en el digrafo.
-}
-\examples{
-
+Función que permite calcular la distancia más corta entre cada
+uno de los pares de constructos en el digrafo.
 }

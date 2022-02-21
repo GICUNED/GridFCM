@@ -6,44 +6,53 @@
 \alias{GridFCM-package}
 \title{GRID FCM}
 \description{
-Paquete de R para la creación de mapas cognitivos borrosos a través de la técnica de rejilla
+R package for applying Fuzzy Cognitive Maps to Personal
+Construct Psychology.
+
+\strong{Logistic Functions:}
+
+\code{\link{importgrid}}
+
+\code{\link{importimp}}
+
+\code{\link{templateimp}}
+
+\strong{Calc Functions:}
+
+\code{\link{actvector}}
+
+\code{\link{dismatrix}}
+
+\code{\link{fcminfer}}
+
+\code{\link{pcsd_summary}}
+
+\strong{Plot Functions:}
+
+\code{\link{fcmdigraph}}
+
+\code{\link{fcmdigraph3D}}
+
+\code{\link{idealdigraph}}
+
+\code{\link{pcsd}}
+
+\code{\link{pcsd_derivative}}
+
+\strong{Index Functions:}
+
+\code{\link{density_index}}
+
+\code{\link{degree_index}}
+
+\code{\link{close_index}}
+
+\code{\link{betw_index}}
+
+\code{\link{auc_index}}
+
+\code{\link{stability_index}}
 }
-\section{Functions}{
-
-
-\strong{Funciones de Utilidades:}
-
-\code{\link{importGRID}}
-
-\code{\link{importIMP}}
-
-\code{\link{templateIMP}}
-
-\code{\link{ActVector}}
-
-\strong{Funciones de Representación:}
-
-\code{\link{FuzzyInfer}}
-
-\code{\link{FuzzyMap}}
-
-\code{\link{FuzzyMap3D}}
-
-\code{\link{IdealMap}}
-
-\strong{Funciones de Índices:}
-
-\code{\link{IMPdensity}}
-
-\code{\link{IMPdistances}}
-
-\code{\link{CentDegree}}
-
-\code{\link{CentClose}}
-
-\code{\link{CentBetw}}
-}
-
 \author{
-Alejandro Sanfeliciano (GICUNED)
+Alejandro Sanfeliciano -- sanfeliciano.alejandro@gmail.com
 }

@@ -109,23 +109,21 @@ degree_index <- function(imp, method="simple"){
 # DISTANCE MATRIX -- dismatrix()
 ################################################################################
 
-#' Distance MAtrix (IMPdistances)
+#' Distance Matrix -- dismatrix()
 #'
-#' @description Función que permite calcular la distancia mas corta entre cada
+#' @description Función que permite calcular la distancia más corta entre cada
 #' uno de los pares de constructos en el digrafo.
 #'
 #' @param imp Matriz de implicaciones del sujeto importada con
 #' \code{\link{importIMP}}.
 #'
 #' @param mode Modo de calcular las distancias en función de la dirección de las
-#' aristas. Con "out" las calculamos respetando la dirección de las aristas, "in"
+#' aristas. Con "out" las calculamos respetando la dirección de las aristas,"in"
 #' a través de la inversa de la dirección de las aristas y "all" sin tener en
 #' cuenta la dirección.
 #'
 #' @return Devuelve la matriz de distancia del digrafo. Matriz que contiene las
 #' distancias de los caminos más cortos de un constructo a otro.
-#'
-#' @examples
 #'
 #' @export
 #'
@@ -235,65 +233,109 @@ betw_index <- function(imp,norm=TRUE){
 #  PCSD AUC INDEX -- auc_index()
 ################################################################################
 
+#' PCSD AUC Index -- auc_index()
+#'
+#' @description Esta función nos devuelve el area debajo de la curva del PCSD
+#' para cada uno de los constructos personales.
+#'
+#' @param grid Repgrid del sujeto. Debe de ser un objeto importando con la
+#' función \code{\link{importgrid}}.
+#'
+#' @param  imp Matriz de implicaciones del sujeto importada con
+#' \code{\link{importimp}}.
+#'
+#' @param ideal Posición del ideal dentro de la rejilla expresado a través del
+#' número de la columna donde se encuentra. Por defecto se estable el último
+#' elemento de la Repgrid.
+#'
+#' @param ... Esta función hereda todos los parámetos de la función
+#' \code{\link{pcsd}}
+#'
+#' @report Devuelve un vector con el area bajo la curva para cada uno de los
+#' constructos personales.
+#'
 #' @import MESS
 #'
 #' @export
 
-auc_index <- function(x, imp, ideal=dim(x)[2],...){
+auc_index <- function(grid, imp, ideal=dim(grid)[2],...){
 
   require(MESS)
 
-  lpoles <- OpenRepGrid::getConstructNames(x)[,1]                               # Extraemos los nombres de los constructos
-  rpoles <- OpenRepGrid::getConstructNames(x)[,2]
+  lpoles <- OpenRepGrid::getConstructNames(grid)[,1]                            # Extraemos los nombres de los constructos
+  rpoles <- OpenRepGrid::getConstructNames(grid)[,2]
   poles <- paste(lpoles,"-",rpoles,sep = " ")
-  iter <- fcminfer(x,imp,iter=60,...)$convergence
+  iter <- fcminfer(grid,imp,iter=60,...)$convergence
 
-  ideal.vector <- OpenRepGrid::getRatingLayer(x)[,ideal]
+  ideal.vector <- OpenRepGrid::getRatingLayer(grid)[,ideal]
   ideal.vector <- (ideal.vector -
                    getScaleMidpoint(grid))/((getScale(grid)[2]-1)/2)
   ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),             # Creamos una matriz con los valores del yo-ideal repetidos por filas
-                         nrow = iter, byrow = TRUE)
+                        nrow = iter, byrow = TRUE)
 
-  res <- fcminfer(x,imp,iter=iter,...)$values
-  res <- abs(res - ideal.matrix) / 2
+  res <- fcminfer(grid,imp,iter=iter,...)$values                                # Extraemos la matriz de iteraciones hasta su convergencia.
+  res <- abs(res - ideal.matrix) / 2                                            # Transformamos la matriz de iteraciones en distancias estandarizadas desde el Yo-Ideal.
 
   matrix <- matrix(ncol= length(poles), nrow = 1)
 
-  for (n in 1:length(poles)) {
+  for (n in 1:length(poles)) {                                                  # Calculamos el area bajo la curva para cada constructo
     matrix[,n] <- auc(c(1:iter), res[,n], type = "spline")/iter
   }
 
-  colnames(matrix) <- poles
-  rownames(matrix) <- NULL
+  result <- as.vector(matrix)
 
-  return(matrix)
+  names(result) <- poles
+
+
+  return(result)
 }
 ################################################################################
 
 #  PCSD STABILITY INDEX -- stability_index()
 ################################################################################
 
+#' PCSD Stability Index -- stability_index()
+#'
+#' @description Esta función nos devuelve la desviación típica para cada uno de
+#' los constructos personales a lo largo de la iteraciones matemáticas del PCSD.
+#'
+#' @param grid Repgrid del sujeto. Debe de ser un objeto importando con la
+#' función \code{\link{importgrid}}.
+#'
+#' @param  imp Matriz de implicaciones del sujeto importada con
+#' \code{\link{importimp}}.
+#'
+#' @param ideal Posición del ideal dentro de la rejilla expresado a través del
+#' número de la columna donde se encuentra. Por defecto se estable el último
+#' elemento de la Repgrid.
+#'
+#' @param ... Esta función hereda todos los parámetos de la función
+#' \code{\link{pcsd}}
+#'
+#' @return Devuelve un vector con los valores de la desviación típica para cada
+#' uno de los constructos.
+#'
 #' @import MESS
 #'
 #' @export
 
-stability_index <- function(x, imp, ideal=dim(x)[2],...){
+stability_index <- function(grid, imp, ideal=dim(grid)[2],...){
 
   require(MESS)
 
-  lpoles <- OpenRepGrid::getConstructNames(x)[,1]                               # Extraemos los nombres de los constructos.
-  rpoles <- OpenRepGrid::getConstructNames(x)[,2]
+  lpoles <- OpenRepGrid::getConstructNames(grid)[,1]                            # Extraemos los nombres de los constructos.
+  rpoles <- OpenRepGrid::getConstructNames(grid)[,2]
   poles <- paste(lpoles,"-",rpoles,sep = " ")
-  iter <- fcminfer(x,imp,iter=60,...)$convergence
+  iter <- fcminfer(grid,imp,iter=60,...)$convergence
 
-  ideal.vector <- OpenRepGrid::getRatingLayer(x)[,ideal]
+  ideal.vector <- OpenRepGrid::getRatingLayer(grid)[,ideal]
   ideal.vector <- (ideal.vector -
                    getScaleMidpoint(grid))/((getScale(grid)[2]-1)/2)
   ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),             # Creamos una matriz con los valores del yo-ideal repetidos por filas.
                          nrow = iter, byrow = TRUE)
 
-  res <- fcminfer(x,imp,iter=iter,...)$values                                   # Extraemos la matriz de iteraciones hasta su convergencia.
-  res <- abs(res - ideal.matrix) / 2                                            # Transformamos la matriz de iteraciones en distancias normalizadas desde el Yo-Ideal.
+  res <- fcminfer(grid,imp,iter=iter,...)$values                                # Extraemos la matriz de iteraciones hasta su convergencia.
+  res <- abs(res - ideal.matrix) / 2                                            # Transformamos la matriz de iteraciones en distancias estandarizadas desde el Yo-Ideal.
 
 
   result <- apply(res, 2, sd)                                                   # Calculamos la desviación típica para cada constructro.
@@ -307,43 +349,84 @@ stability_index <- function(x, imp, ideal=dim(x)[2],...){
 #  PCSD SUMMARY -- pcsd_summary()
 ################################################################################
 
+#' PCSD summary -- pcsd_summary()
+#'
+#' @description Esta función nos devuelve un resumen sobre el PCSD. Nos informa
+#' sobre el valor inicial y final de cada constructo y sobre la diferencia entre
+#' ambos.
+#'
+#' @param grid Repgrid del sujeto. Debe de ser un objeto importando con la
+#' función \code{\link{importgrid}}.
+#'
+#' @param  imp Matriz de implicaciones del sujeto importada con
+#' \code{\link{importimp}}.
+#'
+#' @param ideal Posición del ideal dentro de la rejilla expresado a través del
+#' número de la columna donde se encuentra. Por defecto se estable el último
+#' elemento de la Repgrid.
+#'
+#' @param ... Esta función hereda todos los parámetos de la función
+#' \code{\link{pcsd}}
+#'
+#' @return Devuelve una matriz con el resumen del PCSD.
+#'
 #' @import MESS
 #'
 #' @export
 
-pcsd_summary <- function(x, imp, ideal=dim(x)[2],...){
+pcsd_summary <- function(grid, imp, ideal=dim(grid)[2],...){
 
   require(MESS)
 
-  lpoles <- OpenRepGrid::getConstructNames(x)[,1]                               # Extraemos los nombres de los constructos
-  rpoles <- OpenRepGrid::getConstructNames(x)[,2]
+  lpoles <- OpenRepGrid::getConstructNames(grid)[,1]                            # Extraemos los nombres de los constructos
+  rpoles <- OpenRepGrid::getConstructNames(grid)[,2]
   poles <- paste(lpoles,"-",rpoles,sep = " ")
 
-  iter <- fcminfer(x,imp,iter=60,...)$convergence                               # Extraemos la convergencia de la inferencia
+  iter <- fcminfer(grid,imp,iter=60,...)$convergence                            # Extraemos la convergencia de la inferencia
 
-  ideal.vector <- OpenRepGrid::getRatingLayer(x)[,ideal]
+  ideal.vector <- OpenRepGrid::getRatingLayer(grid)[,ideal]
   ideal.vector <- (ideal.vector -
                    getScaleMidpoint(grid))/((getScale(grid)[2]-1)/2)
   ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),             # Creamos una matriz con los valores del yo-ideal repetidos por filas
                          nrow = iter, byrow = TRUE)
 
-  res <- fcminfer(x,imp,iter=iter,...)$values
-  res <- abs(res - ideal.matrix) / 2
+  res <- fcminfer(grid,imp,iter=iter,...)$values                                # Extraemos la matriz de iteraciones hasta su convergencia.
+  res <- abs(res - ideal.matrix) / 2                                            # Transformamos la matriz de iteraciones en distancias estandarizadas desde el Yo-Ideal.
 
 
-  result <- res[c(1,iter),]
+
+  result <- res[c(1,iter),]                                                     # Extraemos el primer vector y el último vector de la matriz de iteraciones
   result <- t(result)
-  result <- cbind(result, result[,2] - result[,1])
+  result <- cbind(result, result[,2] - result[,1])                              # Calculamos la diferencia entre el primer vector y el último y lo agregamos a los resultados.
 
   rownames(result) <- poles
   colnames(result) <- c("Initial value", "Final value", "Difference")
 
   return(result)
 }
-# PERSONAL CONSTRUCTS SYSTEM DYNAMICS PLOT -- pcsd()
+
+# PERSONAL CONSTRUCTS SYSTEM DERIVATIVE -- pcsd_derivative()
 ################################################################################
 
-
+#' PCSD derivative -- pcsd_derivative()
+#'
+#' @description Esta función reprensenta la primera derivada para cada una de
+#' las curvas del PCSD.
+#'
+#' @param grid Repgrid del sujeto. Debe de ser un objeto importando con la
+#' función \code{\link{importgrid}}.
+#'
+#' @param  imp Matriz de implicaciones del sujeto importada con
+#' \code{\link{importimp}}.
+#'
+#' @param ideal Posición del ideal dentro de la rejilla expresado a través del
+#' número de la columna donde se encuentra. Por defecto se estable el último
+#' elemento de la Repgrid.
+#'
+#' @param ... Esta función hereda todos los parámetos de la función
+#' \code{\link{pcsd}}
+#'
+#' @return Devuelve una representación gráfica creada con el paquete plotly.
 #'
 #' @import plotly
 #'

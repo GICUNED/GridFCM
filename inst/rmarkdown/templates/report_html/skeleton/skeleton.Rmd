@@ -279,7 +279,7 @@ kable(sum.pcsd)
 ```{r AUC, echo=FALSE, message=FALSE, warning=FALSE}
 
 auc.pcsd <- auc_index(render.grid, render.imp)
-auc.pcsd <- auc.pcsd[,order(-auc.pcsd)]
+auc.pcsd <- auc.pcsd[order(-auc.pcsd)]
 
 kable(auc.pcsd, col.names = "AUC")
 ```

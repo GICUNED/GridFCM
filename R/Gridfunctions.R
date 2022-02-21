@@ -7,13 +7,13 @@
 #' Import ImpGrid -- importimp()
 #'
 #' @description Función que permite leer una ImpGrid contenida
-#' dentro de un archivo de excel. Para la creación de la plantilla xlsx de la
+#' dentro de un archivo xlsx. Para la creación de la plantilla xlsx de la
 #' ImpGrid se puede utilizar la función \code{\link{templateimp}}
 #'
 #' @param path Ruta donde se encuentra el archivo de excel que contiene la
 #' ImpGrid.
 #'
-#' @param ... hereda todos los parámetros de la función
+#' @param ... Esta función hereda todos los parámetros de la función
 #' \code{\link{importExcel}} del paquete OpenRepGrid.
 #'
 #' @return Devuelve un objeto S4 repgrid que contiene los datos de la matriz de
@@ -35,10 +35,13 @@ importimp <- function(path,...){
 #' Import RepGrid -- importgrid()
 #'
 #' @description Función que permite leer una técnica de rejilla contenida
-#' dentro de un archivo de excel.
+#' dentro de un archivo xlsx.
 #'
 #' @param path Ruta donde se encuentra el archivo de excel que contiene la
 #' la técnica de rejilla.
+#'
+#' @param ... Esta función hereda todos los parámetros de la función
+#' \code{\link{importExcel}} del paquete OpenRepGrid.
 #'
 #' @return Devuelve un objeto S4 repgrid del paquete OpenRepGrid que contiene la
 #' información de la técnica de rejilla.

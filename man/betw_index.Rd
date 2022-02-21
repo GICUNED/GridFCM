@@ -2,7 +2,7 @@
 % Please edit documentation in R/IndexFunctions.R
 \name{betw_index}
 \alias{betw_index}
-\title{Cálculo de la centralidad a través de la intermediación (CentBetw)}
+\title{Betweeness index -- betw_index()}
 \usage{
 betw_index(imp, norm = TRUE)
 }
@@ -19,10 +19,7 @@ Devuelve un vector con el índice de intermediación de cada uno de los
 constructos.
 }
 \description{
-Función que permite calcular la intermediación de un
-constructo. Esto es el número de veces que un camino geodésico entre otros
-dos constructos pasa por dicho constructo.
-}
-\examples{
-
+Función que permite calcular la intermediación de todos los
+constructos. Esto es el número de veces que un camino geodésico entre otros
+dos constructos pasa por dicho constructo en el digrafo.
 }

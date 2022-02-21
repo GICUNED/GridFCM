@@ -32,12 +32,12 @@ elemento de la RepGrid.}
 
 \item{infer}{Función de Propagación para la inferencia de escenarios.
 Puedes mirar la información sobre las diferentes funciones de propagación
-escribiendo ?\code{\link{PropFunctions}}. Por defecto se utiliza la
+con ?\code{\link{propfunctions}}. Por defecto se utiliza la
 modificada de Kosko ("mk").}
 
 \item{thr}{Función de Umbral para la inferencia de escenarios. Puedes mirar
-la información sonbre las distintas funciones umbral escribiendo
-?\code{\link{ThrFunctions}}. Por defecto se utiliza la Tangente Hiperbólica
+la información sonbre las distintas funciones umbral con
+?\code{\link{thrfunctions}}. Por defecto se utiliza la Tangente Hiperbólica
 ("t").}
 
 \item{lambda}{Valor de lambda de la función umbral. Solo se aplica si se
