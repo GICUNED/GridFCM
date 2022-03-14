@@ -11,7 +11,7 @@ sus transmisores y del peso de sus relaciones. Para utilizarla en la función \c
 
 \strong{Inferencia Modificada de Kosko:} Consiste en sumarle al estado actual de los vértices el producto matricial entre el vector de activación y la matriz de pesos. La nueva
 activación de los vértices depende de la activación de sus transmisores, del peso de sus relaciones y del estado previo de la red. Para utilizarla en la función.
-\code{\link{FuzzyInfer}} el argumento infer debe de ser igual a "mk".
+\code{\link{fcminfer}} el argumento infer debe de ser igual a "mk".
 
 \strong{Inferencia reescalada:} Similar a la modificada de Kosko pero con un reescalado de los valores. Para utilizarla en la función \code{\link{fcminfer}} el argumento infer
  debe de ser igual a "r".

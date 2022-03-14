@@ -16,42 +16,36 @@ fcminfer(
 )
 }
 \arguments{
-\item{grid}{RepGrid del sujeto desde donde queremos realizar las inferencias.
-Debe de ser un objeto importando con la función \code{\link{importgrid}}.}
+\item{grid}{Subject's RepGrid. It must be an S4 object imported by the
+\code{\link{importgrid}} function.}
 
-\item{imp}{Matriz de implicaciones del sujeto importada con
-\code{\link{importimp}}.}
+\item{imp}{Subject's ImpGrid. It must be an S4 object imported by the
+\code{\link{importimp}} function.}
 
-\item{act.vec}{Vector de activación creado a través de
-\code{\link{actvector}}. Si no se define se utiliza el vector correspondiente
- al primer elemento de la RepGrid.}
+\item{act.vec}{Activation vector created via \code{\link{actvector}} function.
+The default vector is the first element of the RepGrid.}
 
-\item{ideal}{Posición del ideal dentro de la RepGrid expresado a través del
-número de la columna donde se encuentra. Por defecto se establece el último
-elemento de la RepGrid.}
+\item{ideal}{Column number representing the position of the Ideal-Self in the
+RepGrid. By default the last column of the RepGrid is set.}
 
-\item{infer}{Función de Propagación para la inferencia de escenarios.
-Puedes mirar la información sobre las diferentes funciones de propagación
-con ?\code{\link{propfunctions}}. Por defecto se utiliza la
-modificada de Kosko ("mk").}
+\item{infer}{Propagation function for scenario inference. More information in
+?\code{\link{propfunctions}}.}
 
-\item{thr}{Función de Umbral para la inferencia de escenarios. Puedes mirar
-la información sonbre las distintas funciones umbral con
-?\code{\link{thrfunctions}}. Por defecto se utiliza la Tangente Hiperbólica
-("t").}
+\item{thr}{Threshold function for scenario inference. More information in
+?\code{\link{thrfunctions}}.}
 
-\item{lambda}{Valor de lambda de la función umbral. Solo se aplica si se
-escoge función umbral sigmoidal o tangente hiperbólica.}
+\item{lambda}{Lambda value of the threshold function. Only applicable in
+sigmoidal or hyperbolic tangent threshold function}
 
-\item{iter}{Número de iteraciones que se desea inferir}
+\item{iter}{Number of iterations to infer.}
 }
 \value{
-Devuelve una lista con dos entradas. La entrada $values contiene por
-filas cada uno de los vectores de escenario en función del número de
-iteraciones. Y la entrada $convergence contiene el número de la iteración
-donde se estabilizada el mapa cognitivo borroso.
+Return a list with two entries. The $values entry contains in rows
+each of the scenario vectors according to the number of iterations. And the
+$convergence entry contains the number of the iteration where the
+Fuzzy Cognitive Map is stabilised.
 }
 \description{
-Función para inferir escenarios futuros simulados del mapa
-cognitivo borroso derivados de las relaciones de causalidad.
+Function to infer simulated future scenarios from a RepGrid and
+an Impgrid.
 }

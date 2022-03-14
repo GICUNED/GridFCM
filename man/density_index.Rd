@@ -8,7 +8,7 @@ density_index(imp)
 }
 \arguments{
 \item{imp}{Matriz de implicaciones del sujeto importada con
-\code{\link{importIMP}}.}
+\code{\link{importimp}}.}
 }
 \value{
 Devuelve una valor de 0 a 1 que representa la proporcion de aristas

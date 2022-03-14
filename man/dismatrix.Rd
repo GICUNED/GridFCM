@@ -8,7 +8,7 @@ dismatrix(imp, mode = "out")
 }
 \arguments{
 \item{imp}{Matriz de implicaciones del sujeto importada con
-\code{\link{importIMP}}.}
+\code{\link{importimp}}.}
 
 \item{mode}{Modo de calcular las distancias en función de la dirección de las
 aristas. Con "out" las calculamos respetando la dirección de las aristas,"in"

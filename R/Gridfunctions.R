@@ -68,7 +68,7 @@ importgrid <- function(path, ...){
 #' base una RepGrid.
 #'
 #' @param grid Técnica de Rejilla importada a través de la función
-#' \code{\link{importGRID}. Debe de ser un objeto RepGrid.
+#' \code{\link{importgrid}}. Debe de ser un objeto RepGrid.
 #'
 #' @param name Nombre para el archivo de salida.
 #'

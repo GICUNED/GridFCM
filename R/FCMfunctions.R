@@ -8,20 +8,18 @@
 
 #' Crear Vector de Activación (actvector)
 #'
-#' @description Función que extrae un vector de un elemento de la RepGrid y lo
-#' estandariza para poder utilizarse como vector de activación en un mapa
-#' cognitivo borroso.
+#' @description Function that extracts a column vector from a RepGrid and
+#' standardises it so that it can be used as an activation vector in a Fuzzy
+#' Cognitive Map.
 #'
-#' @param grid Rejilla del sujeto desde donde queremos extraer el vector de
-#' activación.Debe de ser un objeto importando con la función
-#' \code{\link{importgrid}}.
+#' @param grid Subject's RepGrid. It must be an S4 object imported by the
+#' \code{\link{importgrid}} function.
 #'
-#' @param col.element Elemento desde el que extraemos el vector de activación.
-#' Por defecto se establece el primer elemento, que coincide normalmente con el
-#' Yo-Actual de la RepGrid.
+#' @param col.element column number corresponding to the element from which the
+#' activation vector is extracted.
 #'
-#' @return Devuelve un vector que contiene los pesos para cada uno de los
-#' constructos asociados a un elemento.
+#' @return Returns a vector containing the standardised weights for each of the
+#' constructs associated an element.
 #'
 #' @import OpenRepGrid
 #'
@@ -30,9 +28,9 @@
 
 actvector <- function(grid, col.element = 1){
 
-  vector <- getRatingLayer(grid)[,col.element]                                  # Extraemos el vector de la rejilla
+  vector <- getRatingLayer(grid)[,col.element]                                  # extract vector from de RepGrid
 
-  result <- (vector - getScaleMidpoint(grid))/((getScale(grid)[2]-1)/2)         # Estandarizamos el vector en  un intervalo [-1,1]
+  result <- (vector - getScaleMidpoint(grid))/((getScale(grid)[2]-1)/2)         # Standardise vector into a interval [-1,1]
 
   return(result)
 }
@@ -43,60 +41,53 @@ actvector <- function(grid, col.element = 1){
 
 #' Inferencia de Escenarios Futuros -- fcminfer()
 #'
-#' @description Función para inferir escenarios futuros simulados del mapa
-#' cognitivo borroso derivados de las relaciones de causalidad.
+#' @description Function to infer simulated future scenarios from a RepGrid and
+#' an Impgrid.
 #'
-#' @param grid RepGrid del sujeto desde donde queremos realizar las inferencias.
-#' Debe de ser un objeto importando con la función \code{\link{importgrid}}.
+#' @param grid Subject's RepGrid. It must be an S4 object imported by the
+#' \code{\link{importgrid}} function.
 #'
-#' @param imp Matriz de implicaciones del sujeto importada con
-#' \code{\link{importimp}}.
+#' @param imp Subject's ImpGrid. It must be an S4 object imported by the
+#' \code{\link{importimp}} function.
 #'
-#' @param act.vec Vector de activación creado a través de
-#' \code{\link{actvector}}. Si no se define se utiliza el vector correspondiente
-#'  al primer elemento de la RepGrid.
+#' @param act.vec Activation vector created via \code{\link{actvector}} function.
+#' The default vector is the first element of the RepGrid.
 #'
-#' @param ideal Posición del ideal dentro de la RepGrid expresado a través del
-#' número de la columna donde se encuentra. Por defecto se establece el último
-#' elemento de la RepGrid.
+#' @param ideal Column number representing the position of the Ideal-Self in the
+#' RepGrid. By default the last column of the RepGrid is set.
 #'
-#' @param infer Función de Propagación para la inferencia de escenarios.
-#' Puedes mirar la información sobre las diferentes funciones de propagación
-#' con ?\code{\link{propfunctions}}. Por defecto se utiliza la
-#' modificada de Kosko ("mk").
+#' @param infer Propagation function for scenario inference. More information in
+#' ?\code{\link{propfunctions}}.
 #'
-#' @param thr Función de Umbral para la inferencia de escenarios. Puedes mirar
-#' la información sonbre las distintas funciones umbral con
-#' ?\code{\link{thrfunctions}}. Por defecto se utiliza la Tangente Hiperbólica
-#' ("t").
+#' @param thr Threshold function for scenario inference. More information in
+#' ?\code{\link{thrfunctions}}.
 #'
-#' @param lambda Valor de lambda de la función umbral. Solo se aplica si se
-#' escoge función umbral sigmoidal o tangente hiperbólica.
+#' @param lambda Lambda value of the threshold function. Only applicable in
+#' sigmoidal or hyperbolic tangent threshold function
 #'
-#' @param iter Número de iteraciones que se desea inferir
+#' @param iter Number of iterations to infer.
 #'
-#' @return Devuelve una lista con dos entradas. La entrada $values contiene por
-#' filas cada uno de los vectores de escenario en función del número de
-#' iteraciones. Y la entrada $convergence contiene el número de la iteración
-#' donde se estabilizada el mapa cognitivo borroso.
+#' @return Return a list with two entries. The $values entry contains in rows
+#' each of the scenario vectors according to the number of iterations. And the
+#' $convergence entry contains the number of the iteration where the
+#' Fuzzy Cognitive Map is stabilised.
 #'
 #' @import OpenRepGrid
-#' @import ggplot2
 #'
 #' @export
 
 fcminfer <- function(grid, imp, act.vec = actvector(grid), ideal = dim(grid)[2],
                        infer= "mk", thr= "t", lambda = 1 , iter = 30){
 
-  imp_a <- .adaptrepgrid(imp, t = FALSE)                                        # Extraemos los valores de la matriz de implicaciones
+  imp_a <- .adaptrepgrid(imp, t = FALSE)                                        # Extract ImpGrid values.
 
   w.mat <- .weightmatrix(imp_a)
-  w.mat <- as.data.frame(w.mat)                                                 # Transformamos la matriz de implicaciones en una matriz de pesos
+  w.mat <- as.data.frame(w.mat)                                                 # Transform implication matrix to a weight matrix.
 
 
 
   result <- .infer(act.vec, weight_mat = w.mat, infer = infer,
-                      transform = thr, lambda = lambda, iter = iter)            # Aplicamos la función para hacer la inferencia
+                      transform = thr, lambda = lambda, iter = iter)            # Apply the infer function.
 
   return(result)
 }
@@ -107,24 +98,23 @@ fcminfer <- function(grid, imp, act.vec = actvector(grid), ideal = dim(grid)[2],
 
 #' Personal Constructs System Dynamics plot -- pcsd()
 #'
-#' @description Gráfico que nos permite observar la dinámica del sistema de
-#' constructros personales. Cruza la iteraciones matemáticas de
-#' \code{\link{fcminfer}} con la distancia respecto al ideal de cada uno de los
-#' constructos personales.
+#' @description Interactive line plot of personal constructs system dinamics.
+#' Show \code{\link{fcminfer}} values expressed in terms of distance to
+#' Ideal-Self for each personal construct across the mathematical iterations.
 #'
-#' @param grid RepGrid sobre la que queremos realizar nuestro PCSD. Debe haber
-#' sido importada a través de \code{\link{importgrid}}.
+#' @param grid Subject's RepGrid. It must be an S4 object imported by the
+#' \code{\link{importgrid}} function.
 #'
-#' @param imp Impgrid sobre la que queremos realizar nuestro PCSD. Debe de haber
-#' sido importada a través de \code{\link{importimp}}.
+#' @param imp Subject's ImpGrid. It must be an S4 object imported by the
+#' \code{\link{importimp}} function.
 #'
-#' @param ideal Columna donde se encuentra el Yo-Ideal en la Repgrid. Por
-#' defecto se estable la última columna de la Repgrid.
+#' @param ideal Column number representing the position of the Ideal-Self in the
+#' RepGrid. By default the last column of the RepGrid is set.
 #'
-#' @param ... Esta función hereda todos los parámetos de la función
+#' @param ... This function inherits all the parameters from the function
 #' \code{\link{fcminfer}}
 #'
-#' @return Gráfico interactivo confeccionado con plotly.
+#' @return Interactive plot created with plotly.
 #'
 #' @import plotly
 #'
@@ -133,34 +123,36 @@ fcminfer <- function(grid, imp, act.vec = actvector(grid), ideal = dim(grid)[2],
 pcsd <- function(grid,imp,ideal=dim(grid)[2],...){
 
 
-  lpoles <- OpenRepGrid::getConstructNames(grid)[,1]                            # Extraemos los nombres de los constructos
+  lpoles <- OpenRepGrid::getConstructNames(grid)[,1]                            # Extract constructs names
   rpoles <- OpenRepGrid::getConstructNames(grid)[,2]
   poles <- paste(lpoles,"—",rpoles,sep = "")
 
-  iter <- fcminfer(grid,imp,iter=60)$convergence                                # Establecemos el número de iteración donde se estabiliza el FCM
+  iter <- fcminfer(grid,imp,iter=60)$convergence                                # Save convergence value
 
   ideal.vector <- OpenRepGrid::getRatingLayer(grid)[,ideal]
   ideal.vector <- (ideal.vector -
                    getScaleMidpoint(grid))/((getScale(grid)[2]-1)/2)
-  ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),             # Creamos una matriz con los valores del yo-ideal repetidos por filas
+  ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),             # Create a matrix with Ideal-Self values repeated by rows
                         nrow = iter, byrow = TRUE)
 
-  res <- fcminfer(grid,imp,iter=iter,...)$values                                # Obtenemos la inferencia del MCB
+  res <- fcminfer(grid,imp,iter=iter,...)$values                                # Apply fcminfer function
 
   x <- c(0:(iter-1))
   y <- c(0:length(poles))
   y <- as.character(y)
-  df <- data.frame(x, abs(res - ideal.matrix) / 2)                              # Confeccionamos un dataframe con las distancias estandarizadas entre los resultados y el ideal
+  df <- data.frame(x, abs(res - ideal.matrix) / 2)                              # Dataframe with the standardised distances between self-now and ideal-self
   colnames(df) <- y
 
-  fig <- plot_ly(df, x = ~x, y = df[,2], name = poles[1], type = 'scatter',
-                 mode = 'lines+markers',line = list(shape = "spline"))          # Construimos el gráfico de plotly de las iteraciones para cada uno de los constructos
+  fig <- plotly::plot_ly(df, x = ~x, y = df[,2], name = poles[1],
+                         type = 'scatter',
+                        mode = 'lines+markers',line = list(shape = "spline"))   # Build PCSD with plotly
 
   for (n in 3:(length(poles)+1)) {
-  fig <- fig %>% add_trace(y = df[,n], name = poles[n-1], mode = 'lines+markers'
-                           ,line = list(shape = "spline"))
+  fig <- fig %>% plotly::add_trace(y = df[,n], name = poles[n-1],
+                                   mode = 'lines+markers'
+                                   ,line = list(shape = "spline"))
  }
-  fig <- fig %>% layout(
+  fig <- fig %>% plotly::layout(
                         xaxis = list(
                           title = "ITERATIONS"
                           ),
@@ -169,12 +161,12 @@ pcsd <- function(grid,imp,ideal=dim(grid)[2],...){
                           range = c(-0.05,1.05)
                           )
                         )
-  fig <- fig %>% layout(legend=list(
+  fig <- fig %>% plotly::layout(legend=list(
                           title=list(text='<b>PERSONAL CONSTRUCTS</b>')
                           )
                         )
 
-  fig                                                                           # Ejecutamos el gráfico
+  fig                                                                           # Run the results
 }
 ################################################################################
 
@@ -183,23 +175,20 @@ pcsd <- function(grid,imp,ideal=dim(grid)[2],...){
 
 #' Fuzzy Cognitive Map Digraph -- fcmdigraph()
 #'
-#' @description Función que nos dibuja un digrafo del Mapa Cognitivo Borroso del
-#' sistema de constructos de un individuo a través de una técnica de rejilla y
-#' una rejilla de implicaciones.
+#' @description This function draws a digraph of the Fuzzy Cognitive Map of an
+#' individual's construct system using a Repgrid and Impgrid.
 #'
-#' @param grid RepGrid del sujeto del que queremos dibujar el Mapa Cognitivo
-#' Borroso. Debe de ser un objeto importado con la función
-#' \code{\link{importgrid}}.
+#' @param grid Subject's RepGrid. It must be an S4 object imported by the
+#' \code{\link{importgrid}} function.
 #'
-#' @param imp Matriz de implicaciones del sujeto importada con
-#' \code{\link{importimp}}.
+#' @param imp Subject's ImpGrid. It must be an S4 object imported by the
+#' \code{\link{importimp}} function.
 #'
-#' @param results inferencia de escenarios creada con \code{\link{fcminfer}}.
-#' Por defecto se establece una inferencia sobre el Yo-Actual.
+#' @param results scenario inference values calculated with
+#' \code{\link{fcminfer}}. By default they are calculated with the Self-Now
 #'
-#' @param ideal Posición del ideal dentro de la rejilla expresado a través del
-#' número de la columna donde se encuentra. Por defecto el último elemento de la
-#' RepGrid
+#' @param ideal Column number representing the position of the Ideal-Self in the
+#' RepGrid. The default is the last column of the RepGrid.
 #'
 #' @param niter Selección del vector de escenario que se quiere representar en
 #' el mapa. Expresado a través del número de iteraciones. Por defecto se
@@ -317,9 +306,9 @@ fcmdigraph <- function(grid, imp, results = fcminfer(grid,imp)$values,
     else{
       if(pole.name.vertex > 0){V(graph.map)$name[n] <- rpoles[n] }
       else{
-        if(pole.name.vertex == 0){V(graph.map)$name[n] <- paste(lpoles[n],"—",
+        if(pole.name.vertex == 0){V(graph.map)$name[n] <- paste(lpoles[n],"-",
                                                                 rpoles[n],sep =
-                                                                  "")}
+                                                                  " ")}
       }
     }
     n <- n + 1
@@ -460,9 +449,9 @@ fcmdigraph3D <- function(grid, imp, results = fcminfer(grid,imp)$values,
     else{
       if(pole.name.vertex > 0){V(graph.map)$name[n] <- rpoles[n] }
       else{
-        if(pole.name.vertex == 0){V(graph.map)$name[n] <- paste(lpoles[n],"—",
+        if(pole.name.vertex == 0){V(graph.map)$name[n] <- paste(lpoles[n],"-",
                                                                 rpoles[n],sep =
-                                                                  "")}
+                                                                  " ")}
       }
     }
     n <- n + 1
@@ -656,9 +645,9 @@ idealdigraph <- function(grid,imp, ideal = dim(grid)[2], inc = FALSE,
     else{
       if(pole.name.vertex > 0){V(graph.map)$name[n] <- rpoles[n] }
       else{
-        if(pole.name.vertex == 0){V(graph.map)$name[n] <- paste(lpoles[n],"—",
+        if(pole.name.vertex == 0){V(graph.map)$name[n] <- paste(lpoles[n],"-",
                                                                 rpoles[n],sep =
-                                                                  "")}
+                                                                  " ")}
       }
     }
     n <- n + 1
@@ -744,10 +733,10 @@ idealdigraph <- function(grid,imp, ideal = dim(grid)[2], inc = FALSE,
 #' @export
 #'
 
-fcmreport <- function(x, imp, name = "report", dir = getwd(), output = "html",
+fcmreport <- function(grid, imp, name = "report", dir = getwd(), output = "html",
                       edit = FALSE){
 
-  render.grid <- x                                                              # Creamos los objetos renderizables para el draft
+  render.grid <- grid                                                             # Creamos los objetos renderizables para el draft
   render.imp <- imp
 
   file <- paste(name,".Rmd", sep = "")                                          # Damos nombre al archivo de salida

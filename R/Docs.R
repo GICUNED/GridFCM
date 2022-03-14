@@ -65,7 +65,7 @@
 #'
 #' \strong{Inferencia Modificada de Kosko:} Consiste en sumarle al estado actual de los vértices el producto matricial entre el vector de activación y la matriz de pesos. La nueva
 #' activación de los vértices depende de la activación de sus transmisores, del peso de sus relaciones y del estado previo de la red. Para utilizarla en la función.
-#' \code{\link{FuzzyInfer}} el argumento infer debe de ser igual a "mk".
+#' \code{\link{fcminfer}} el argumento infer debe de ser igual a "mk".
 #'
 #' \strong{Inferencia reescalada:} Similar a la modificada de Kosko pero con un reescalado de los valores. Para utilizarla en la función \code{\link{fcminfer}} el argumento infer
 #'  debe de ser igual a "r".
@@ -73,7 +73,7 @@
 NULL
 
 #' @title Tipos de funciones umbral
-#' @name thrunctions
+#' @name thrfunctions
 #' @description
 #' El paquete GridFCM permite cuatro funciones umbral, dos de ellas discretas y otras dos continuas:
 #'
@@ -81,7 +81,7 @@ NULL
 #'
 #' \emph{\strong{Función bivalente:}} La función bivalente devuelve un valor 1 al vértice cuando la activación que le llega es superior a 0,y devuelve 0 cuando
 #' esa activacion es menor o igual que 0. Permite que los vértices tomen valores discretos y dicotómicos (activados o desactivados). Para utilizar esta función debemos escribir
-#' como argumento `thr = "b"` en la función \code{\link{fcm}}.
+#' como argumento `thr = "b"` en la función \code{\link{fcminfer}}.
 #'
 #' \emph{\strong{Función trivalente:}} La función trivalente devuelve un valor 1 al vértice cuando la activación que le llega es superior a 0, devuelve 0 cuando
 #' esa activacion es igual a 0, y devuelve -1 si esa activación es inferior a 0. Permite que los vértices tomen valores discretos, y a diferencia de la bivalente, devuelve

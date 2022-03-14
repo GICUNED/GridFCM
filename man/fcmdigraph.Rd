@@ -17,19 +17,17 @@ fcmdigraph(
 )
 }
 \arguments{
-\item{grid}{RepGrid del sujeto del que queremos dibujar el Mapa Cognitivo
-Borroso. Debe de ser un objeto importado con la función
-\code{\link{importgrid}}.}
+\item{grid}{Subject's RepGrid. It must be an S4 object imported by the
+\code{\link{importgrid}} function.}
 
-\item{imp}{Matriz de implicaciones del sujeto importada con
-\code{\link{importimp}}.}
+\item{imp}{Subject's ImpGrid. It must be an S4 object imported by the
+\code{\link{importimp}} function.}
 
-\item{results}{inferencia de escenarios creada con \code{\link{fcminfer}}.
-Por defecto se establece una inferencia sobre el Yo-Actual.}
+\item{results}{scenario inference values calculated with
+\code{\link{fcminfer}}. By default they are calculated with the Self-Now}
 
-\item{ideal}{Posición del ideal dentro de la rejilla expresado a través del
-número de la columna donde se encuentra. Por defecto el último elemento de la
-RepGrid}
+\item{ideal}{Column number representing the position of the Ideal-Self in the
+RepGrid. The default is the last column of the RepGrid.}
 
 \item{niter}{Selección del vector de escenario que se quiere representar en
 el mapa. Expresado a través del número de iteraciones. Por defecto se
@@ -49,7 +47,6 @@ Devuelve una representación gráfica de un digrafo de un Mapa
 Cognitivo Borroso.
 }
 \description{
-Función que nos dibuja un digrafo del Mapa Cognitivo Borroso del
-sistema de constructos de un individuo a través de una técnica de rejilla y
-una rejilla de implicaciones.
+This function draws a digraph of the Fuzzy Cognitive Map of an
+individual's construct system using a Repgrid and Impgrid.
 }

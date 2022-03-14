@@ -4,9 +4,12 @@
 \alias{pcsd_derivative}
 \title{PCSD derivative -- pcsd_derivative()}
 \usage{
-pcsd_derivative(x, imp, ideal = dim(x)[2], ...)
+pcsd_derivative(grid, imp, ideal = dim(grid)[2], ...)
 }
 \arguments{
+\item{grid}{Repgrid del sujeto. Debe de ser un objeto importando con la
+función \code{\link{importgrid}}.}
+
 \item{imp}{Matriz de implicaciones del sujeto importada con
 \code{\link{importimp}}.}
 
@@ -16,9 +19,6 @@ elemento de la Repgrid.}
 
 \item{...}{Esta función hereda todos los parámetos de la función
 \code{\link{pcsd}}}
-
-\item{grid}{Repgrid del sujeto. Debe de ser un objeto importando con la
-función \code{\link{importgrid}}.}
 }
 \value{
 Devuelve una representación gráfica creada con el paquete plotly.

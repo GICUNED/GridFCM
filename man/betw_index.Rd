@@ -8,7 +8,7 @@ betw_index(imp, norm = TRUE)
 }
 \arguments{
 \item{imp}{Matriz de implicaciones del sujeto importada con
-\code{\link{importIMP}}.}
+\code{\link{importimp}}.}
 
 \item{norm}{Si es TRUE devuelve la intermediación de los constructos
 normalizada en función del número de vértices. Por defecto se establece en

@@ -11,7 +11,7 @@
 #' grafo que genera la matriz de implicaciones.
 #'
 #' @param imp Matriz de implicaciones del sujeto importada con
-#' \code{\link{importIMP}}.
+#' \code{\link{importimp}}.
 #'
 #'
 #' @return Devuelve una valor de 0 a 1 que representa la proporcion de aristas
@@ -46,8 +46,7 @@ density_index <- function(imp){
 #' @param imp Matriz de implicaciones del sujeto importada con
 #' \code{\link{importimp}}.
 #'
-#' @param method Método para calcular el grado de centralidad. Más información
-#' escribiendo ?\code{\link{DegreeMethod}} o haciendo click sobre él.
+#' @param method Método para calcular el grado de centralidad.
 #'
 #' @return Devuelve una lista con los datos de centralidad por constructo y
 #' separados por grado de entrada y grado de salida.
@@ -115,7 +114,7 @@ degree_index <- function(imp, method="simple"){
 #' uno de los pares de constructos en el digrafo.
 #'
 #' @param imp Matriz de implicaciones del sujeto importada con
-#' \code{\link{importIMP}}.
+#' \code{\link{importimp}}.
 #'
 #' @param mode Modo de calcular las distancias en función de la dirección de las
 #' aristas. Con "out" las calculamos respetando la dirección de las aristas,"in"
@@ -151,15 +150,13 @@ dismatrix <- function(imp,mode="out"){
 #' del resto de constructos del mapa cognitivo borroso.
 #'
 #' @param imp Matriz de implicaciones del sujeto importada con
-#' \code{\link{importIMP}}.
+#' \code{\link{importimp}}.
 #'
 #' @param norm Si es TRUE devuelve la cercanía de los constructos normalizada en
 #' función del número de vértices. Por defecto se establece en TRUE.
 #'
 #' @return Devuelve un vector con el índice de cercanía de cada uno de los
 #' constructos.
-#'
-#' @examples
 #'
 #' @export
 #'
@@ -196,7 +193,7 @@ close_index <- function(imp, norm = TRUE){
 #' dos constructos pasa por dicho constructo en el digrafo.
 #'
 #' @param imp Matriz de implicaciones del sujeto importada con
-#' \code{\link{importIMP}}.
+#' \code{\link{importimp}}.
 #'
 #' @param norm Si es TRUE devuelve la intermediación de los constructos
 #' normalizada en función del número de vértices. Por defecto se establece en
@@ -260,8 +257,6 @@ betw_index <- function(imp,norm=TRUE){
 
 auc_index <- function(grid, imp, ideal=dim(grid)[2],...){
 
-  require(MESS)
-
   lpoles <- OpenRepGrid::getConstructNames(grid)[,1]                            # Extraemos los nombres de los constructos
   rpoles <- OpenRepGrid::getConstructNames(grid)[,2]
   poles <- paste(lpoles,"-",rpoles,sep = " ")
@@ -279,7 +274,7 @@ auc_index <- function(grid, imp, ideal=dim(grid)[2],...){
   matrix <- matrix(ncol= length(poles), nrow = 1)
 
   for (n in 1:length(poles)) {                                                  # Calculamos el area bajo la curva para cada constructo
-    matrix[,n] <- auc(c(1:iter), res[,n], type = "spline")/iter
+    matrix[,n] <- MESS::auc(c(1:iter), res[,n], type = "spline")/iter
   }
 
   result <- as.vector(matrix)
@@ -315,13 +310,12 @@ auc_index <- function(grid, imp, ideal=dim(grid)[2],...){
 #' @return Devuelve un vector con los valores de la desviación típica para cada
 #' uno de los constructos.
 #'
-#' @import MESS
+#' @import stats
 #'
 #' @export
 
 stability_index <- function(grid, imp, ideal=dim(grid)[2],...){
 
-  require(MESS)
 
   lpoles <- OpenRepGrid::getConstructNames(grid)[,1]                            # Extraemos los nombres de los constructos.
   rpoles <- OpenRepGrid::getConstructNames(grid)[,2]
@@ -370,13 +364,12 @@ stability_index <- function(grid, imp, ideal=dim(grid)[2],...){
 #'
 #' @return Devuelve una matriz con el resumen del PCSD.
 #'
-#' @import MESS
 #'
 #' @export
 
 pcsd_summary <- function(grid, imp, ideal=dim(grid)[2],...){
 
-  require(MESS)
+
 
   lpoles <- OpenRepGrid::getConstructNames(grid)[,1]                            # Extraemos los nombres de los constructos
   rpoles <- OpenRepGrid::getConstructNames(grid)[,2]
@@ -432,20 +425,20 @@ pcsd_summary <- function(grid, imp, ideal=dim(grid)[2],...){
 #'
 #' @export
 
-pcsd_derivative <- function(x,imp,ideal=dim(x)[2],...){
+pcsd_derivative <- function(grid,imp,ideal=dim(grid)[2],...){
 
 
-  lpoles <- OpenRepGrid::getConstructNames(x)[,1]                               # Extraemos los nombres de los constructos
-  rpoles <- OpenRepGrid::getConstructNames(x)[,2]
+  lpoles <- OpenRepGrid::getConstructNames(grid)[,1]                               # Extraemos los nombres de los constructos
+  rpoles <- OpenRepGrid::getConstructNames(grid)[,2]
   poles <- paste(lpoles,"-",rpoles,sep = " ")
-  iter <- fcminfer(x,imp,iter=60,...)$convergence
+  iter <- fcminfer(grid,imp,iter=60,...)$convergence
 
-  ideal.vector <- OpenRepGrid::getRatingLayer(x)[,ideal]
+  ideal.vector <- OpenRepGrid::getRatingLayer(grid)[,ideal]
   ideal.vector <- (ideal.vector - 4)/3
   ideal.matrix <- matrix(ideal.vector, ncol = length(ideal.vector),             # Creamos una matriz con los valores del yo-ideal repetidos por filas
                          nrow = iter, byrow = TRUE)
 
-  res.pre <- fcminfer(x,imp,iter=iter,...)$values                               # Obtenemos la inferencia del MCB
+  res.pre <- fcminfer(grid,imp,iter=iter,...)$values                               # Obtenemos la inferencia del MCB
   res.pre <- abs(res.pre - ideal.matrix) / 2
 
 
@@ -463,23 +456,23 @@ pcsd_derivative <- function(x,imp,ideal=dim(x)[2],...){
   df <- data.frame(x,res)                                                       # Confeccionamos un dataframe con las distancias estandarizadas entre los resultados y el ideal
   colnames(df) <- y
 
-  fig <- plot_ly(df, x = ~x, y = df[,2], name = poles[1], type = 'scatter',
-                 mode = 'lines+markers',line = list(shape = "spline"))
+  fig <- plotly::plot_ly(df, x = ~x, y = df[,2], name = poles[1],
+                         type = 'scatter', mode = 'lines+markers',
+                         line = list(shape = "spline"))
 
   for (n in 3:(length(poles)+1)) {
-    fig <- fig %>% add_trace(y = df[,n], name = poles[n-1],
-                             mode = 'lines+markers',
-                             line = list(shape = "spline"))
+    fig <- fig %>% plotly::add_trace(y = df[,n], name = poles[n-1],
+                                     mode = 'lines+markers',
+                                     line = list(shape = "spline"))
   }
 
-  fig <- fig %>% layout(xaxis = list(
-                          title = "ITERATIONS"),
-                        yaxis = list(
-                          title = "DERIVATIVE"
-                          )
-  )
-  fig <- fig %>% layout(legend=list(
-    title=list(text='<b>PERSONAL CONSTRUCTS</b>')))
+  fig <- fig %>% plotly::layout(xaxis = list(
+                                title = "ITERATIONS"),
+                                yaxis = list(
+                                title = "DERIVATIVE"))
+
+  fig <- fig %>% plotly::layout(legend=list(
+                                title=list(text='<b>PERSONAL CONSTRUCTS</b>')))
 
   fig
 }

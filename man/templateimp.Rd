@@ -7,6 +7,9 @@
 templateimp(grid, name = "ImpGrid_Template")
 }
 \arguments{
+\item{grid}{Técnica de Rejilla importada a través de la función
+\code{\link{importgrid}}. Debe de ser un objeto RepGrid.}
+
 \item{name}{Nombre para el archivo de salida.}
 }
 \value{

@@ -7,20 +7,18 @@
 actvector(grid, col.element = 1)
 }
 \arguments{
-\item{grid}{Rejilla del sujeto desde donde queremos extraer el vector de
-activación.Debe de ser un objeto importando con la función
-\code{\link{importgrid}}.}
+\item{grid}{Subject's RepGrid. It must be an S4 object imported by the
+\code{\link{importgrid}} function.}
 
-\item{col.element}{Elemento desde el que extraemos el vector de activación.
-Por defecto se establece el primer elemento, que coincide normalmente con el
-Yo-Actual de la RepGrid.}
+\item{col.element}{column number corresponding to the element from which the
+activation vector is extracted.}
 }
 \value{
-Devuelve un vector que contiene los pesos para cada uno de los
-constructos asociados a un elemento.
+Returns a vector containing the standardised weights for each of the
+constructs associated an element.
 }
 \description{
-Función que extrae un vector de un elemento de la RepGrid y lo
-estandariza para poder utilizarse como vector de activación en un mapa
-cognitivo borroso.
+Function that extracts a column vector from a RepGrid and
+standardises it so that it can be used as an activation vector in a Fuzzy
+Cognitive Map.
 }

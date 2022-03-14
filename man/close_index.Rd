@@ -8,7 +8,7 @@ close_index(imp, norm = TRUE)
 }
 \arguments{
 \item{imp}{Matriz de implicaciones del sujeto importada con
-\code{\link{importIMP}}.}
+\code{\link{importimp}}.}
 
 \item{norm}{Si es TRUE devuelve la cercanía de los constructos normalizada en
 función del número de vértices. Por defecto se establece en TRUE.}
@@ -20,7 +20,4 @@ constructos.
 \description{
 Función que permite calcular la cercanía de un constructo
 del resto de constructos del mapa cognitivo borroso.
-}
-\examples{
-
 }

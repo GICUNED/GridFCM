@@ -5,7 +5,7 @@
 \title{GridFCM Analisys Report -- fcmreport())}
 \usage{
 fcmreport(
-  x,
+  grid,
   imp,
   name = "report",
   dir = getwd(),
@@ -14,6 +14,10 @@ fcmreport(
 )
 }
 \arguments{
+\item{grid}{RepGrid del sujeto del que queremos dibujar el Mapa Cognitivo
+Borroso. Debe de ser un objeto importado con la función
+\code{\link{importgrid}}.}
+
 \item{imp}{Matriz de implicaciones del sujeto importada con
 \code{\link{importimp}}.}
 
@@ -26,10 +30,6 @@ se estable el directorio de trabajo.}
 
 \item{edit}{Parametro booleano para indicar si se desea editar el código
 fuente del informe. Por defecto se encuentra definido como FALSE.}
-
-\item{grid}{RepGrid del sujeto del que queremos dibujar el Mapa Cognitivo
-Borroso. Debe de ser un objeto importado con la función
-\code{\link{importgrid}}.}
 }
 \value{
 Devuelve un archivo html que muestra un análisis completo sobre la

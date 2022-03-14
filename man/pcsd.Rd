@@ -7,24 +7,23 @@
 pcsd(grid, imp, ideal = dim(grid)[2], ...)
 }
 \arguments{
-\item{grid}{RepGrid sobre la que queremos realizar nuestro PCSD. Debe haber
-sido importada a través de \code{\link{importgrid}}.}
+\item{grid}{Subject's RepGrid. It must be an S4 object imported by the
+\code{\link{importgrid}} function.}
 
-\item{imp}{Impgrid sobre la que queremos realizar nuestro PCSD. Debe de haber
-sido importada a través de \code{\link{importimp}}.}
+\item{imp}{Subject's ImpGrid. It must be an S4 object imported by the
+\code{\link{importimp}} function.}
 
-\item{ideal}{Columna donde se encuentra el Yo-Ideal en la Repgrid. Por
-defecto se estable la última columna de la Repgrid.}
+\item{ideal}{Column number representing the position of the Ideal-Self in the
+RepGrid. By default the last column of the RepGrid is set.}
 
-\item{...}{Esta función hereda todos los parámetos de la función
+\item{...}{This function inherits all the parameters from the function
 \code{\link{fcminfer}}}
 }
 \value{
-Gráfico interactivo confeccionado con plotly.
+Interactive plot created with plotly.
 }
 \description{
-Gráfico que nos permite observar la dinámica del sistema de
-constructros personales. Cruza la iteraciones matemáticas de
-\code{\link{fcminfer}} con la distancia respecto al ideal de cada uno de los
-constructos personales.
+Interactive line plot of personal constructs system dinamics.
+Show \code{\link{fcminfer}} values expressed in terms of distance to
+Ideal-Self for each personal construct across the mathematical iterations.
 }
