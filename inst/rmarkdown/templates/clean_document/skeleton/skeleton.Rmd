@@ -1,0 +1,87 @@
+---
+title: "GridFCM"
+output:
+  flexdashboard::flex_dashboard:
+    css: style.css
+    logo: gridfcm.png
+    source_code: embed
+    
+output_file: "Informe.html"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(GridFCM)
+library(OpenRepGrid)
+library(knitr)
+library(rgl)
+library(shiny)
+library(plotly)
+knitr::knit_hooks$set(webgl = hook_webgl)
+```
+
+GRIDS {data-orientation=rows}
+=============================================
+
+**GRIDFCM REPORT**
+
+Grids {.tabset .tabset-fade}
+---------------------------------------------
+
+### RepGrid
+
+```{r RepGrid, echo=FALSE, fig.width=12, message=FALSE, warning=FALSE}
+bertin(render.grid, colors = c("white","#005440"))
+```
+
+### ImpGrid
+
+```{r ImpGrid, echo=FALSE, fig.width=12, message=FALSE, warning=FALSE}
+bertin(render.imp, colors = c("#F52722","#e5e5e5","#a5d610"))
+```
+
+### Impgrid 2.0
+
+```{r Imp, echo=FALSE, fig.width=12, message=FALSE, warning=FALSE}
+scores <- getRatingLayer(render.imp)
+lpoles <- getConstructNames(render.imp)[,1]
+rpoles <- getConstructNames(render.imp)[,2]
+imps <- paste("(",c(1:dim(render.imp)[2]),")",getElementNames(render.imp))
+
+imp.matrix <- matrix(nrow = dim(render.imp)[1], ncol = dim(render.imp)[2])
+colnames(imp.matrix) <- imps
+for (n in 1:dim(imp.matrix)[2]) {
+  for (i in 1:dim(imp.matrix)[1]) {
+    if(scores[i,n] > 0){
+    imp.matrix[i,n] <- rpoles[i]
+    }
+    if(scores[i,n] < 0){
+    imp.matrix[i,n] <- lpoles[i]
+    }
+    if(scores[i,n] == 0){
+    imp.matrix[i,n] <- 0
+    }
+  }
+}
+imp.matrix <- cbind(c(1:dim(imp.matrix)[2]),imp.matrix)
+kable(imp.matrix)
+```
+
+Self Map Digraph {data-orientation=rows}
+===========================================
+
+FCM Digraph  {.tabset .tabset-fade}
+---------------------------------------
+
+### Graphopt
+
+```{r FCM Graphopt, echo=FALSE, fig.height=10, fig.width=10, message=FALSE, warning=FALSE, results='hide'}
+fcmdigraph(render.grid,render.imp,niter = 1, layout = "graphopt")
+```
+
+### Multidimensional Scaling
+
+```{r FCM MDS, echo=FALSE, fig.height=10, fig.width=10, message=FALSE, warning=FALSE, results='hide'}
+fcmdigraph(render.grid,render.imp,niter = 1, layout = "mds")
+```
+

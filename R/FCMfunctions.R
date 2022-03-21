@@ -753,6 +753,10 @@ if(output =="shiny"){
   rmarkdown::draft(name,"report_shiny", package = "GridFCM",edit=edit)          # Creamos el draft del Shiny y lo ejecutamos
   rmarkdown::run(file, shiny_args = list(launch.browser = TRUE))
 }
+if(output =="clean"){
+  rmarkdown::draft(name,"clean_document", package = "GridFCM",edit=edit)          # Creamos el draft del Shiny y lo ejecutamos
+  rmarkdown::render(file , output_dir = dir)
+}
   file.remove(file)
   file.remove("style.css")
   file.remove("gridfcm.png")                                                    # eliminamos los archivos temporales de la renderización

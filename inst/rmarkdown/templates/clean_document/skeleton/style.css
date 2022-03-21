@@ -1,0 +1,108 @@
+body {
+  padding-top: 63px;
+}
+.navbar{
+  color: rgb(255, 255, 255);
+  background: linear-gradient(-100deg, #005440 19%, #49d49d 100%);
+  box-shadow: 0px 3px 3px rgba(0,0,0,0.64);
+  border-color: rgba(0, 0, 0, 0);
+}
+.navbar-form,
+.navbar-inverse{
+  border-color: rgba(0, 0, 0, 0);
+}
+
+.navbar-inverse .navbar-nav > li > a:hover,
+.navbar-inverse .navbar-nav > li > a:focus {
+  color: #ffffff;
+  background-color: rgb(0, 84, 64);
+}
+.navbar-inverse .navbar-nav > .active > a,
+.navbar-inverse .navbar-nav > .active > a:hover,
+.navbar-inverse .navbar-nav > .active > a:focus {
+  color: #ffffff;
+  background-color: rgb(0, 84, 64);
+}
+.navbar-inverse .navbar-toggle:hover,
+.navbar-inverse .navbar-toggle:focus {
+  background-color: rgb(0, 84, 64);
+}
+.navbar-inverse .navbar-collapse,
+.navbar-inverse .navbar-form {
+  border-color: rgba(0, 0, 0, 0);
+}
+.navbar-inverse .navbar-nav > .open > a,
+.navbar-inverse .navbar-nav > .open > a:hover,
+.navbar-inverse .navbar-nav > .open > a:focus{
+  background-color: rgb(0, 84, 64);
+}
+.navbar-inverse .navbar-brand,
+.navbar-inverse .navbar-brand:hover,
+.navbar-inverse .navbar-brand:focus{
+  font-weight: bold;
+  color: #005440 ;
+}
+.dropdown-menu > .active > a,
+.dropdown-menu > .active > a:hover,
+.dropdown-menu > .active > a:focus{
+  background-color: rgb(0, 84, 64);
+}
+.dropdown-menu > .open > a,
+.dropdown-menu > .open > a:hover,
+.dropdown-menu > .open > a:focus{
+  background-color: rgb(0, 84, 64)
+}
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus{
+  background-color: rgb(0, 84, 64)
+}
+.section.sidebar {
+  top: 54px;
+  background-color: rgba(73, 212, 157, 0.3);
+}
+
+.value-box {
+  color: #f9f9f9;
+}
+
+.bg-primary {
+  background-color: rgba(0, 84, 64, 0.7);
+}
+
+.nav-tabs > li > a:hover,
+.nav-tabs > li > a:focus,
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus,
+.nav-tabs .open > a,
+.nav-tabs .open > a:hover,
+.nav-tabs .open > a:focus {
+  padding-bottom: 5px;
+  margin-top: 0;
+}
+
+.nav-tabs-custom > .nav-tabs > li > a {
+  border-top-color: white;
+  border-right-color: white;
+  border-left-color: white;
+}
+
+.nav-tabs-custom > .nav-tabs > li.active {
+  border-top-color: rgba(0, 84, 64, 0.7);
+}
+
+.bg-info {
+  background-color: rgba(117, 202, 235, 0.9);
+}
+
+.bg-warning {
+  background-color: rgba(255, 133, 27, 0.7);
+}
+
+.bg-success {
+  background-color: rgba(40, 182, 44, 0.7);
+}
+
+.bg-danger {
+  background-color: rgba(255, 65, 54, 0.7);
+}
