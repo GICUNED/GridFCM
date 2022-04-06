@@ -23,28 +23,26 @@ fcmdigraph(
 \item{imp}{Subject's ImpGrid. It must be an S4 object imported by the
 \code{\link{importimp}} function.}
 
-\item{results}{scenario inference values calculated with
+\item{results}{Iteration matrix calculated with
 \code{\link{fcminfer}}. By default they are calculated with the Self-Now}
 
 \item{ideal}{Column number representing the position of the Ideal-Self in the
 RepGrid. The default is the last column of the RepGrid.}
 
-\item{niter}{Selección del vector de escenario que se quiere representar en
-el mapa. Expresado a través del número de iteraciones. Por defecto se
-establece la primera iteracion.}
+\item{niter}{Scenario vector to be represented in the digraph expressed by
+the row number in the iteration matrix. The default is the first row.}
 
-\item{layout}{Layout que se quiere utilizar para representar el mapa. Más
-información de los layouts con ?\code{\link{digraphlayouts}}.}
+\item{layout}{Layout to represent the FCM digraph. More information about
+layouts in ?\code{\link{digraphlayouts}}.}
 
-\item{edge.width}{Escalar del grosor de las aristas.}
+\item{edge.width}{Edge width scalar.}
 
-\item{vertex.size}{Escalar del tamaño de los vértices.}
+\item{vertex.size}{Vertex size scalar.}
 
-\item{legend}{Dibuja una leyenda con TRUE.}
+\item{legend}{Draws a legend if TRUE.}
 }
 \value{
-Devuelve una representación gráfica de un digrafo de un Mapa
-Cognitivo Borroso.
+Returns a graphical representation of a digraph of a FCM
 }
 \description{
 This function draws a digraph of the Fuzzy Cognitive Map of an

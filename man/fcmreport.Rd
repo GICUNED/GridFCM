@@ -14,28 +14,25 @@ fcmreport(
 )
 }
 \arguments{
-\item{grid}{RepGrid del sujeto del que queremos dibujar el Mapa Cognitivo
-Borroso. Debe de ser un objeto importado con la función
-\code{\link{importgrid}}.}
+\item{grid}{Subject's RepGrid. It must be an S4 object imported by the
+\code{\link{importgrid}} function.}
 
-\item{imp}{Matriz de implicaciones del sujeto importada con
-\code{\link{importimp}}.}
+\item{imp}{Subject's ImpGrid. It must be an S4 object imported by the
+\code{\link{importimp}} function.}
 
-\item{name}{Nombre del archivo de salida}
+\item{name}{Name of the output file.}
 
-\item{dir}{Directorio dónde se va a crear el archivo de salida. Por defecto
-se estable el directorio de trabajo.}
+\item{dir}{Directory where the output file is to be created. Default is the
+working directory.}
 
-\item{output}{Work in progress}
+\item{output}{Work in progress.}
 
-\item{edit}{Parametro booleano para indicar si se desea editar el código
-fuente del informe. Por defecto se encuentra definido como FALSE.}
+\item{edit}{Allows editing of the draft if TRUE. Default is FALSE.}
 }
 \value{
-Devuelve un archivo html que muestra un análisis completo sobre la
-RepGrid y la ImpGrid del sujeto.
+Returns a report with a full GridFCM analysis
 }
 \description{
-Función que nos exporta un análisis completo sobre un sujeto
-utilizando
+A function that exports a complete analysis of a subject using
+rmarkdown draft
 }

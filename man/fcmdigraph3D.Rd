@@ -15,35 +15,31 @@ fcmdigraph3D(
 )
 }
 \arguments{
-\item{grid}{RepGrid del sujeto del que queremos dibujar el Mapa Cognitivo
-Borroso. Debe de ser un objeto importado con la función
-\code{\link{importgrid}}.}
+\item{grid}{Subject's RepGrid. It must be an S4 object imported by the
+\code{\link{importgrid}} function.}
 
-\item{imp}{Matriz de implicaciones del sujeto importada con
-\code{\link{importimp}}.}
+\item{imp}{Subject's ImpGrid. It must be an S4 object imported by the
+\code{\link{importimp}} function.}
 
-\item{results}{inferencia de escenarios creada con \code{\link{fcminfer}}.
-Por defecto se establece una inferencia sobre el Yo-Actual.}
+\item{results}{Iterarion matrix calculated with
+\code{\link{fcminfer}}. By default they are calculated with the Self-Now}
 
-\item{ideal}{Posición del ideal dentro de la rejilla expresado a través del
-número de la columna donde se encuentra. Por defecto se estable el último
-elemento de la Repgrid.}
+\item{ideal}{Column number representing the position of the Ideal-Self in the
+RepGrid. The default is the last column of the RepGrid.}
 
-\item{niter}{Selección del vector de escenario que se quiere representar en
-el mapa. Expresado a través del número de iteracion. Por defecto se
-establece la primera iteración.}
+\item{niter}{Scenario vector to be represented in the digraph expressed by
+the row number in the iteration matrix. The default is the first row.}
 
-\item{edge.width}{Escalar del grosor de las aristas.}
+\item{edge.width}{Edge width scalar.}
 
-\item{vertex.size}{Escalar del tamaño de los vértices.}
+\item{vertex.size}{Vertex size scalar.}
 }
 \value{
-Devuelve una representación gráfica de un digrafo de un Mapa
-Cognitivo Borroso en un escalado multidimensional de 3 dimensiones.
+Returns a rgl output of a FCM digraph in a 3D multidimensional
+scaling.
 }
 \description{
-Función que nos dibuja un digrafo del Mapa Cognitivo Borroso en
-tres dimensiones del sistema de constructos de un individuo a través de una
-técnica de rejilla y una rejilla de implicaciones. Utilizando un layout de
-escalado multidimensional.
+Function that draws a three-dimensional FCM digraph of an
+personal construct system using a grid technique and an implication
+grid. It is represented with a 3D multidimensional scaling.
 }

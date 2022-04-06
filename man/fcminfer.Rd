@@ -2,7 +2,7 @@
 % Please edit documentation in R/FCMfunctions.R
 \name{fcminfer}
 \alias{fcminfer}
-\title{Inferencia de Escenarios Futuros -- fcminfer()}
+\title{inference of simulated future scenarios -- fcminfer()}
 \usage{
 fcminfer(
   grid,

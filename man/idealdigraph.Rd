@@ -16,34 +16,31 @@ idealdigraph(
 )
 }
 \arguments{
-\item{grid}{RepGrid del sujeto del que queremos dibujar el Mapa Cognitivo
-Borroso. Debe de ser un objeto importado con la función
-\code{\link{importgrid}}.}
+\item{grid}{Subject's RepGrid. It must be an S4 object imported by the
+\code{\link{importgrid}} function.}
 
-\item{imp}{Matriz de implicaciones del sujeto importada con
-\code{\link{importimp}}.}
+\item{imp}{Subject's ImpGrid. It must be an S4 object imported by the
+\code{\link{importimp}} function.}
 
-\item{ideal}{Posición del ideal dentro de la rejilla expresado a través del
-número de la columna donde se encuentra. Por defecto se establece el último
-elemento de la rejilla.}
+\item{ideal}{Column number representing the position of the Ideal-Self in the
+RepGrid. The default is the last column of the RepGrid.}
 
-\item{inc}{Si lo establecemos como TRUE nos muestra solamente las relaciones
-de inconsistencia (relaciones inversas) dentro del ideal.}
+\item{inc}{Shows only inconsistencies (inverse relationships) if TRUE.
+Default is FALSE.}
 
-\item{layout}{Layout que se quiere utilizar para representar el mapa. Más
-información de los layouts con ?\code{\link{digraphlayouts}}.}
+\item{layout}{Layout to represent the FCM digraph. More information about
+layouts in ?\code{\link{digraphlayouts}}.}
 
-\item{edge.width}{Escalar del grosor de las aristas.}
+\item{edge.width}{Edge width scalar.}
 
-\item{vertex.size}{Escalar del tamaño de los vértices.}
+\item{vertex.size}{Vertex size scalar.}
 
-\item{legend}{Dibuja una leyenda con TRUE.}
+\item{legend}{Draws a legend if TRUE. Default is FALSE.}
 }
 \value{
-Devuelve una representación gráfica de un digrafo del Yo-Ideal del
-individuo
+Returns Ideal FCM digraph.
 }
 \description{
-Función que nos dibuja un digrafo del Ideal del individuo que
-nos permite ver las implicaciones entre los polos del Yo-Ideal.
+This function draws an ideal FCM digraph allows to see
+implications between Ideal-Self poles.
 }
