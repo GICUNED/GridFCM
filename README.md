@@ -7,7 +7,7 @@ To install the 0.1.0-alpha version from github you can use the `devtools` packag
     library(devtools)
     install_github("GICUNED/GridFCM") 
     
-to run gridfcm you must have Java and Java Develpoment Kit installed and updated.
+To run GridFCM properly you must have Java and Java Develpoment Kit installed and updated.
 
 **Download Java:**  https://www.java.com/en/download/
 
