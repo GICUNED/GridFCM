@@ -1,5 +1,6 @@
 # GridFCM <img src="man/figures/GridFCM.png" align="right" width="175" />
 
+![GitHub R package version](https://img.shields.io/github/r-package/v/GICUNED/GridFCM?style=for-the-badge)
 ![GitHub](https://img.shields.io/github/license/GICUNED/GridFCM?style=for-the-badge)
 
 GridFCM is an R package that allows us to create Fuzzy Cognitive Maps using a RepGrid and an ImpGrid. With this software you will be able to analyse the structure and dynamics of the personal meaning system of individuals.
