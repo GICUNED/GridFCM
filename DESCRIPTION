@@ -19,6 +19,7 @@ Imports:
     xlsx(>= 0.6.5),
     MESS (>= 0.5.7)
 Depends:
+    flexdashboard,
     OpenRepGrid (>= 0.1.12),
     igraph (>= 1.2.6),
     R (>= 2.10),
