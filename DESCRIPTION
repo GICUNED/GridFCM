@@ -16,7 +16,6 @@ Imports:
     rgl (>= 0.106.8), 
     readxl (>= 1.3.1),
     plotly (>= 1.8.6),
-    xlsx(>= 0.6.5),
     MESS (>= 0.5.7)
 Depends:
     flexdashboard,
@@ -24,5 +23,6 @@ Depends:
     igraph (>= 1.2.6),
     R (>= 2.10),
     stats
-Suggests: 
+Suggests:
+    xlsx(>= 0.6.5),
     knitr

@@ -75,12 +75,13 @@ importgrid <- function(path, ...){
 #' @return Exporta un documento xlsx en el directorio de trabajo asignado de la
 #' sesión.
 #'
-#' @import xlsx
-#'
 #' @export
 
 templateimp <- function(grid,name ="ImpGrid_Template"){
-  requireNamespace("xlsx")                                                      # Comprobamos que el sujeto tenga instalado y ejecutado xlsx
+
+  if(!library(xlsx, quietly = TRUE, logical.return=TRUE)){
+    stop(cat("ERROR: You need install xlsx package for this function \n"))
+  }
 
   dim <- dim(grid)[1]                                                           # Guardamos el número de constructos de la rejilla
 
