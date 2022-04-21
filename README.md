@@ -15,3 +15,5 @@ To run GridFCM properly you must have Java and Java Develpoment Kit installed an
 **Download Java:**  https://www.java.com/en/download/
 
 **Download Java Developtment Kit:** https://www.oracle.com/java/technologies/downloads
+
+In addition, to display 3D graphics correctly, you must have Freetype installed on your operating system.
