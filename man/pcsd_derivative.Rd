@@ -7,23 +7,22 @@
 pcsd_derivative(grid, imp, ideal = dim(grid)[2], ...)
 }
 \arguments{
-\item{grid}{Repgrid del sujeto. Debe de ser un objeto importando con la
-función \code{\link{importgrid}}.}
+\item{grid}{Subject's RepGrid. It must be an S4 object imported by the
+\code{\link{importgrid}} function.}
 
-\item{imp}{Matriz de implicaciones del sujeto importada con
-\code{\link{importimp}}.}
+\item{imp}{Subject's ImpGrid. It must be an S4 object imported by the
+\code{\link{importimp}} function.}
 
-\item{ideal}{Posición del ideal dentro de la rejilla expresado a través del
-número de la columna donde se encuentra. Por defecto se estable el último
-elemento de la Repgrid.}
+\item{ideal}{Column number representing the position of the Ideal-Self in the
+RepGrid. By default the last column of the RepGrid is set.}
 
-\item{...}{Esta función hereda todos los parámetos de la función
-\code{\link{pcsd}}}
+\item{...}{This function inherits all the parameters of \code{\link{pcsd}}
+function.}
 }
 \value{
-Devuelve una representación gráfica creada con el paquete plotly.
+Return a plot create via plotly r-package.
 }
 \description{
-Esta función reprensenta la primera derivada para cada una de
-las curvas del PCSD.
+This function represents the first derivative for each of the
+PCSD curves.
 }

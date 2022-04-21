@@ -53,69 +53,128 @@
 #'
 "_PACKAGE"
 
-#' @title Tipos de funciones de propagación
+#' @title Types of Propagation Punctions
 #'
 #' @name propfunctions
 #'
 #' @description
-#' El paquete GridFCM permite tres funciones de propagación:
+#' The GridFCM package allows three propagation functions:
 #'
-#' \strong{Inferencia de Kosko:} Consiste en un producto matricial entre el vector de activación y la matriz de pesos. La nueva activación de los vértices depende de la activación de
-#' sus transmisores y del peso de sus relaciones. Para utilizarla en la función \code{\link{fcminfer}} el argumento infer debe de ser igual a "k".
+#' \strong{Kosko's inference:} It consists of a matrix product between the
+#' activation vector and the weight matrix. The new activation of the vertices
+#' depends on the activation of their inputs and the weight of their relations.
+#' o use it in the function \code{link{fcminfer}} the argument infer must be
+#' equal to "k".
 #'
-#' \strong{Inferencia Modificada de Kosko:} Consiste en sumarle al estado actual de los vértices el producto matricial entre el vector de activación y la matriz de pesos. La nueva
-#' activación de los vértices depende de la activación de sus transmisores, del peso de sus relaciones y del estado previo de la red. Para utilizarla en la función.
-#' \code{\link{fcminfer}} el argumento infer debe de ser igual a "mk".
+#' \strong{Modified Kosko's inference:} It consists of adding the matrix product
+#' between the activation vector and the weight matrix to the current state of
+#' the vertices. The new activation of the vertices depends on the activation of
+#' their inputs, the weight of their relations and the previous state of the
+#' network. To use it in the function \code{link{fcminfer}} the parameter infer
+#' must be equal to "mk".
 #'
-#' \strong{Inferencia reescalada:} Similar a la modificada de Kosko pero con un reescalado de los valores. Para utilizarla en la función \code{\link{fcminfer}} el argumento infer
-#'  debe de ser igual a "r".
+#'
+#' \strong{Rescalated inference:} Similar to the Modified Kosko but with a
+#' rescaling of the values. To use it in the function \code{link{fcminfer}}
+#' the parameter infer must be equal to "r".
 #'
 NULL
 
-#' @title Tipos de funciones umbral
+#' @title Types of Threshold Function
 #' @name thrfunctions
 #' @description
-#' El paquete GridFCM permite cuatro funciones umbral, dos de ellas discretas y otras dos continuas:
+#' The GridFCM package allows for four threshold functions, two of which are
+#' discrete and the other two are continuous:
 #'
-#' \strong{Funciones discretas}
+#' \strong{Discrete Functions}
 #'
-#' \emph{\strong{Función bivalente:}} La función bivalente devuelve un valor 1 al vértice cuando la activación que le llega es superior a 0,y devuelve 0 cuando
-#' esa activacion es menor o igual que 0. Permite que los vértices tomen valores discretos y dicotómicos (activados o desactivados). Para utilizar esta función debemos escribir
-#' como argumento `thr = "b"` en la función \code{\link{fcminfer}}.
+#' \emph{\strong{Bivalent function:}} The bivalent function returns a value of 1
+#'  to the vertex when the incoming activation is greater than 0, and returns 0
+#'  when the incoming activation is less than or equal to 0. This leads to the
+#'  vertices taking discrete and dichotomous values (True or false). To use this
+#'  function we must write as parameter `thr = "b"` in the function
+#'  code{link{fcminfer}}.
 #'
-#' \emph{\strong{Función trivalente:}} La función trivalente devuelve un valor 1 al vértice cuando la activación que le llega es superior a 0, devuelve 0 cuando
-#' esa activacion es igual a 0, y devuelve -1 si esa activación es inferior a 0. Permite que los vértices tomen valores discretos, y a diferencia de la bivalente, devuelve
-#' tres posibles valores distintos. Para utilizar esta función debemos escribir como argumento `thr = "tri"` en la función \code{\link{fcminfer}}.
+#' \emph{\strong{Trivalent function:}} The trivalent function returns a value of
+#'  1 to the vertex when the incoming activation is greater than 0, returns 0
+#'  when that activation is equal to 0, and returns -1 if that activation is
+#'  less than 0. This leads to the vertices to take discrete values, and unlike
+#'  bivalent, returns three different possible values; useful for discrete
+#'  bipolar dimensions.To use this function, we must write `thr = "tri"` as a
+#'  parameter to the function code{link{fcminfer}}.
 #'
-#' \strong{Funciones continuas}
+#' \strong{Continuous Functions}
 #'
-#' \emph{\strong{Función sigmoidal:}} La función sigmoidal es la versión continua de la función bivalente. Permite establecer un rango de activación del vértice entre 0 y 1
-#' . Si utilizamos esta función debemos específicar un lambda asociado que define el poder de discriminación de la función; valores altos de lambda acercan la función sigmoidal
-#' a la función bivalente, valores bajos la acercan a una función lineal. Para utilizar esta función debemos escribir como argumento thr = "s" en la función \code{\link{fcminfer}}
+#' \emph{\strong{Sigmoidal Function:}} The sigmoidal function is the continuous
+#' version of the bivalent function. Forces the vertex to be set to an
+#' activation range between 0 and 1. If we use this function we must specify an
+#' associated lambda which defines the discriminating power of the function;
+#' high values of lambda bring the sigmoidal function closer to a bivalent
+#' function, low values bring it closer to a linear function. To use this
+#' function we must write as parameter `thr = "s"` in the function
+#' \code{link{fcminfer}}.
 #'
-#' \emph{\strong{Función tangente hiperbólica:}} La función tangente hiperbólica es la versión continua de la función trivalente. Permite establecer un rango de activación del vértice entre -1 y 1
-#' . Si utilizamos esta función debemos específicar un lambda asociado que define el poder de discriminación de la función; valores altos de lambda acercan la función tangente hiperbólica
-#' a la función trivalente, valores bajos la acercan a una función lineal. Para utilizar esta función debemos escribir como argumento thr = "t" en la función \code{\link{fcminfer}}
+#' \emph{\strong{Hyperbolic Tangent Function:}} The hyperbolic tangent function
+#' is the continuos version of the trivalent function. Forces the vertez to be
+#' set to an activation range between -1 and +1. If we use this function
+#' we must specify an associated lambda which defines the discriminating power
+#' of the function; high values of lambda bring the Hyperbolic Tangent Function
+#' closer to a trivalent function, low values bring it closer to a linear
+#' function. To use this function we must write as parameter `thr = "t"` in the
+#' function \code{link{fcminfer}}.
 #'
 NULL
 
-#' @title Tipos de layouts para el digrafo
+#' @title Digraph Layouts
 #' @name digraphlayouts
 #' @description
-#' El paquete GridFCM permite cinco layouts para el digrafo:
+#' The GridFCM package has five layouts to represent the digraphs:
 #'
-#' \strong{Graphopt:} Este layout representa el digrafo creando clusters en función de la influencia que tienen los constructos entre si. Cuanto más cerca estén dos constructos,
-#' mayor influencia hay entre ellos. Para utilizar este layout debemos igualar el atributo layout a "graphopt".
+#' \strong{Graphopt:} Closer two constructs are, more influence they have on
+#' each other. To use this layout we must set the layout parameter to "graphopt".
 #'
-#' \strong{Multidimensional Scaling:} Este layout establece las coordenadas de los vértices a través de una escalado multidimensional de la matriz de implicaciones.
-#' Cuanto más cerca estén dos constructos, una mayor similitud hay entre ellos en referencia a sus implicaciones. Para utilizar este layout debemos igualar el atributo layout a "mds".
+#' \strong{Multidimensional Scaling:} This layout establishes the coordinates of
+#' the vertices through a multidimensional scaling of the implication matrix.
+#' Closer two constructs are, more similarity there is between them in terms of
+#' their implications. To use this layout we have to set the parameter layout to
+#' "mds".
 #'
-#' \strong{Reingold-tilford:} Este layout establece las coordenadas de los vértices siguiendo el algoritmo propuesto por Reingold y Tilford. Para utilizar este layout, podemos igualar
-#' el atributo layout a "rtcircle" si lo queremos en formato circular, o a "tree" si lo queremos en formato de arbol.
+#' \strong{Reingold-tilford:} This layout sets the coordinates of the vertices
+#' following the algorithm proposed by Reingold and Tilford. To use this layout,
+#' we can set the layout parameter to "rtcircle" if we want it in circular
+#' format, or to "tree" if we want it in tree format.
 #'
-#' \strong{Circle:} Este layout coloca los vértices en círculo de forma arbitraria sin ningún significado adicional. Es util para representar una imagen limpia y evitar superposiciones.
-#' Para utilizar este layout debemos igualar el atributo layout a "circle".
+#' \strong{Circle:} This layout arbitrarily places the vertices in a circle
+#'  without any additional meaning. It is useful to represent a clean image and
+#'  avoid overlaps. To use this layout we must set the layout attribute to
+#'  "circle".
 #'
-#' \strong{Grid:} Este layout coloca los vértices siguiendo una rejilla de forma arbitraria sin ningún significado adicional. Es util para representar una imagen limpia y evitar
-#' superposiciones. Para utilizar este layout debemos igualar el atributo layout a "grid".
+#' \strong{Grid:} This layout arbitrarily places the vertices in a grid
+#'  without any additional meaning. It is useful to represent a clean image and
+#'  avoid overlaps. To use this layout we must set the layout attribute to
+#'  "grid".
 NULL
+
+#' Elsa RepGrid
+#'
+#' A dataset containing Elsa's RepGrid. From an unpublished case study. You can
+#' use it to test the different functions of the package.
+#'
+#' @docType data
+#' @keywords datasets
+#' @name elsa2022.grid
+#' @usage data(elsa2022)
+#' @format A S4 repgrid object
+"elsa2022.grid"
+
+#' Elsa ImpGrid
+#'
+#' A dataset containing Elsa's ImpGrid. From an unpublished case study. You can
+#' use it to test the different functions of the package.
+#'
+#' @docType data
+#' @keywords datasets
+#' @name elsa2022.imp
+#' @usage data(elsa2022)
+#' @format A S4 repgrid object
+"elsa2022.imp"

@@ -7,20 +7,19 @@
 auc_index(grid, imp, ideal = dim(grid)[2], ...)
 }
 \arguments{
-\item{grid}{Repgrid del sujeto. Debe de ser un objeto importando con la
-función \code{\link{importgrid}}.}
+\item{grid}{Subject's RepGrid. It must be an S4 object imported by the
+\code{\link{importgrid}} function.}
 
-\item{imp}{Matriz de implicaciones del sujeto importada con
-\code{\link{importimp}}.}
+\item{imp}{Subject's ImpGrid. It must be an S4 object imported by the
+\code{\link{importimp}} function.}
 
-\item{ideal}{Posición del ideal dentro de la rejilla expresado a través del
-número de la columna donde se encuentra. Por defecto se estable el último
-elemento de la Repgrid.}
+\item{ideal}{Column number representing the position of the Ideal-Self in the
+RepGrid. By default the last column of the RepGrid is set.}
 
-\item{...}{Esta función hereda todos los parámetos de la función
-\code{\link{pcsd}}}
+\item{...}{This function inherits all the parameters of \code{\link{pcsd}}
+function.}
 }
 \description{
-Esta función nos devuelve el area debajo de la curva del PCSD
-para cada uno de los constructos personales.
+This function calculates the area under the PCSD curve for each
+construct.
 }

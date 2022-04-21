@@ -7,17 +7,20 @@
 degree_index(imp, method = "simple")
 }
 \arguments{
-\item{imp}{Matriz de implicaciones del sujeto importada con
-\code{\link{importimp}}.}
+\item{imp}{Subject's ImpGrid. It must be an S4 object imported by the
+\code{\link{importimp}} function.}
 
-\item{method}{Método para calcular el grado de centralidad.}
+\item{method}{Method for calculating centrality. You can use the simple
+method with "simple", normalized with "norm", weighted with "weigth",
+normalized weighted with "wnorm" and the ego density method with "ego".
+Default is Simple Method.}
 }
 \value{
-Devuelve una lista con los datos de centralidad por constructo y
-separados por grado de entrada y grado de salida.
+Returns a list with the centrality data by construct and separated by
+ input degree, output degree and total degree (in and out).
 }
 \description{
-Función que permite calcular la centralidad de los constructos
-teniendo en cuenta su grado. Entendiendo este como el grado de conexión que
-mantiene con el resto de constructos.
+Function to calculate the centrality of the constructs.
+In this case, centrality is understood as the degree of connection that each
+construct maintains with the rest, i.e. the number of links for each vertex.
 }

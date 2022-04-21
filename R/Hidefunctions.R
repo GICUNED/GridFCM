@@ -6,10 +6,10 @@
 ################################################################################
 .adaptrepgrid <- function(x, t=FALSE){
 
-  result <- getRatingLayer(x)                                                   # Extraemos las puntuaciones del objeto repgrid a una matriz
+  result <- getRatingLayer(x)                                                   # Extract rating layer of RepGrid
 
   if(!t){
-  result <- t(result)                                                           # Se traspone la matriz en caso de ser necesario
+  result <- t(result)                                                           # If necessary, transpose matrix
   }
 
   return(result)
@@ -20,8 +20,8 @@
 ################################################################################
 .alignbyself <- function(x, self = 1){
 
-  for (i in 1:dim(x)[1]) {                                                      # Revisamos fila a fila todos los constructos del self
-    if(getRatingLayer(x)[i,self] > getScaleMidpoint(x)){                        # Permutamos aquello que no esten orientados hacia el self
+  for (i in 1:dim(x)[1]) {                                                      # Review row by row the constructs of the self
+    if(getRatingLayer(x)[i,self] > getScaleMidpoint(x)){                        # Swap constructs that are not oriented to the self
       x <- swapPoles(x,i)
     }
   }
@@ -32,8 +32,10 @@
 # WEIGHT MATRIX -- .weightmatrix()
 ################################################################################
 
-.weightmatrix <- function(x){                                                   # Estandarizamos la matriz dividiendo entre su escala (ADECUAR A LA ESCALA)
+.weightmatrix <- function(x){                                                   # standardize the matrix
+
   result <- x/3
+
   return(result)
 }
 ################################################################################
@@ -42,7 +44,7 @@
 ################################################################################
 
 .infer <- function (activation_vec, weight_mat, iter = 20, infer = "k",
-                    transform = "s", lambda = 1, e = 0.001)                     # Función extraída del paquete fcm y adaptada a GridFCM
+                    transform = "s", lambda = 1, e = 0.001)                     #  Function extracted and slightly modified from fcm package
 {
   if (length(which(activation_vec > 1)) & length(which(activation_vec >
                                                        -1))) {

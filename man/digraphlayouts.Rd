@@ -2,22 +2,31 @@
 % Please edit documentation in R/Docs.R
 \name{digraphlayouts}
 \alias{digraphlayouts}
-\title{Tipos de layouts para el digrafo}
+\title{Digraph Layouts}
 \description{
-El paquete GridFCM permite cinco layouts para el digrafo:
+The GridFCM package has five layouts to represent the digraphs:
 
-\strong{Graphopt:} Este layout representa el digrafo creando clusters en función de la influencia que tienen los constructos entre si. Cuanto más cerca estén dos constructos,
-mayor influencia hay entre ellos. Para utilizar este layout debemos igualar el atributo layout a "graphopt".
+\strong{Graphopt:} Closer two constructs are, more influence they have on
+each other. To use this layout we must set the layout parameter to "graphopt".
 
-\strong{Multidimensional Scaling:} Este layout establece las coordenadas de los vértices a través de una escalado multidimensional de la matriz de implicaciones.
-Cuanto más cerca estén dos constructos, una mayor similitud hay entre ellos en referencia a sus implicaciones. Para utilizar este layout debemos igualar el atributo layout a "mds".
+\strong{Multidimensional Scaling:} This layout establishes the coordinates of
+the vertices through a multidimensional scaling of the implication matrix.
+Closer two constructs are, more similarity there is between them in terms of
+their implications. To use this layout we have to set the parameter layout to
+"mds".
 
-\strong{Reingold-tilford:} Este layout establece las coordenadas de los vértices siguiendo el algoritmo propuesto por Reingold y Tilford. Para utilizar este layout, podemos igualar
-el atributo layout a "rtcircle" si lo queremos en formato circular, o a "tree" si lo queremos en formato de arbol.
+\strong{Reingold-tilford:} This layout sets the coordinates of the vertices
+following the algorithm proposed by Reingold and Tilford. To use this layout,
+we can set the layout parameter to "rtcircle" if we want it in circular
+format, or to "tree" if we want it in tree format.
 
-\strong{Circle:} Este layout coloca los vértices en círculo de forma arbitraria sin ningún significado adicional. Es util para representar una imagen limpia y evitar superposiciones.
-Para utilizar este layout debemos igualar el atributo layout a "circle".
+\strong{Circle:} This layout arbitrarily places the vertices in a circle
+ without any additional meaning. It is useful to represent a clean image and
+ avoid overlaps. To use this layout we must set the layout attribute to
+ "circle".
 
-\strong{Grid:} Este layout coloca los vértices siguiendo una rejilla de forma arbitraria sin ningún significado adicional. Es util para representar una imagen limpia y evitar
-superposiciones. Para utilizar este layout debemos igualar el atributo layout a "grid".
+\strong{Grid:} This layout arbitrarily places the vertices in a grid
+ without any additional meaning. It is useful to represent a clean image and
+ avoid overlaps. To use this layout we must set the layout attribute to
+ "grid".
 }

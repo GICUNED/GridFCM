@@ -7,14 +7,14 @@
 density_index(imp)
 }
 \arguments{
-\item{imp}{Matriz de implicaciones del sujeto importada con
-\code{\link{importimp}}.}
+\item{imp}{Subject's ImpGrid. It must be an S4 object imported by the
+\code{\link{importimp}} function.}
 }
 \value{
-Devuelve una valor de 0 a 1 que representa la proporcion de aristas
-existentes en el grafo sobre el número máximo de aristas posibles.
+Returns a value from 0 to 1 representing the ratio of the number of
+edges in the graph over the maximum number of possible edges.
 }
 \description{
-Función que permite calcular la densidad de aristas dentro del
-grafo que genera la matriz de implicaciones.
+Function used to calculate the density of edges of the
+calculated digraph of the impgrid
 }

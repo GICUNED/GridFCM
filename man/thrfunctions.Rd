@@ -2,27 +2,45 @@
 % Please edit documentation in R/Docs.R
 \name{thrfunctions}
 \alias{thrfunctions}
-\title{Tipos de funciones umbral}
+\title{Types of Threshold Function}
 \description{
-El paquete GridFCM permite cuatro funciones umbral, dos de ellas discretas y otras dos continuas:
+The GridFCM package allows for four threshold functions, two of which are
+discrete and the other two are continuous:
 
-\strong{Funciones discretas}
+\strong{Discrete Functions}
 
-\emph{\strong{Función bivalente:}} La función bivalente devuelve un valor 1 al vértice cuando la activación que le llega es superior a 0,y devuelve 0 cuando
-esa activacion es menor o igual que 0. Permite que los vértices tomen valores discretos y dicotómicos (activados o desactivados). Para utilizar esta función debemos escribir
-como argumento `thr = "b"` en la función \code{\link{fcminfer}}.
+\emph{\strong{Bivalent function:}} The bivalent function returns a value of 1
+ to the vertex when the incoming activation is greater than 0, and returns 0
+ when the incoming activation is less than or equal to 0. This leads to the
+ vertices taking discrete and dichotomous values (True or false). To use this
+ function we must write as parameter `thr = "b"` in the function
+ code{link{fcminfer}}.
 
-\emph{\strong{Función trivalente:}} La función trivalente devuelve un valor 1 al vértice cuando la activación que le llega es superior a 0, devuelve 0 cuando
-esa activacion es igual a 0, y devuelve -1 si esa activación es inferior a 0. Permite que los vértices tomen valores discretos, y a diferencia de la bivalente, devuelve
-tres posibles valores distintos. Para utilizar esta función debemos escribir como argumento `thr = "tri"` en la función \code{\link{fcminfer}}.
+\emph{\strong{Trivalent function:}} The trivalent function returns a value of
+ 1 to the vertex when the incoming activation is greater than 0, returns 0
+ when that activation is equal to 0, and returns -1 if that activation is
+ less than 0. This leads to the vertices to take discrete values, and unlike
+ bivalent, returns three different possible values; useful for discrete
+ bipolar dimensions.To use this function, we must write `thr = "tri"` as a
+ parameter to the function code{link{fcminfer}}.
 
-\strong{Funciones continuas}
+\strong{Continuous Functions}
 
-\emph{\strong{Función sigmoidal:}} La función sigmoidal es la versión continua de la función bivalente. Permite establecer un rango de activación del vértice entre 0 y 1
-. Si utilizamos esta función debemos específicar un lambda asociado que define el poder de discriminación de la función; valores altos de lambda acercan la función sigmoidal
-a la función bivalente, valores bajos la acercan a una función lineal. Para utilizar esta función debemos escribir como argumento thr = "s" en la función \code{\link{fcminfer}}
+\emph{\strong{Sigmoidal Function:}} The sigmoidal function is the continuous
+version of the bivalent function. Forces the vertex to be set to an
+activation range between 0 and 1. If we use this function we must specify an
+associated lambda which defines the discriminating power of the function;
+high values of lambda bring the sigmoidal function closer to a bivalent
+function, low values bring it closer to a linear function. To use this
+function we must write as parameter `thr = "s"` in the function
+\code{link{fcminfer}}.
 
-\emph{\strong{Función tangente hiperbólica:}} La función tangente hiperbólica es la versión continua de la función trivalente. Permite establecer un rango de activación del vértice entre -1 y 1
-. Si utilizamos esta función debemos específicar un lambda asociado que define el poder de discriminación de la función; valores altos de lambda acercan la función tangente hiperbólica
-a la función trivalente, valores bajos la acercan a una función lineal. Para utilizar esta función debemos escribir como argumento thr = "t" en la función \code{\link{fcminfer}}
+\emph{\strong{Hyperbolic Tangent Function:}} The hyperbolic tangent function
+is the continuos version of the trivalent function. Forces the vertez to be
+set to an activation range between -1 and +1. If we use this function
+we must specify an associated lambda which defines the discriminating power
+of the function; high values of lambda bring the Hyperbolic Tangent Function
+closer to a trivalent function, low values bring it closer to a linear
+function. To use this function we must write as parameter `thr = "t"` in the
+function \code{link{fcminfer}}.
 }

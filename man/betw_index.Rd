@@ -7,19 +7,17 @@
 betw_index(imp, norm = TRUE)
 }
 \arguments{
-\item{imp}{Matriz de implicaciones del sujeto importada con
-\code{\link{importimp}}.}
+\item{imp}{Subject's ImpGrid. It must be an S4 object imported by the
+\code{\link{importimp}} function.}
 
-\item{norm}{Si es TRUE devuelve la intermediación de los constructos
-normalizada en función del número de vértices. Por defecto se establece en
-TRUE.}
+\item{norm}{If TRUE, the values will be standardized. Default is TRUE.}
 }
 \value{
-Devuelve un vector con el índice de intermediación de cada uno de los
-constructos.
+Returns a vector with the betweeness index for each of the
+constructs.
 }
 \description{
-Función que permite calcular la intermediación de todos los
-constructos. Esto es el número de veces que un camino geodésico entre otros
-dos constructos pasa por dicho constructo en el digrafo.
+Function that calculates the betweenness of each of the
+constructs. This is the number of times a geodesic path (shortest path)
+between two other constructs passes through that construct in the digraph.
 }

@@ -7,18 +7,16 @@
 importimp(path, ...)
 }
 \arguments{
-\item{path}{Ruta donde se encuentra el archivo de excel que contiene la
-ImpGrid.}
+\item{path}{xlsx file path}
 
-\item{...}{Esta función hereda todos los parámetros de la función
-\code{\link{importExcel}} del paquete OpenRepGrid.}
+\item{...}{This function inherits all the parameters of function
+\code{\link{importExcel}} from OpenRepGrid package.}
 }
 \value{
-Devuelve un objeto S4 repgrid que contiene los datos de la matriz de
-implicaciones
+Returns an S4 repgrid object containing the data from the ImpGrid
 }
 \description{
-Función que permite leer una ImpGrid contenida
-dentro de un archivo xlsx. Para la creación de la plantilla xlsx de la
-ImpGrid se puede utilizar la función \code{\link{templateimp}}
+Function used to read ImpGrid inside an xlsx file. For the
+creation of the ImpGrid template you can use the function
+\code{\link{templateimp}}
 }

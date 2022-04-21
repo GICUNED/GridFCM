@@ -7,17 +7,15 @@
 templateimp(grid, name = "ImpGrid_Template")
 }
 \arguments{
-\item{grid}{Técnica de Rejilla importada a través de la función
-\code{\link{importgrid}}. Debe de ser un objeto RepGrid.}
+\item{grid}{Subject's RepGrid. It must be an S4 object imported by the
+\code{\link{importgrid}} function.}
 
-\item{name}{Nombre para el archivo de salida.}
+\item{name}{Output file name. Default is "ImpGrid_Template"}
 }
 \value{
-Exporta un documento xlsx en el directorio de trabajo asignado de la
-sesión.
+Export an xlsx file in the working directory.
 }
 \description{
-Función que crea en el directorio de trabajo un archivo de excel
-con una plantilla personalizada de la Rejilla de Implicaciones teniendo como
-base una RepGrid.
+Function that creates an xlsx file in the working directory.
+This file contains an impgrid template according to the specified repgrid.
 }

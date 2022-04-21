@@ -7,17 +7,14 @@
 importgrid(path, ...)
 }
 \arguments{
-\item{path}{Ruta donde se encuentra el archivo de excel que contiene la
-la técnica de rejilla.}
+\item{path}{xlsx file path.}
 
-\item{...}{Esta función hereda todos los parámetros de la función
-\code{\link{importExcel}} del paquete OpenRepGrid.}
+\item{...}{This function inherits all the parameters of function
+\code{\link{importExcel}} from OpenRepGrid package.}
 }
 \value{
-Devuelve un objeto S4 repgrid del paquete OpenRepGrid que contiene la
-información de la técnica de rejilla.
+Returns an S4 repgrid object containing the data from the RepGrid.
 }
 \description{
-Función que permite leer una técnica de rejilla contenida
-dentro de un archivo xlsx.
+Function used to read RepGrid inside an xlsx file.
 }

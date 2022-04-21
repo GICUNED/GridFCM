@@ -2,17 +2,25 @@
 % Please edit documentation in R/Docs.R
 \name{propfunctions}
 \alias{propfunctions}
-\title{Tipos de funciones de propagación}
+\title{Types of Propagation Punctions}
 \description{
-El paquete GridFCM permite tres funciones de propagación:
+The GridFCM package allows three propagation functions:
 
-\strong{Inferencia de Kosko:} Consiste en un producto matricial entre el vector de activación y la matriz de pesos. La nueva activación de los vértices depende de la activación de
-sus transmisores y del peso de sus relaciones. Para utilizarla en la función \code{\link{fcminfer}} el argumento infer debe de ser igual a "k".
+\strong{Kosko's inference:} It consists of a matrix product between the
+activation vector and the weight matrix. The new activation of the vertices
+depends on the activation of their inputs and the weight of their relations.
+o use it in the function \code{link{fcminfer}} the argument infer must be
+equal to "k".
 
-\strong{Inferencia Modificada de Kosko:} Consiste en sumarle al estado actual de los vértices el producto matricial entre el vector de activación y la matriz de pesos. La nueva
-activación de los vértices depende de la activación de sus transmisores, del peso de sus relaciones y del estado previo de la red. Para utilizarla en la función.
-\code{\link{fcminfer}} el argumento infer debe de ser igual a "mk".
+\strong{Modified Kosko's inference:} It consists of adding the matrix product
+between the activation vector and the weight matrix to the current state of
+the vertices. The new activation of the vertices depends on the activation of
+their inputs, the weight of their relations and the previous state of the
+network. To use it in the function \code{link{fcminfer}} the parameter infer
+must be equal to "mk".
 
-\strong{Inferencia reescalada:} Similar a la modificada de Kosko pero con un reescalado de los valores. Para utilizarla en la función \code{\link{fcminfer}} el argumento infer
- debe de ser igual a "r".
+
+\strong{Rescalated inference:} Similar to the Modified Kosko but with a
+rescaling of the values. To use it in the function \code{link{fcminfer}}
+the parameter infer must be equal to "r".
 }

@@ -7,19 +7,19 @@
 dismatrix(imp, mode = "out")
 }
 \arguments{
-\item{imp}{Matriz de implicaciones del sujeto importada con
-\code{\link{importimp}}.}
+\item{imp}{Subject's ImpGrid. It must be an S4 object imported by the
+\code{\link{importimp}} function}
 
-\item{mode}{Modo de calcular las distancias en función de la dirección de las
-aristas. Con "out" las calculamos respetando la dirección de las aristas,"in"
-a través de la inversa de la dirección de las aristas y "all" sin tener en
-cuenta la dirección.}
+\item{mode}{Method to calculate the distances depending on the direction of
+the edges.With "out" we calculate them respecting the direction of the edges,
+"in" through the inverse of the direction of the edges and "all" without
+taking into account the direction.}
 }
 \value{
-Devuelve la matriz de distancia del digrafo. Matriz que contiene las
-distancias de los caminos más cortos de un constructo a otro.
+Returns the digraph distance matrix. Matrix that contains the
+distances of the shortest paths from one construct to another.
 }
 \description{
-Función que permite calcular la distancia más corta entre cada
-uno de los pares de constructos en el digrafo.
+Function that calculates the shortest distance between each of
+the pairs of digraph constructions.
 }

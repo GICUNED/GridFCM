@@ -715,6 +715,7 @@ idealdigraph <- function(grid,imp, ideal = dim(grid)[2], inc = FALSE,
 #' @return Returns a report with a full GridFCM analysis
 #'
 #' @import rmarkdown
+#' @import flexdashboard
 #'
 #' @export
 #'
