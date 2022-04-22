@@ -9,7 +9,9 @@ GridFCM is an R package that allows us to create Fuzzy Cognitive Maps using a Re
 To install the latest version from github you can use the `devtools` package.
     
     library(devtools)
-    install_github("GICUNED/GridFCM") 
+    install_github("GICUNED/GridFCM")
+    
+# Dependencies
     
 To run GridFCM properly you must have Java and Java Develpoment Kit installed and updated.
 
