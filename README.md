@@ -24,3 +24,4 @@ In addition, to display 3D graphics correctly, you must have Freetype installed 
 
 # Citation
 
+Sanfeliciano, Alejandro, & Saúl, Luis Ángel. (2022). GridFCM: A tool for creating Fuzzy Cognitive Maps (0.1.0-alpha). Zenodo. https://doi.org/10.5281/zenodo.6476591
