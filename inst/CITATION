@@ -1,13 +1,15 @@
 citHeader("To cite GridFCM in publications use:")
 
 citEntry(
-  entry    = "Article",
+  entry    = "Manual",
   title    = "GridFCM: A tool for creating Fuzzy Cognitive Map",
-  author   = "Alejandro Sanfeliciano,Luis Angel Saúl",
-  journal  = "Zenodo",
+  author   = "Alejandro Sanfeliciano , Luis Ángel Saúl",
+  publisher  = "Zenodo",
   year     = "2022",
-  note     = "doi:10.5281/zenodo.6476591"
+  doi     = "doi:10.5281/zenodo.6476591",
+  version = "0.1.0-alpha",
+  url     = "https://doi.org/10.5281/zenodo.6476591",
   textVersion = paste(
-  "Sanfeliciano, A., & Saúl, L.A. (2022). GridFCM: A tool for creating Fuzzy Cognitive Maps. ZENODO.doi:10.5281/zenodo.6476591"
+  "Sanfeliciano, Alejandro, & Saúl, Luis Ángel. (2022). GridFCM: A tool for creating Fuzzy Cognitive Maps (0.1.0-alpha). Zenodo. https://doi.org/10.5281/zenodo.6476591"
   )
 )
