@@ -6,7 +6,8 @@ citEntry(
   author   = "Alejandro Sanfeliciano,Luis Angel Saúl",
   journal  = "Zenodo",
   year     = "2022",
+  note     = "doi:10.5281/zenodo.6476591"
   textVersion = paste(
-  "Sanfeliciano, A., & Saúl, L.A. (2022). GridFCM: A tool for creating Fuzzy Cognitive Maps. ZENODO."
+  "Sanfeliciano, A., & Saúl, L.A. (2022). GridFCM: A tool for creating Fuzzy Cognitive Maps. ZENODO.doi:10.5281/zenodo.6476591"
   )
 )
