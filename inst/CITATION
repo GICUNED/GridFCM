@@ -2,15 +2,11 @@ citHeader("To cite GridFCM in publications use:")
 
 citEntry(
   entry    = "Article",
-  title    = "Aplicación de los Mapas Cognitivos Borrosos al Sistema de Constructos Personales",
-  author   = "Alejandro Sanfeliciano",
-  journal  = "Prueba",
-  year     = "2021",
-  volume   = "Prueba",
-  number   = "Prueba",
-  pages    = "Prueba",
-  url      = "Prueba",
+  title    = "GridFCM: A tool for creating Fuzzy Cognitive Map",
+  author   = "Alejandro Sanfeliciano,Luis Angel Saúl",
+  journal  = "Zenodo",
+  year     = "2022",
   textVersion = paste(
-  "Esta sería la cita en formato de texto"
+  "Sanfeliciano, A., & Saúl, L.A. (2022). GridFCM: A tool for creating Fuzzy Cognitive Maps. ZENODO."
   )
 )

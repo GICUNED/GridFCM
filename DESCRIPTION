@@ -5,7 +5,9 @@ Version: 0.1.0
 Author: person("Alejandro", "Sanfeliciano", email = "Sanfeliciano.Alejandro@gmail.com",
                   role = c("aut", "cre"))
 Maintainer: Alejandro Sanfeliciano <Sanfeliciano.Alejandro@gmail.com>
-Description: work in progress
+Description: GridFCM is an R package that allows us to create Fuzzy Cognitive 
+  Maps using a RepGrid and an ImpGrid. With this software you will be able to 
+  analyse the structure and dynamics of the personal meaning system of individuals.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
@@ -21,7 +23,7 @@ Depends:
     flexdashboard,
     OpenRepGrid (>= 0.1.12),
     igraph (>= 1.2.6),
-    R (>= 2.10),
+    R (>= 3.5.0),
     stats
 Suggests:
     xlsx(>= 0.6.5),

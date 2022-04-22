@@ -2,7 +2,7 @@
 % Please edit documentation in R/FCMfunctions.R
 \name{actvector}
 \alias{actvector}
-\title{Crear Vector de Activación (actvector)}
+\title{Create Activation Vector (actvector)}
 \usage{
 actvector(grid, col.element = 1)
 }

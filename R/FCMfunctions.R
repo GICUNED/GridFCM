@@ -6,7 +6,7 @@
 # ACTIVATION VECTOR -- actvector()
 ################################################################################
 
-#' Crear Vector de Activación (actvector)
+#' Create Activation Vector (actvector)
 #'
 #' @description Function that extracts a column vector from a RepGrid and
 #' standardises it so that it can be used as an activation vector in a Fuzzy
@@ -125,7 +125,7 @@ pcsd <- function(grid,imp,ideal=dim(grid)[2],...){
 
   lpoles <- OpenRepGrid::getConstructNames(grid)[,1]                            # Extract constructs names.
   rpoles <- OpenRepGrid::getConstructNames(grid)[,2]
-  poles <- paste(lpoles,"—",rpoles,sep = "")
+  poles <- paste(lpoles,"-",rpoles,sep = " ")
 
   iter <- fcminfer(grid,imp,iter=60)$convergence                                # Save convergence value.
 
@@ -205,7 +205,13 @@ pcsd <- function(grid,imp,ideal=dim(grid)[2],...){
 #' @return Returns a graphical representation of a digraph of a FCM
 #'
 #'
-#' @import igraph
+#' @importFrom igraph graph.adjacency
+#' @importFrom igraph E<-
+#' @importFrom igraph V<-
+#' @importFrom igraph E
+#' @importFrom igraph V
+#' @importFrom igraph add_layout_
+#' @importFrom igraph plot.igraph
 #' @import OpenRepGrid
 #'
 #' @export
@@ -393,7 +399,22 @@ fcmdigraph <- function(grid, imp, results = fcminfer(grid,imp)$values,
 #' @return Returns a rgl output of a FCM digraph in a 3D multidimensional
 #' scaling.
 #'
-#' @import igraph
+#' @importFrom igraph graph.adjacency
+#' @importFrom igraph E<-
+#' @importFrom igraph V<-
+#' @importFrom igraph E
+#' @importFrom igraph V
+#' @importFrom igraph add_layout_
+#' @importFrom igraph plot.igraph
+#' @importFrom igraph as_tree
+#' @importFrom igraph in_circle
+#' @importFrom igraph with_graphopt
+#' @importFrom igraph with_mds
+#' @importFrom igraph on_grid
+#' @importFrom igraph layout_with_mds
+#' @importFrom igraph rglplot
+
+#'
 #' @import OpenRepGrid
 #'
 #' @export
@@ -527,7 +548,18 @@ fcmdigraph3D <- function(grid, imp, results = fcminfer(grid,imp)$values,
 #' @return Returns Ideal FCM digraph.
 #'
 #'
-#' @import igraph
+#' @importFrom igraph graph.adjacency
+#' @importFrom igraph E<-
+#' @importFrom igraph V<-
+#' @importFrom igraph E
+#' @importFrom igraph V
+#' @importFrom igraph add_layout_
+#' @importFrom igraph plot.igraph
+#' @importFrom igraph as_tree
+#' @importFrom igraph in_circle
+#' @importFrom igraph with_graphopt
+#' @importFrom igraph with_mds
+#' @importFrom igraph on_grid
 #' @import OpenRepGrid
 #'
 #' @export

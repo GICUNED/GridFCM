@@ -307,7 +307,8 @@ auc_index <- function(grid, imp, ideal=dim(grid)[2],...){
 #' @return Returns a vector with the standard deviation of each of the
 #' constructs.
 #'
-#' @import stats
+#' @importFrom stats sd
+#' @importFrom stats rnorm
 #'
 #' @export
 
