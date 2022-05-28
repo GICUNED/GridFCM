@@ -195,7 +195,18 @@ idealdigraph(render.grid,render.imp)
 idealdigraph(render.grid,render.imp, inc=TRUE)
 ```
 
-Self Map Digraph {data-navmenu="FCM ANALYSIS" data-orientation=rows}
+Inconsistencies Info
+---------------------
+
+### Inconsistencies Info
+
+```{r Ideal inconsistencies table, echo=FALSE, message=FALSE, warning=FALSE}
+inc <- inc_index(render.grid,render.imp)
+inc <- inc[order(-inc[,3]),]
+kable(inc)
+```
+
+Self Map Digraph {data-navmenu="FCM ANALYSIS"}
 ===========================================
 
 sidebar {.sidebar}
@@ -243,6 +254,50 @@ fcmdigraph(render.grid,render.imp,niter = 1, layout = "circle")
 fcmdigraph(render.grid,render.imp,niter = 1, layout = "grid")
 ```
 
+FCM Digraph iter convergence  {.tabset .tabset-fade}
+---------------------------------------
+
+
+```{r convergence, include=FALSE}
+convergence <- fcminfer(render.grid, render.imp)$convergence
+```
+
+### Multidimensional Scaling 3D
+
+```{r FCM MDS3D convergence, echo=FALSE, fig.height=12, fig.width=12, message=FALSE, warning=FALSE, results='hide', webgl=TRUE}
+rgl.clear()
+fcmdigraph3D(render.grid,render.imp, niter = convergence )
+```
+
+### Multidimensional Scaling
+
+```{r FCM MDS convergence, echo=FALSE, fig.height=10, fig.width=10, message=FALSE, warning=FALSE, results='hide'}
+fcmdigraph(render.grid,render.imp,niter = convergence, layout = "mds")
+```
+
+### Graphopt
+
+```{r FCM Graphopt convergence, echo=FALSE, fig.height=10, fig.width=10, message=FALSE, warning=FALSE, results='hide'}
+fcmdigraph(render.grid,render.imp,niter = convergence, layout = "graphopt")
+```
+
+### Reingold - Tilford
+
+```{r FCM RT convergence, echo=FALSE, fig.height=10, fig.width=10, message=FALSE, warning=FALSE, results='hide'}
+fcmdigraph(render.grid,render.imp,niter = convergence, layout = "rtcircle")
+```
+
+### Circle
+
+```{r FCM Circle convergence, echo=FALSE, fig.height=10, fig.width=10, message=FALSE, warning=FALSE, results='hide'}
+fcmdigraph(render.grid,render.imp,niter = convergence, layout = "circle")
+```
+
+### Grid
+
+```{r FCM Grid convergence, echo=FALSE, fig.height=10, fig.width=10, message=FALSE, warning=FALSE, results='hide'}
+fcmdigraph(render.grid,render.imp,niter = convergence, layout = "grid")
+```
 
 Personal Construct System Dynamics {data-navmenu="FCM ANALYSIS" data-orientation=rows}
 ===========================================

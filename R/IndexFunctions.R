@@ -95,10 +95,12 @@ degree_index <- function(imp, method="simple"){
   if(method == "ego"){                                                          # Ego density method-------------------------------------
 
     Cout <- Cout/(N*(N-1))
-    Cin <- Cin/(N*(N-1))                                                         # Divide output and input values by maximum possible number of edges
+    Cin <- Cin/(N*(N-1))                                                        # Divide output and input values by maximum possible number of edges
+  }
+
   names(Cout) <- poles
   names(Cin) <- poles
-  }
+
 
   result$Outputs <- Cout
   result$Inputs <- Cin
@@ -472,3 +474,63 @@ pcsd_derivative <- function(grid,imp,ideal=dim(grid)[2],...){
   fig                                                                           # Config the plot and run it.
 }
 ################################################################################
+
+#' Ideal Inconsitencies -- inc_index()
+#'
+#' @description WIP
+#'
+#' @param grid Subject's RepGrid. It must be an S4 object imported by the
+#' \code{\link{importgrid}} function.
+#'
+#' @param  imp Subject's ImpGrid. It must be an S4 object imported by the
+#' \code{\link{importimp}} function.
+#'
+#' @param ideal Column number representing the position of the Ideal-Self in the
+#' RepGrid. By default the last column of the RepGrid is set.
+#'
+#' @return WIP.
+#'
+#' @import plotly
+#'
+#' @export
+#'
+
+inc_index <- function(grid,imp, ideal = dim(grid)[2]){
+
+  act.vector <- actvector(grid,col.element = ideal)
+  ideal.results <- fcminfer(grid,imp,act.vector)$values
+
+  imp_a <- .adaptrepgrid(imp, t = FALSE)                                        # Extract ImpGrid values.
+
+  lpoles <- getConstructNames(grid)[,1]                                         # Extract construct names.
+  rpoles <- getConstructNames(grid)[,2]
+  poles <- paste(lpoles,"-",rpoles)
+
+  w.mat <- .weightmatrix(imp_a)
+  w.mat <- as.matrix(w.mat)                                                     # Transform Implication Matrix in a Weight Matrix.
+
+
+  results <- as.numeric(as.data.frame(ideal.results)[1,])                       # Extract scenario vector from user input.
+
+  n <- 1
+  for (integer in results) {                                                    # Orient the weight matrix according the vertex status.
+    if(integer != 0){                                                           # This is for change the colour of the edges depending on vertex status.
+      integer.value <- integer / abs(integer)
+      w.mat[,n] <- w.mat[,n] * integer.value
+      w.mat[n,] <- w.mat[n,] * integer.value
+    }
+    n <- n + 1
+  }
+
+  w.mat <- w.mat/abs(w.mat)
+  w.mat[is.nan(w.mat)] <- 0
+
+  in.inc <- colSums(w.mat == -1)
+  out.inc <- rowSums(w.mat == -1)
+  all.inc <- in.inc + out.inc
+  result <- cbind(in.inc, out.inc, all.inc)
+  rownames(result) <- poles
+  colnames(result) <- c("IN","OUT","ALL")
+
+  return(result)
+}
