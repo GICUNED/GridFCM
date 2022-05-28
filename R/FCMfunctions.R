@@ -77,7 +77,8 @@ actvector <- function(grid, col.element = 1){
 #' @export
 
 fcminfer <- function(grid, imp, act.vec = actvector(grid), ideal = dim(grid)[2],
-                       infer= "mk", thr= "t", lambda = 1 , iter = 30){
+                     infer= "mk", thr= "t", lambda = 1 , iter = 30,
+                     e = 0.001){
 
   imp_a <- .adaptrepgrid(imp, t = FALSE)                                        # Extract ImpGrid values.
 
@@ -87,7 +88,7 @@ fcminfer <- function(grid, imp, act.vec = actvector(grid), ideal = dim(grid)[2],
 
 
   result <- .infer(act.vec, weight_mat = w.mat, infer = infer,
-                      transform = thr, lambda = lambda, iter = iter)            # Apply the infer function.
+                      transform = thr, lambda = lambda, iter = iter, e = e)      # Apply the infer function.
 
   return(result)
 }

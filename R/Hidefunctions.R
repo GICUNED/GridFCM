@@ -179,6 +179,10 @@
     }
   }
   outlist <- list(values = A)
+
+
+
+
   outlist$convergence <- Res_e
   return(outlist)
 }

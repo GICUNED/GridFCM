@@ -12,7 +12,8 @@ fcminfer(
   infer = "mk",
   thr = "t",
   lambda = 1,
-  iter = 30
+  iter = 30,
+  e = 1e-04
 )
 }
 \arguments{
