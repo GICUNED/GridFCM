@@ -181,9 +181,27 @@
   outlist <- list(values = A)
 
 
+  convergence <- NA
+  diff.matrix <- A[2:iter,] - A[1:iter-1,]
+  exit <- 0
+  n <- 1
+  while(exit < 3 && n <= iter){
+
+    row <- diff.matrix[n,]
+    mean.row <- abs(sum(row)/length(row))
+
+    if(mean.row <= e){
+      exit <- exit + 1
+      n <- n + 1
+      convergence <- n
+    }else{
+      n <- n+1
+      exit <- 0
+      convergence <- NA
+    }
+  }
 
 
-  outlist$convergence <- Res_e
+  outlist$convergence <- convergence
   return(outlist)
 }
-
