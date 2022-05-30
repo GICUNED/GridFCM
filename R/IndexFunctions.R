@@ -260,7 +260,7 @@ auc_index <- function(grid, imp, ideal=dim(grid)[2],...){
   lpoles <- OpenRepGrid::getConstructNames(grid)[,1]                            # Extract name of the constructs.
   rpoles <- OpenRepGrid::getConstructNames(grid)[,2]
   poles <- paste(lpoles,"-",rpoles,sep = " ")
-  iter <- fcminfer(grid,imp,iter=60,...)$convergence
+  iter <- fcminfer(grid,imp,iter=60,force.conv = TRUE)$convergence
 
   ideal.vector <- OpenRepGrid::getRatingLayer(grid)[,ideal]
   ideal.vector <- (ideal.vector -
@@ -320,7 +320,7 @@ stability_index <- function(grid, imp, ideal=dim(grid)[2],...){
   lpoles <- OpenRepGrid::getConstructNames(grid)[,1]                            # Extract name of the constructs.
   rpoles <- OpenRepGrid::getConstructNames(grid)[,2]
   poles <- paste(lpoles,"-",rpoles,sep = " ")
-  iter <- fcminfer(grid,imp,iter=60,...)$convergence
+  iter <- fcminfer(grid,imp,iter=60,force.conv = TRUE)$convergence
 
   ideal.vector <- OpenRepGrid::getRatingLayer(grid)[,ideal]
   ideal.vector <- (ideal.vector -
@@ -373,7 +373,7 @@ pcsd_summary <- function(grid, imp, ideal=dim(grid)[2],...){
   rpoles <- OpenRepGrid::getConstructNames(grid)[,2]
   poles <- paste(lpoles,"-",rpoles,sep = " ")
 
-  iter <- fcminfer(grid,imp,iter=60,...)$convergence                            # Extract convergence of the fcminfer.
+  iter <- fcminfer(grid,imp,iter=60,force.conv = TRUE)$convergence              # Extract convergence of the fcminfer.
 
   ideal.vector <- OpenRepGrid::getRatingLayer(grid)[,ideal]
   ideal.vector <- (ideal.vector -

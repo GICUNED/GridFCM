@@ -13,7 +13,8 @@ fcminfer(
   thr = "t",
   lambda = 1,
   iter = 30,
-  e = 0.001
+  e = 0.001,
+  force.conv = FALSE
 )
 }
 \arguments{

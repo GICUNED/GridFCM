@@ -78,7 +78,7 @@ actvector <- function(grid, col.element = 1){
 
 fcminfer <- function(grid, imp, act.vec = actvector(grid), ideal = dim(grid)[2],
                      infer= "mk", thr= "t", lambda = 1 , iter = 30,
-                     e = 0.001){
+                     e = 0.001, force.conv = FALSE){
 
   imp_a <- .adaptrepgrid(imp, t = FALSE)                                        # Extract ImpGrid values.
 
@@ -88,7 +88,8 @@ fcminfer <- function(grid, imp, act.vec = actvector(grid), ideal = dim(grid)[2],
 
 
   result <- .infer(act.vec, weight_mat = w.mat, infer = infer,
-                      transform = thr, lambda = lambda, iter = iter, e = e)      # Apply the infer function.
+                   transform = thr, lambda = lambda, iter = iter, e = e,
+                   force.conv = force.conv)      # Apply the infer function.
 
   return(result)
 }
@@ -128,7 +129,7 @@ pcsd <- function(grid,imp,ideal=dim(grid)[2],...){
   rpoles <- OpenRepGrid::getConstructNames(grid)[,2]
   poles <- paste(lpoles,"-",rpoles,sep = " ")
 
-  iter <- fcminfer(grid,imp,iter=60)$convergence                                # Save convergence value.
+  iter <- fcminfer(grid,imp,iter=60,force.conv = TRUE)$convergence                                # Save convergence value.
 
   ideal.vector <- OpenRepGrid::getRatingLayer(grid)[,ideal]
   ideal.vector <- (ideal.vector -

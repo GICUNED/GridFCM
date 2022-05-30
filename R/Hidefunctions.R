@@ -44,7 +44,7 @@
 ################################################################################
 
 .infer <- function (activation_vec, weight_mat, iter = 20, infer = "k",
-                    transform = "s", lambda = 1, e = 0.001)                     #  Function extracted and slightly modified from fcm package
+                    transform = "s", lambda = 1, e = 0.001, force.conv = FALSE) #  Function extracted and slightly modified from fcm package
 {
   if (length(which(activation_vec > 1)) & length(which(activation_vec >
                                                        -1))) {
@@ -185,7 +185,7 @@
   diff.matrix <- A[2:iter,] - A[1:iter-1,]
   exit <- 0
   n <- 1
-  while(exit < 3 && n <= iter){
+  while(exit < 3 && n < iter){
 
     row <- diff.matrix[n,]
     mean.row <- abs(sum(row)/length(row))
@@ -201,6 +201,9 @@
     }
   }
 
+  if(force.conv && is.na(convergence)){
+    convergence <- iter
+  }
 
   outlist$convergence <- convergence
   return(outlist)
