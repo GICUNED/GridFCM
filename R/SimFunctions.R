@@ -108,3 +108,21 @@ scsim <- function(grid, imp, init.vec = actvector(grid), act.vec, iter = 30,
   return(outlist)
 }
 
+# IMPORT WEIGTHED IMPGRID -- wimpimport()
+################################################################################
+
+#' Import Weigthed ImpGrid -- wimpimport()
+#'
+#' @description Function used to read Weighted ImpGrid inside an xlsx file. For the
+#' creation of the ImpGrid template you can use the function
+#' \code{\link{templateimp}}
+#'
+#' @param path xlsx file path
+#'
+#' @param ... This function inherits all the parameters of function
+#' \code{\link{importExcel}} from OpenRepGrid package.
+#'
+#' @return Returns an S4 repgrid object containing the data from the ImpGrid
+#'
+#' @export
+
