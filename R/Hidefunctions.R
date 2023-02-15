@@ -40,6 +40,33 @@
 }
 ################################################################################
 
+# linear threshold -- .threshold.linear()
+################################################################################
+
+.threshold.linear <- function(x){
+  if(x > 1){
+    return(1)
+  }
+  if(x < -1){
+    return(-1)
+  }
+  if(x <= 1 && x >= -1){
+   return(x)
+  }
+}
+
+# TANGENT HIPERBOLIC -- .threshold.tanh()
+################################################################################
+
+.threshold.tranh <- function(x, lambda=1.23){
+
+  result <- (exp(1)^(lambda*x) - exp(1)^(-lambda*x)) / (exp(1)^(lambda*x) + exp(1)^(-lambda*x))
+
+  return(result)
+}
+
+
+
 # HIDE FCM INFER -- .infer()
 ################################################################################
 
